@@ -16,6 +16,7 @@ const HomeScreen = () => {
       saveStorage('weekStore', JSON.stringify(recetas));
       getStorage('weekStore')
         .then((result) => {
+          // console.log('result', result);
           if (typeof result === 'string') {
             const parsedData = JSON.parse(result);
             setRecipes(parsedData);

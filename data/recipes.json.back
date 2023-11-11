@@ -1,0 +1,187 @@
+[
+  {
+    "id": 1,
+    "nombre": "Macarrones",
+    "categoria": "Pasta & Arroces",
+    "estacion": "Todas",
+    "tiempo": "30 min",
+    "imagen": "https://cosmorecetas.com/images/macarrones-bolonesa.jpg"
+  },
+  {
+    "id": 2,
+    "nombre": "Tallarines chinos",
+    "categoria": "Pasta & Arroces",
+    "estacion": "Todas",
+    "tiempo": "30 min",
+    "imagen": "https://okdiario.com/img/2019/08/22/fideos-chinos-salteados-con-chistorra.jpg"
+  },
+  {
+    "id": 3,
+    "nombre": "Espaguetis",
+    "categoria": "Pasta & Arroces",
+    "estacion": "Todas",
+    "tiempo": "30 min",
+    "imagen": "https://assets.unileversolutions.com/recipes-v2/232073.jpg"
+  },
+  {
+    "id": 4,
+    "nombre": "Cus cus",
+    "categoria": "Pasta & Arroces",
+    "estacion": "Todas",
+    "tiempo": "30 min",
+    "imagen": "https://recetasdecocina.elmundo.es/wp-content/uploads/2017/04/receta-cuscus.jpg"
+  },
+  {
+    "id": 5,
+    "nombre": "Arroz salvaje",
+    "categoria": "Pasta & Arroces",
+    "estacion": "Todas",
+    "tiempo": "30 min",
+    "imagen": "https://www.comedera.com/wp-content/uploads/2023/02/arroz-salvaje.jpg"
+  },
+  {
+    "id": 6,
+    "nombre": "Arroz 3 delicias",
+    "categoria": "Pasta & Arroces",
+    "estacion": "Todas",
+    "tiempo": "30 min",
+    "imagen": "https://sivarious.com/wp-content/uploads/2019/10/arroz-tres-delicias.jpg"
+  },
+  {
+    "id": 7,
+    "nombre": "Arroz negro",
+    "categoria": "Pasta & Arroces",
+    "estacion": "Todas",
+    "tiempo": "30 min",
+    "imagen": "https://www.recetas-espana.com/base/stock/Recipe/199-image/199-image_web.jpg.webp"
+  },
+  {
+    "id": 8,
+    "nombre": "Asado de dorada",
+    "categoria": "Pescados",
+    "estacion": "Todas",
+    "tiempo": "30 min",
+    "imagen": "https://cdn6.recetasdeescandalo.com/wp-content/uploads/2014/09/Asado-de-dorada-al-horno-con-patatas.jpg"
+  },
+  {
+    "id": 9,
+    "nombre": "Salmón al horno",
+    "categoria": "Pescados",
+    "estacion": "Todas",
+    "tiempo": "30 min",
+    "imagen": "https://unareceta.com/wp-content/uploads/2016/11/salmon-al-horno.jpg"
+  },
+  {
+    "id": 10,
+    "nombre": "Atún con verduras",
+    "categoria": "Pescados",
+    "estacion": "Todas",
+    "tiempo": "30 min",
+    "imagen": "https://saborgourmet.com/wp-content/uploads/Receta-de-atun-a-la-plancha-facil-saludable.jpg"
+  },
+  {
+    "id": 11,
+    "nombre": "Fideua",
+    "categoria": "Pescados",
+    "estacion": "Todas",
+    "tiempo": "30 min",
+    "imagen": "https://s1.eestatic.com/2015/03/25/cocinillas/cocinillas_20757956_115803029_1706x960.jpg"
+  },
+  {
+    "id": 12,
+    "nombre": "Merluza en salsa",
+    "categoria": "Pescados",
+    "estacion": "Todas",
+    "tiempo": "30 min",
+    "imagen": "https://ybarraentucocina.com/wp-content/uploads/2020/10/recetas-ybarra-merluza-salsa-piquillos-virgen-extra.jpg"
+  },
+  {
+    "id": 13,
+    "nombre": "Pollo a la jardinera",
+    "categoria": "Pollo",
+    "estacion": "Todas",
+    "tiempo": "30 min",
+    "imagen": "https://cocina.guru/wp-content/uploads/2020/01/receta-Pollo-a-la-Jardinera.jpg"
+  },
+  {
+    "id": 14,
+    "nombre": "Pollo al limón",
+    "categoria": "Pollo",
+    "estacion": "Todas",
+    "tiempo": "30 min",
+    "imagen": "https://www.pronto.es/files/main_image/uploads/2021/07/05/62aa811fc5994.jpeg"
+  },
+  {
+    "id": 15,
+    "nombre": "Pollo a la cerveza",
+    "categoria": "Pollo",
+    "estacion": "Todas",
+    "tiempo": "30 min",
+    "imagen": "https://www.deliciosi.com/images/1900/1990/muslos-de-pollo-al-lim%C3%B3n.jpg"
+  },
+  {
+    "id": 16,
+    "nombre": "Alitas adobadas",
+    "categoria": "Pollo",
+    "estacion": "Todas",
+    "tiempo": "30 min",
+    "imagen": "https://i.blogs.es/7bb4b4/alitas-ar/1366_2000.jpg"
+  },
+  {
+    "id": 17,
+    "nombre": "Asado de pollo",
+    "categoria": "Pollo",
+    "estacion": "Todas",
+    "tiempo": "30 min",
+    "imagen": "https://imag.bonviveur.com/pollo-asado-al-horno-con-patatas.jpg"
+  },
+  {
+    "id": 18,
+    "nombre": "Pollo a las finas hierbas",
+    "categoria": "Pollo",
+    "estacion": "Todas",
+    "tiempo": "30 min",
+    "ingredientes": ["pollo", "hierbas"],
+    "imagen": "https://cecotec.es/recetas/wp-content/uploads/2022/06/Jamoncitos_finas_Hierbas_Cecofry_Full_inox_RRSS.jpg"
+  },
+  {
+    "id": 19,
+    "nombre": "Magra con tomate",
+    "categoria": "Otras carnes",
+    "estacion": "Todas",
+    "tiempo": "30 min",
+    "imagen": "https://recetaland.com/wp-content/uploads/2022/05/20220427_141033.jpg"
+  },
+  {
+    "id": 20,
+    "nombre": "Magra-Ternera en salsa",
+    "categoria": "Otras carnes",
+    "estacion": "Todas",
+    "tiempo": "30 min",
+    "imagen": "https://i.ytimg.com/vi/myERVmRpcrI/maxresdefault.jpg"
+  },
+  {
+    "id": 21,
+    "nombre": "Asado de cordero",
+    "categoria": "Otras carnes",
+    "estacion": "Todas",
+    "tiempo": "30 min",
+    "imagen": "https://s1.eestatic.com/2016/01/06/cocinillas/cocinillas_92500906_116237077_1024x576.jpg"
+  },
+  {
+    "id": 22,
+    "nombre": "Conejo con patatas",
+    "categoria": "Otras carnes",
+    "estacion": "Todas",
+    "tiempo": "30 min",
+    "imagen": "https://minutosdecocina.files.wordpress.com/2017/10/conejo-frito.jpg?w=640"
+  },
+  {
+    "id": 23,
+    "nombre": "Judías verdes con jamón",
+    "categoria": "Verduras",
+    "estacion": "Todas",
+    "tiempo": "30 min",
+    "imagen": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTxeXMXTcMwmZEzt1p1IW1tLSOHaY7kPCE2Q&usqp=CAU"
+  }
+]
