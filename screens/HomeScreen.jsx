@@ -11,7 +11,8 @@ const HomeScreen = () => {
   const [recipes, setRecipes] = useState();
 
   useEffect(() => {
-    if (getDayOfWeek(numberWeekDay()) === 'Domingo') {
+    console.log(getDayOfWeek(numberWeekDay()));
+    if (getDayOfWeek(numberWeekDay()) === 'Lunes') {
       removeStorage();
       saveStorage('weekStore', JSON.stringify(recetas));
       getStorage('weekStore')

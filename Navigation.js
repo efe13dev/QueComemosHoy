@@ -11,43 +11,55 @@ import RandomRecipes from './screens/RandomRecipes';
 import { FontAwesome, Entypo, Ionicons } from '@expo/vector-icons';
 
 const Tab = createBottomTabNavigator();
-const MyRecipesStack = createNativeStackNavigator();
-const MyHomeStack = createNativeStackNavigator();
+const MyStack = createNativeStackNavigator();
 
-function MyStack() {
+function HomeStack() {
   return (
-    <MyRecipesStack.Navigator initialRouteName='HomeScreen'>
-      <MyHomeStack.Screen
-        name='HomeScreen'
+    <MyStack.Navigator>
+      <MyStack.Screen
+        name='HomeScreenStack'
         component={HomeScreen}
         options={{
           headerShown: false
         }}
       />
-      <MyRecipesStack.Screen
+      <MyStack.Screen
         name='DetailRecipe'
         component={DetailRecipe}
         options={{
           headerTitle: 'Volver'
         }}
       />
-      <MyRecipesStack.Screen
-        name='MyRecipesStack'
+    </MyStack.Navigator>
+  );
+}
+function RecipesStack() {
+  return (
+    <MyStack.Navigator>
+      <MyStack.Screen
+        name='MyRecipes'
         component={MyRecipes}
         options={{
           headerShown: false
         }}
       />
-    </MyRecipesStack.Navigator>
+      <MyStack.Screen
+        name='DetailRecipe'
+        component={DetailRecipe}
+        options={{
+          headerTitle: 'Volver'
+        }}
+      />
+    </MyStack.Navigator>
   );
 }
 
 function MyTabs() {
   return (
-    <Tab.Navigator initialRouteName='Inicio'>
+    <Tab.Navigator>
       <Tab.Screen
-        name='Inicio'
-        component={MyStack}
+        name='Home'
+        component={HomeStack}
         options={{
           tabBarActiveTintColor: '#116A7B',
           tabBarLabel: 'Inicio',
@@ -62,8 +74,8 @@ function MyTabs() {
         }}
       />
       <Tab.Screen
-        name='MyRecipes'
-        component={MyStack}
+        name='MyRecipesScreen'
+        component={RecipesStack}
         options={{
           tabBarActiveTintColor: '#116A7B',
           tabBarLabel: 'Mis recetas',

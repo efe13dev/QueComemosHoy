@@ -1,4 +1,4 @@
-export function getDayOfWeek (index) {
+export function getDayOfWeek(index) {
   const daysOfWeek = [
     'Lunes',
     'Martes',
@@ -16,8 +16,8 @@ export function getDayOfWeek (index) {
   return '';
 }
 
-export function numberWeekDay () {
+export function numberWeekDay() {
   const date = new Date();
   const dayNumber = date.getDay();
-  return dayNumber - 1;
+  return dayNumber;
 }
