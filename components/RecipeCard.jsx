@@ -30,13 +30,13 @@ export function RecipeCard({ recipe }) {
             source={timerIcon}
             style={styles.timerIcon}
           />
-          <Text>{recipe.tiempo}</Text>
+          <Text style={styles.text_time}>{recipe.tiempo}</Text>
         </View>
         <TouchableOpacity
           style={styles.button}
           onPress={changeScreen}
         >
-          <Text>Ver receta</Text>
+          <Text style={styles.buttonText}>Ver receta</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -69,6 +69,10 @@ const styles = StyleSheet.create({
     gap: 5
   },
   text_name: {
+    textShadowColor: '#B0A695',
+    textShadowOffset: { width: 0.5, height: 0.5 },
+    textShadowRadius: 1,
+    color: '#776B5D',
     fontSize: 20
   },
   image: {
@@ -80,9 +84,17 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20
   },
+  text_time: {
+    color: '#594545',
+    fontWeight: '500'
+  },
   button: {
     backgroundColor: '#D7C0AE',
     padding: 8,
     borderRadius: 10
+  },
+  buttonText: {
+    color: '#594545',
+    fontWeight: '500'
   }
 });

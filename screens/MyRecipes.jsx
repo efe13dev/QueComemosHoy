@@ -25,14 +25,17 @@ export default MyRecipes;
 const styles = StyleSheet.create({
   container: {
     paddingTop: Constants.statusBarHeight + 10,
-    marginBottom: Constants.statusBarHeight + 40
+    marginBottom: Constants.statusBarHeight + 50
   },
   text_title: {
+    textShadowColor: 'black',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 1,
+    color: '#884A39',
     textAlign: 'center',
     fontWeight: 'bold',
-    textDecorationLine: 'underline',
     fontSize: 40,
-    marginBottom: 10
+    marginVertical: 10
   },
 
   listContent: {

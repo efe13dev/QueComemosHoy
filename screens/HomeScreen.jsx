@@ -16,7 +16,6 @@ const HomeScreen = () => {
       saveStorage('weekStore', JSON.stringify(recetas));
       getStorage('weekStore')
         .then((result) => {
-          // console.log('result', result);
           if (typeof result === 'string') {
             const parsedData = JSON.parse(result);
             setRecipes(parsedData);
@@ -49,7 +48,7 @@ const HomeScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text_title}>Menu semanal</Text>
+      <Text style={styles.text_title}>Menú semanal</Text>
       <FlatList
         data={recipes}
         ItemSeparatorComponent={() => <Text />}
@@ -70,19 +69,24 @@ const HomeScreen = () => {
 export default HomeScreen;
 const styles = StyleSheet.create({
   container: {
-    marginTop: Constants.statusBarHeight,
+    marginTop: Constants.statusBarHeight + 10,
     marginBottom: Constants.statusBarHeight + 50,
 
     fontWeight: 'bold'
   },
   text_title: {
+    textShadowColor: 'black',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 1,
+    color: '#884A39',
     textAlign: 'center',
     fontWeight: 'bold',
-    textDecorationLine: 'underline',
     fontSize: 40,
-    marginBottom: 10
+    marginVertical: 10
   },
   text_day: {
+    color: '#884A39',
+    fontWeight: 'bold',
     fontSize: 15
   },
   listContent: {

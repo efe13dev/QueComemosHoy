@@ -12,10 +12,18 @@ import { FontAwesome, Entypo, Ionicons } from '@expo/vector-icons';
 
 const Tab = createBottomTabNavigator();
 const MyRecipesStack = createNativeStackNavigator();
+const MyHomeStack = createNativeStackNavigator();
 
 function MyStack() {
   return (
-    <MyRecipesStack.Navigator initialRouteName='MyRecipesStack'>
+    <MyRecipesStack.Navigator initialRouteName='HomeScreen'>
+      <MyHomeStack.Screen
+        name='HomeScreen'
+        component={HomeScreen}
+        options={{
+          headerShown: false
+        }}
+      />
       <MyRecipesStack.Screen
         name='DetailRecipe'
         component={DetailRecipe}
@@ -39,9 +47,9 @@ function MyTabs() {
     <Tab.Navigator initialRouteName='Inicio'>
       <Tab.Screen
         name='Inicio'
-        component={HomeScreen}
+        component={MyStack}
         options={{
-          tabBarActiveTintColor: '#827469',
+          tabBarActiveTintColor: '#116A7B',
           tabBarLabel: 'Inicio',
           tabBarIcon: ({ color, size }) => (
             <FontAwesome
@@ -57,7 +65,7 @@ function MyTabs() {
         name='MyRecipes'
         component={MyStack}
         options={{
-          tabBarActiveTintColor: '#827469',
+          tabBarActiveTintColor: '#116A7B',
           tabBarLabel: 'Mis recetas',
           tabBarIcon: ({ color, size }) => (
             <Entypo
@@ -73,7 +81,7 @@ function MyTabs() {
         name='Buscar receta'
         component={RandomRecipes}
         options={{
-          tabBarActiveTintColor: '#827469',
+          tabBarActiveTintColor: '#116A7B',
           tabBarLabel: 'Buscar receta',
           tabBarIcon: ({ color, size }) => (
             <Ionicons
