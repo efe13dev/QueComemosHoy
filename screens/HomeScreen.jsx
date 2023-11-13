@@ -1,55 +1,65 @@
-import { View, Text, StyleSheet, FlatList } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity
+} from 'react-native';
 import Constants from 'expo-constants';
 import { useEffect, useState } from 'react';
 import { RecipeCard } from '../components/RecipeCard';
-import { getDayOfWeek, numberWeekDay } from '../utils/calculateDays';
+import { getDayOfWeek } from '../utils/calculateDays';
 import { saveStorage, removeStorage, getStorage } from '../utils/storage';
 import { getRecipesWeek } from '../utils/getRecipesWeek';
 
 const HomeScreen = () => {
-  const recetas = getRecipesWeek();
   const [recipes, setRecipes] = useState();
-
+  function loadRecipes() {
+    const recipesWeek = getRecipesWeek();
+    removeStorage();
+    saveStorage('weekStore', JSON.stringify(recipesWeek));
+    getStorage('weekStore').then((result) => {
+      console.log(result);
+      if (typeof result === 'string') {
+        const parsedData = JSON.parse(result);
+        setRecipes(parsedData);
+      } else {
+        console.log(
+          'El valor obtenido no es un string válido en formato JSON.'
+        );
+      }
+    });
+  }
   useEffect(() => {
-    console.log(getDayOfWeek(numberWeekDay()));
-    if (getDayOfWeek(numberWeekDay()) === 'Martes') {
-      removeStorage();
-      saveStorage('weekStore', JSON.stringify(recetas));
-      getStorage('weekStore')
-        .then((result) => {
-          if (typeof result === 'string') {
-            const parsedData = JSON.parse(result);
-            setRecipes(parsedData);
-          } else {
-            console.log(
-              'El valor obtenido no es un string válido en formato JSON.'
-            );
-          }
-        })
-        .catch((error) => {
-          console.log('Error al obtener el valor:', error);
-        });
-    } else {
-      getStorage('weekStore')
-        .then((result) => {
-          if (typeof result === 'string') {
-            const parsedData = JSON.parse(result);
-            setRecipes(parsedData);
-          } else {
-            console.log(
-              'El valor obtenido no es un string válido en formato JSON.'
-            );
-          }
-        })
-        .catch((error) => {
-          console.log('Error al obtener el valor:', error);
-        });
-    }
+    getStorage('weekStore')
+      .then((result) => {
+        if (typeof result === 'string') {
+          const parsedData = JSON.parse(result);
+          setRecipes(parsedData);
+        } else {
+          console.log(
+            'El valor obtenido no es un string válido en formato JSON.'
+          );
+        }
+      })
+      .catch((error) => {
+        console.log('Error al obtener el valor:', error);
+      });
   }, []);
 
   return (
     <View style={styles.container}>
       <Text style={styles.text_title}>Menú semanal</Text>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => {
+            loadRecipes();
+          }}
+        >
+          <Text style={styles.buttonText}>Crear Menú</Text>
+        </TouchableOpacity>
+      </View>
       <FlatList
         data={recipes}
         ItemSeparatorComponent={() => <Text />}
@@ -71,7 +81,7 @@ export default HomeScreen;
 const styles = StyleSheet.create({
   container: {
     marginTop: Constants.statusBarHeight + 10,
-    marginBottom: Constants.statusBarHeight + 50,
+    marginBottom: Constants.statusBarHeight + 100,
 
     fontWeight: 'bold'
   },
@@ -94,5 +104,16 @@ const styles = StyleSheet.create({
     paddingTop: 15,
     flexGrow: 1,
     alignItems: 'center'
+  },
+  buttonContainer: {
+    alignItems: 'flex-end',
+    marginRight: 10,
+    paddingHorizontal: 10,
+    paddingBottom: 10
+  },
+  button: {
+    backgroundColor: '#D7C0AE',
+    padding: 8,
+    borderRadius: 10
   }
 });

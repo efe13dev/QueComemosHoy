@@ -1,6 +1,5 @@
 const recipesJson = require('../data/recipes.json');
-export function getRecipesWeek () {
-  console.log('Nuevas recetas añadidas al storage');
+export function getRecipesWeek() {
   const weekRecipes = recipesJson
     .sort(function () {
       return 0.5 - Math.random();
