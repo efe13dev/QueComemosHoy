@@ -12,7 +12,7 @@ const HomeScreen = () => {
 
   useEffect(() => {
     console.log(getDayOfWeek(numberWeekDay()));
-    if (getDayOfWeek(numberWeekDay()) === 'Lunes') {
+    if (getDayOfWeek(numberWeekDay()) === 'Martes') {
       removeStorage();
       saveStorage('weekStore', JSON.stringify(recetas));
       getStorage('weekStore')

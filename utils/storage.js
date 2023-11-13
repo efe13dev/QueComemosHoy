@@ -1,6 +1,6 @@
 import * as SecureStore from 'expo-secure-store';
 
-export async function saveStorage (key, value) {
+export async function saveStorage(key, value) {
   try {
     await SecureStore.setItemAsync(key, value);
   } catch (error) {
@@ -8,7 +8,7 @@ export async function saveStorage (key, value) {
   }
 }
 
-export async function removeStorage () {
+export async function removeStorage() {
   try {
     const value = await SecureStore.getItemAsync('weekStore');
     if (value !== null) {
@@ -24,10 +24,10 @@ export async function removeStorage () {
     );
   }
 }
-export async function getStorage (key) {
+export async function getStorage(key) {
   const result = await SecureStore.getItemAsync(key);
   if (result) {
-    console.log("🔐 Here's your value 🔐 \n" + result);
+    console.log("🔐 Here's your value 🔐 \n");
   } else {
     console.log('No values stored under that key.');
   }
