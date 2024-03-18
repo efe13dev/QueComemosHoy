@@ -46,8 +46,8 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: 'white',
     maxWidth: '75%',
-    width: 250,
-    height: 230,
+    width: 300,
+    height: 260,
     borderColor: '#D7C0AE',
     borderWidth: 2,
     borderRadius: 10,
@@ -76,8 +76,8 @@ const styles = StyleSheet.create({
     fontSize: 20
   },
   image: {
-    width: 200,
-    height: 100,
+    width: '80%',
+    height: '50%',
     borderRadius: 10
   },
   timerIcon: {

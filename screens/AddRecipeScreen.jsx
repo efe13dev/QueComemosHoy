@@ -1,15 +1,16 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import Constants from 'expo-constants';
+import AddFormRecipe from '../components/AddFormRecipe';
 
-const RandomRecipes = () => {
+const AddRecipeScreen = () => {
   return (
     <View style={styles.container}>
-      <Text style={styles.text_title}>RandomRecipes</Text>
+      <AddFormRecipe />
     </View>
   );
 };
 
-export default RandomRecipes;
+export default AddRecipeScreen;
 const styles = StyleSheet.create({
   container: {
     marginTop: Constants.statusBarHeight,
@@ -18,7 +19,6 @@ const styles = StyleSheet.create({
   text_title: {
     textAlign: 'center',
     fontWeight: 'bold',
-    textDecorationLine: 'underline',
     fontSize: 40,
     marginBottom: 10
   }

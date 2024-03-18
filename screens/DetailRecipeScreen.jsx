@@ -30,7 +30,7 @@ const DetailRecipe = ({ route }) => {
             <Text style={styles.title}>{recipe.name}</Text>
             <Text style={styles.textTime}>
               Tiempo de preparación:{' '}
-              <Text style={styles.spanTime}>{recipe.time}</Text>
+              <Text style={styles.spanTime}>{recipe.time} min</Text>
             </Text>
           </View>
           <Text style={styles.titleIngredientsInstructions}>Ingredientes:</Text>

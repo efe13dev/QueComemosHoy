@@ -4,9 +4,9 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import HomeScreen from './screens/HomeScreen';
-import MyRecipes from './screens/MyRecipes';
-import DetailRecipe from './screens/DetailRecipe';
-import RandomRecipes from './screens/RandomRecipes';
+import MyRecipes from './screens/MyRecipesScreen';
+import DetailRecipe from './screens/DetailRecipeScreen';
+import AddRecipe from './screens/AddRecipeScreen';
 
 import { FontAwesome, Entypo, Ionicons } from '@expo/vector-icons';
 
@@ -90,14 +90,14 @@ function MyTabs() {
         }}
       />
       <Tab.Screen
-        name='Buscar receta'
-        component={RandomRecipes}
+        name='AddRecipeScreen'
+        component={AddRecipe}
         options={{
           tabBarActiveTintColor: '#116A7B',
-          tabBarLabel: 'Buscar receta',
+          tabBarLabel: 'Añadir receta',
           tabBarIcon: ({ color, size }) => (
             <Ionicons
-              name='ios-search'
+              name='add-circle'
               size={24}
               color={color}
             />
