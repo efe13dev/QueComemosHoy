@@ -5,58 +5,15 @@
     "categoria": "Pasta & Arroces",
     "estacion": "Todas",
     "tiempo": "30 min",
-    "imagen": "https://frankfurtlacanicaazul.com/wp-content/uploads/2023/02/macarrones-a-la-bolon%CC%83esa.jpg",
-    "personas": "2",
-    "ingredientes": [
-      "100 gramos de macarrones por persona",
-      "250 gramos de carne picada",
-      "300 gramos de tomate frito (preferiblemente hida)",
-      "Sal",
-      "Orégano",
-      "Aceite de oliva"
-    ],
-    "preparacion": [
-      "Ponemos una olla con agua caliente a fuego fuerte.",
-      "Cuando el agua empiece a hervir, añadimos sal y removemos para que se disuelva.",
-      "Cuando el agua vuelva a hervir otra vez, metemos los macarrones en la olla y les damos un par de vueltas para que se sumerjan todos por completo y para evitar que se peguen al fondo de la olla.",
-      "Al echar los macarrones, el hervor del agua se va a interrumpir otra vez. Cuando el agua vuelva a hervir será el momento a partir del cual vamos a contar los minutos de cocción de la pasta. Depende de la marca de la pasta 10 min al dente 12 bien hechos.",
-      "Pasados los minutos de cocción que indique el fabricante en el envase, sacamos los macarrones escurriéndolos un poco y echamos un poco de agua fria por encima. Dejamos reposar.",
-      "En la olla sin agua, añadimos el aceite y cuando esté caliente, echamos la carne picada y removemos bien, entonces añadimos la sal al gusto.",
-      "Vamos removiendo la carne para que no se pegue y cuando esté lista, añadimos los macarrones.",
-      "Echamos orégano por encima al gusto y removemos, entonces echamos el tomate frito y removemos para que todo se mezcle bien y ya estarían nuestros macarraones.",
-      "Si queremos al servir podemos añadir un poco de queso rallado."
-    ]
+    "imagen": "https://cosmorecetas.com/images/macarrones-bolonesa.jpg"
   },
   {
     "id": 2,
     "nombre": "Tallarines chinos",
     "categoria": "Pasta & Arroces",
     "estacion": "Todas",
-    "tiempo": "45 min",
-    "imagen": "https://okdiario.com/img/2019/08/22/fideos-chinos-salteados-con-chistorra.jpg",
-    "personas": "4",
-    "ingredientes": [
-      "300 gramos de tallarines",
-      "1 pimiento verde",
-      "1 pimiento rojo",
-      "1 bote de champiñones",
-      "1 cebolla",
-      "1 zanahoria",
-      "1 pechuga de pollo",
-      "salsa de soja",
-      "sal"
-    ],
-    "preparacion": [
-      "Ponemos una olla con agua caliente a fuego fuerte.",
-      "Cuando el agua empiece a hervir, añadimos sal y removemos para que se disuelva.",
-      "Cuando el agua vuelva a hervir otra vez, metemos los fideos durante 11 minutos. Pasados los minutos de cocción sacamos los fideos escurriéndolos un poco y echamos un poco de agua fria por encima. Dejamos reposar.",
-      "Partimos las verduras en trocitos.",
-      "Echamos aceite a una sarten y añadimos las verduras, primero la cebolla, pimientos y zanahoria. Vamos removiendo.",
-      "Cuando la cebolla esté trasnparente entonces añadimos la pechuga, los champiñones y añadimos un poco de sal.",
-      "Vamos removiendo para que todo se integre y no se queme nada.",
-      "Cuando todo esté bien cocinado, añadimos los fideos y mezclamos bien.",
-      "Cuando todos los ingredientes estén bien mezclados, entonces añadimos la salsa de soja y mezclamos bien."
-    ]
+    "tiempo": "30 min",
+    "imagen": "https://okdiario.com/img/2019/08/22/fideos-chinos-salteados-con-chistorra.jpg"
   },
   {
     "id": 3,
@@ -64,306 +21,152 @@
     "categoria": "Pasta & Arroces",
     "estacion": "Todas",
     "tiempo": "30 min",
-    "imagen": "https://assets.unileversolutions.com/recipes-v2/232073.jpg",
-    "personas": "2",
-    "ingredientes": [
-      "75 gramos de esguetis por persona",
-      "250 gramos de carne picada",
-      "300 gramos de tomate frito (preferiblemente hida)",
-      "sal",
-      "orégano",
-      "aceite de oliva"
-    ],
-    "preparacion": [
-      "Ponemos una olla con agua caliente a fuego fuerte.",
-      "Cuando el agua empiece a hervir, añadimos sal y removemos para que se disuelva.",
-      "Cuando el agua vuelva a hervir otra vez, metemos los espaguetis en la olla y les damos un par de vueltas para que se sumerjan todos por completo y para evitar que se peguen al fondo de la olla.",
-      "Al echar los espaguetis, el hervor del agua se va a interrumpir otra vez. Cuando el agua vuelva a hervir será el momento a partir del cual vamos a contar los minutos de cocción de la pasta. Depende de la marca de la pasta 10 min al dente 12 bien hechos.",
-      "Pasados los minutos de cocción que indique el fabricante en el envase, sacamos los espaguetis escurriéndolos un poco y echamos un poco de agua fria por encima. Dejamos reposar.",
-      "En la olla sin agua, añadimos el aceite y cuando esté caliente, echamos la carne picada y removemos bien, entonces añadimos la sal al gusto.",
-      "Vamos removiendo la carne para que no se pegue y cuando esté lista, añadimos los espaguetis.",
-      "Echamos orégano por encima al gusto y removemos, entonces echamos el tomate frito y removemos para que todo se mezcle bien y ya estarían nuestros macarraones.",
-      "Si queremos al servir podemos añadir un poco de queso rallado."
-    ]
+    "imagen": "https://assets.unileversolutions.com/recipes-v2/232073.jpg"
   },
   {
     "id": 4,
-    "nombre": "Cuscús",
+    "nombre": "Cus cus",
     "categoria": "Pasta & Arroces",
     "estacion": "Todas",
-    "tiempo": "35 min",
-    "imagen": "https://recetasdecocina.elmundo.es/wp-content/uploads/2017/04/receta-cuscus.jpg",
-    "personas": "2",
-    "ingredientes": [
-      "300 gramos de cuscús",
-      "1 pechuga de pollo",
-      "1 zanahoria",
-      "un puñado de espárragos",
-      "un puñado de ajos frescos",
-      "champiñoes",
-      "sal",
-      "aceite",
-      "ajo en polvo",
-      "cúrcuma"
-    ],
-    "preparacion": [
-      "Echamos en un cazo doble de agua del cuscús y ponemos el agua a calentar.",
-      "Cuando el agua esté hirviendo apagamos el fuego y echamos el cuscús. Dejamos reposar para que se haga bien unos 20 min.",
-      "Mientras partimos las verduras y el pollo en trocitos.",
-      "En una sartén añadimos un poco de aceite y echamos las verduras y un poco de sal y que se vayan haciendo.",
-      "Vamos removiendo y cuando las verduras estén listas, añadimos entonces la pechuga, añadimos otra pizca de sal.",
-      "Cuando la pechuga y verduras estén al punto de gusto, entonces añadimos el cuscús y mezclamos todo bien.",
-      "Una vez esté todo bien integrado añadimos un poco de ajo en polvo y cúrcuma al gusto.",
-      "Mezclamos todo bien y listo para servir."
-    ]
+    "tiempo": "30 min",
+    "imagen": "https://recetasdecocina.elmundo.es/wp-content/uploads/2017/04/receta-cuscus.jpg"
   },
   {
     "id": 5,
     "nombre": "Arroz salvaje",
     "categoria": "Pasta & Arroces",
     "estacion": "Todas",
-    "tiempo": "40 min",
-    "imagen": "https://www.comedera.com/wp-content/uploads/2023/02/arroz-salvaje.jpg",
-    "personas": "4",
-    "ingredientes": [
-      "300 gramos de arroz salvaje",
-      "1 pechuga de pollo",
-      "200 gramos de setas",
-      "2 zanahorias",
-      "1 cebollino",
-      "aceite de oliva",
-      "salsa de soja",
-      "sal",
-      "pimienta"
-    ],
-    "preparacion": [
-      "El arroz salvaje necesita de un mayor tiempo de cocción, por lo que empezaremos cocinando el mismo durante unos 35 minutos, hasta que esté al punto.",
-      "La zanahoria la vamos a picar en pequeños trozos, y la agregamos en la olla donde tenemos cociendo el arroz.",
-      "Mientras tenemos el arroz y la zanahoria haciéndose en la olla, aprovechamos para cortar la pechuga de pollo en pequeños trozos.",
-      "Luego la pasamos a una sartén con un poco de aceite de oliva virgen extra para dorarla.",
-      "En cuanto el pollo empiece a coger color, agregamos las setas.",
-      "Salteamos ambos ingredientes juntos y añadimos, si queremos, una cucharada de salsa de soja.",
-      "Ésto le ayudará a coger un toque más de sabor. Una vez el arroz salvaje y la zanahoria estén cocidos, escurrimos el conjunto y lo añadimos a la sartén con los otros ingredientes.",
-      "Mezclamos bien para que los sabores se vayan integrando, y dejamos hacer por unos 2 minutos más.",
-      "Espolvoreamos un poco de cebollino picado y de pimienta."
-    ]
+    "tiempo": "30 min",
+    "imagen": "https://www.comedera.com/wp-content/uploads/2023/02/arroz-salvaje.jpg"
   },
   {
     "id": 6,
     "nombre": "Arroz 3 delicias",
     "categoria": "Pasta & Arroces",
     "estacion": "Todas",
-    "tiempo": "20 min",
-    "imagen": "https://sivarious.com/wp-content/uploads/2019/10/arroz-tres-delicias.jpg",
-    "personas": "4",
-    "ingredientes": [
-      "400 gramos de arroz de grano largo tipo basmati",
-      "1 zanahoria",
-      "gambas",
-      "guisantes",
-      "jamón de york a tacos",
-      "huevos",
-      "salsa de soja",
-      "un poco de azucar",
-      "aceite de oliva"
-    ],
-    "preparacion": [
-      "Cortamos la zanahoria en dados pequeños y la ponemos a cocer en una cacerola con agua y un poco de sal.",
-      "Abrimos la lata de guisantes. Batimos los huevos con la sal y una cucharadita de azúcar y preparamos una tortilla francesa en dos tandas, usando una sartén bien caliente con media cucharada de aceite de oliva.",
-      "La tortilla debe quedarnos bastante fina, tipo crêpe.",
-      "Mientras tanto, ponemos en otro cazo con agua de sal el arroz largo tipo basmati o thai a cocer.",
-      "En unos diez minutos estará listo, dependiendo de la variedad, momento en el que lo escurrimos y reservamos.",
-      "Mientras cuece, cortamos el jamón de York en taquitos. Salteamos las gambas ligeramente en una sartén amplia con el resto del aceite de oliva, y como ya tenemos todos los ingredientes listos, procedemos a preparar el plato de arroz tres delicias.",
-      "Para ello, añadimos el arroz bien escurrido a la sartén, y sazonamos con las cucharadas de salsa de soja.",
-      "Una vez bien salteado, agregamos los demás ingredientes, salteando para que todos se mezclen en la sartén y una vez listos lo pasamos a una fuente y lo servimos inmediatamente, muy caliente con un poco de salsa de soja aparte para que quien quiera pueda añadirla a su gusto."
-    ]
+    "tiempo": "30 min",
+    "imagen": "https://sivarious.com/wp-content/uploads/2019/10/arroz-tres-delicias.jpg"
   },
   {
     "id": 7,
     "nombre": "Arroz negro",
     "categoria": "Pasta & Arroces",
     "estacion": "Todas",
-    "tiempo": "60 min",
-    "imagen": "https://www.recetas-espana.com/base/stock/Recipe/199-image/199-image_web.jpg.webp",
-    "personas": "2",
-    "ingredientes": [
-      "1/2 cebolla dulce",
-      "1 tomate pequeño",
-      "3 dientes de ajo",
-      "Una bolsa de calamares limpia",
-      "100 gramos de arroz bomba",
-      "350 ml de fumet",
-      "1 sobre de tinta de calamar",
-      "Sal"
-    ],
-    "preparacion": [
-      "Echamos un poco de aceite de oliva en una sartén y añadimos los calamares y un poco de sal.",
-      "Removemos bien y dejamos que se hagan para que suelten todo el agua.",
-      "Cuando los calamares estén listos, les quitamos el liquidos sobrante y los apartamos.",
-      "Partimos la cebolla a taquitos pequeños y añadimos un poco de aceite a la misma sarten y vamos haciendo la cebolla poco a poco para que vaya pochando.",
-      "Cuando la cebolla esté transparente, añadimos los ajos picados y removemos.",
-      "Esperamos unos minutos y entonces añadimos el tomate rallado. removemos todo bien.",
-      "Echamos al sofrito los calamares y añadimos un vaso de vino blanco y un poco de agua y dejamos a fuego medio alto durante unos 25 minutos.",
-      "Cuando el caldo se haya consumido casi todo, añadimoslos 100 gramos de arroz y removemos, y seguidamente echamos el fumet.",
-      "Removemos todo bien e incorporamos el sobre de tinta de calamar.",
-      "De nuevo removemos todo bien para que la tinta quede toda repartida.",
-      "Ponemos una tapadera y dejamos el fuego en punto de borbotón para que el arroz se vaya haciendo (mas o menos unos 25 minutos más).",
-      "Cuando veamos el arroz meloso, apagamos el fuego, dejamos reposar unos cinco minutos y listo para disfrutar."
-    ]
+    "tiempo": "30 min",
+    "imagen": "https://www.recetas-espana.com/base/stock/Recipe/199-image/199-image_web.jpg.webp"
   },
   {
     "id": 8,
     "nombre": "Asado de dorada",
     "categoria": "Pescados",
     "estacion": "Todas",
-    "tiempo": "50 min",
-    "imagen": "https://cdn6.recetasdeescandalo.com/wp-content/uploads/2014/09/Asado-de-dorada-al-horno-con-patatas.jpg",
-    "personas": "2",
-    "ingredientes": [""],
-    "preparacion": [""]
+    "tiempo": "30 min",
+    "imagen": "https://cdn6.recetasdeescandalo.com/wp-content/uploads/2014/09/Asado-de-dorada-al-horno-con-patatas.jpg"
   },
   {
     "id": 9,
     "nombre": "Salmón al horno",
     "categoria": "Pescados",
     "estacion": "Todas",
-    "tiempo": "45 min",
-    "imagen": "https://unareceta.com/wp-content/uploads/2016/11/salmon-al-horno.jpg",
-    "personas": "2",
-    "ingredientes": [""],
-    "preparacion": [""]
+    "tiempo": "30 min",
+    "imagen": "https://unareceta.com/wp-content/uploads/2016/11/salmon-al-horno.jpg"
   },
   {
     "id": 10,
     "nombre": "Atún con verduras",
     "categoria": "Pescados",
     "estacion": "Todas",
-    "tiempo": "15 min",
-    "imagen": "https://saborgourmet.com/wp-content/uploads/Receta-de-atun-a-la-plancha-facil-saludable.jpg",
-    "personas": "2",
-    "ingredientes": [""],
-    "preparacion": [""]
+    "tiempo": "30 min",
+    "imagen": "https://saborgourmet.com/wp-content/uploads/Receta-de-atun-a-la-plancha-facil-saludable.jpg"
   },
   {
     "id": 11,
     "nombre": "Fideua",
     "categoria": "Pescados",
     "estacion": "Todas",
-    "tiempo": "45 min",
-    "imagen": "https://s1.eestatic.com/2015/03/25/cocinillas/cocinillas_20757956_115803029_1706x960.jpg",
-    "personas": "2",
-    "ingredientes": [""],
-    "preparacion": [""]
+    "tiempo": "30 min",
+    "imagen": "https://s1.eestatic.com/2015/03/25/cocinillas/cocinillas_20757956_115803029_1706x960.jpg"
   },
   {
     "id": 12,
     "nombre": "Merluza en salsa",
     "categoria": "Pescados",
     "estacion": "Todas",
-    "tiempo": "45 min",
-    "imagen": "https://ybarraentucocina.com/wp-content/uploads/2020/10/recetas-ybarra-merluza-salsa-piquillos-virgen-extra.jpg",
-    "personas": "2",
-    "ingredientes": [""],
-    "preparacion": [""]
+    "tiempo": "30 min",
+    "imagen": "https://ybarraentucocina.com/wp-content/uploads/2020/10/recetas-ybarra-merluza-salsa-piquillos-virgen-extra.jpg"
   },
   {
     "id": 13,
     "nombre": "Pollo a la jardinera",
     "categoria": "Pollo",
     "estacion": "Todas",
-    "tiempo": "40 min",
-    "imagen": "https://cocina.guru/wp-content/uploads/2020/01/receta-Pollo-a-la-Jardinera.jpg",
-    "personas": "2",
-    "ingredientes": [""],
-    "preparacion": [""]
+    "tiempo": "30 min",
+    "imagen": "https://cocina.guru/wp-content/uploads/2020/01/receta-Pollo-a-la-Jardinera.jpg"
   },
   {
     "id": 14,
     "nombre": "Pollo al limón",
     "categoria": "Pollo",
     "estacion": "Todas",
-    "tiempo": "25 min",
-    "imagen": "https://www.pronto.es/files/main_image/uploads/2021/07/05/62aa811fc5994.jpeg",
-    "personas": "2",
-    "ingredientes": [""],
-    "preparacion": [""]
+    "tiempo": "30 min",
+    "imagen": "https://www.pronto.es/files/main_image/uploads/2021/07/05/62aa811fc5994.jpeg"
   },
   {
     "id": 15,
     "nombre": "Pollo a la cerveza",
     "categoria": "Pollo",
     "estacion": "Todas",
-    "tiempo": "35 min",
-    "imagen": "https://www.deliciosi.com/images/1900/1990/muslos-de-pollo-al-lim%C3%B3n.jpg",
-    "personas": "2",
-    "ingredientes": [""],
-    "preparacion": [""]
+    "tiempo": "30 min",
+    "imagen": "https://www.deliciosi.com/images/1900/1990/muslos-de-pollo-al-lim%C3%B3n.jpg"
   },
   {
     "id": 16,
     "nombre": "Alitas adobadas",
     "categoria": "Pollo",
     "estacion": "Todas",
-    "tiempo": "20 min",
-    "imagen": "https://i.blogs.es/7bb4b4/alitas-ar/1366_2000.jpg",
-    "personas": "2",
-    "ingredientes": [""],
-    "preparacion": [""]
+    "tiempo": "30 min",
+    "imagen": "https://i.blogs.es/7bb4b4/alitas-ar/1366_2000.jpg"
   },
   {
     "id": 17,
     "nombre": "Asado de pollo",
     "categoria": "Pollo",
     "estacion": "Todas",
-    "tiempo": "45 min",
-    "imagen": "https://imag.bonviveur.com/pollo-asado-al-horno-con-patatas.jpg",
-    "personas": "2",
-    "ingredientes": [""],
-    "preparacion": [""]
+    "tiempo": "30 min",
+    "imagen": "https://imag.bonviveur.com/pollo-asado-al-horno-con-patatas.jpg"
   },
   {
     "id": 18,
     "nombre": "Pollo a las finas hierbas",
     "categoria": "Pollo",
     "estacion": "Todas",
-    "tiempo": "45 min",
-    "imagen": "https://cecotec.es/recetas/wp-content/uploads/2022/06/Jamoncitos_finas_Hierbas_Cecofry_Full_inox_RRSS.jpg",
-    "personas": "2",
-    "ingredientes": [""],
-    "preparacion": [""]
+    "tiempo": "30 min",
+    "ingredientes": ["pollo", "hierbas"],
+    "imagen": "https://cecotec.es/recetas/wp-content/uploads/2022/06/Jamoncitos_finas_Hierbas_Cecofry_Full_inox_RRSS.jpg"
   },
   {
     "id": 19,
     "nombre": "Magra con tomate",
     "categoria": "Otras carnes",
     "estacion": "Todas",
-    "tiempo": "50 min",
-    "imagen": "https://recetaland.com/wp-content/uploads/2022/05/20220427_141033.jpg",
-    "personas": "2",
-    "ingredientes": [""],
-    "preparacion": [""]
+    "tiempo": "30 min",
+    "imagen": "https://recetaland.com/wp-content/uploads/2022/05/20220427_141033.jpg"
   },
   {
     "id": 20,
     "nombre": "Magra-Ternera en salsa",
     "categoria": "Otras carnes",
     "estacion": "Todas",
-    "tiempo": "50 min",
-    "imagen": "https://i.ytimg.com/vi/myERVmRpcrI/maxresdefault.jpg",
-    "personas": "2",
-    "ingredientes": [""],
-    "preparacion": [""]
+    "tiempo": "30 min",
+    "imagen": "https://i.ytimg.com/vi/myERVmRpcrI/maxresdefault.jpg"
   },
   {
     "id": 21,
     "nombre": "Asado de cordero",
     "categoria": "Otras carnes",
     "estacion": "Todas",
-    "tiempo": "40 min",
-    "imagen": "https://s1.eestatic.com/2016/01/06/cocinillas/cocinillas_92500906_116237077_1024x576.jpg",
-    "personas": "2",
-    "ingredientes": [""],
-    "preparacion": [""]
+    "tiempo": "30 min",
+    "imagen": "https://s1.eestatic.com/2016/01/06/cocinillas/cocinillas_92500906_116237077_1024x576.jpg"
   },
   {
     "id": 22,
@@ -371,20 +174,14 @@
     "categoria": "Otras carnes",
     "estacion": "Todas",
     "tiempo": "30 min",
-    "imagen": "https://minutosdecocina.files.wordpress.com/2017/10/conejo-frito.jpg?w=640",
-    "personas": "2",
-    "ingredientes": [""],
-    "preparacion": [""]
+    "imagen": "https://minutosdecocina.files.wordpress.com/2017/10/conejo-frito.jpg?w=640"
   },
   {
     "id": 23,
     "nombre": "Judías verdes con jamón",
     "categoria": "Verduras",
     "estacion": "Todas",
-    "tiempo": "20 min",
-    "imagen": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTxeXMXTcMwmZEzt1p1IW1tLSOHaY7kPCE2Q&usqp=CAU",
-    "personas": "2",
-    "ingredientes": [""],
-    "preparacion": [""]
+    "tiempo": "30 min",
+    "imagen": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTxeXMXTcMwmZEzt1p1IW1tLSOHaY7kPCE2Q&usqp=CAU"
   }
 ]

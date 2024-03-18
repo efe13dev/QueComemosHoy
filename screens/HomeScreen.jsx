@@ -1,51 +1,8 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  FlatList,
-  TouchableOpacity
-} from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Constants from 'expo-constants';
-import { useEffect, useState } from 'react';
-import { RecipeCard } from '../components/RecipeCard';
-import { getDayOfWeek } from '../utils/calculateDays';
-import { saveStorage, removeStorage, getStorage } from '../utils/storage';
-import { getRecipesWeek } from '../utils/getRecipesWeek';
 
 const HomeScreen = () => {
-  const [recipes, setRecipes] = useState();
-  function loadRecipes() {
-    const recipesWeek = getRecipesWeek();
-    removeStorage();
-    saveStorage('weekStore', JSON.stringify(recipesWeek));
-    getStorage('weekStore').then((result) => {
-      console.log(result);
-      if (typeof result === 'string') {
-        const parsedData = JSON.parse(result);
-        setRecipes(parsedData);
-      } else {
-        console.log(
-          'El valor obtenido no es un string válido en formato JSON.'
-        );
-      }
-    });
-  }
-  useEffect(() => {
-    getStorage('weekStore')
-      .then((result) => {
-        if (typeof result === 'string') {
-          const parsedData = JSON.parse(result);
-          setRecipes(parsedData);
-        } else {
-          console.log(
-            'El valor obtenido no es un string válido en formato JSON.'
-          );
-        }
-      })
-      .catch((error) => {
-        console.log('Error al obtener el valor:', error);
-      });
-  }, []);
+  // const [recipes, setRecipes] = useState();
 
   return (
     <View style={styles.container}>
@@ -53,14 +10,13 @@ const HomeScreen = () => {
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={styles.button}
-          onPress={() => {
-            loadRecipes();
-          }}
+          onPress={() => {}}
         >
           <Text style={styles.buttonText}>Crear Menú</Text>
         </TouchableOpacity>
       </View>
-      <FlatList
+      <Text>HomeScreen</Text>
+      {/* <FlatList
         data={recipes}
         ItemSeparatorComponent={() => <Text />}
         renderItem={({ item: recipe, index }) => (
@@ -72,7 +28,7 @@ const HomeScreen = () => {
         keyExtractor={(recipe) => recipe.id}
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
-      />
+      /> */}
     </View>
   );
 };

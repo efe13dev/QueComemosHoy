@@ -16,21 +16,21 @@ export function RecipeCard({ recipe }) {
       key={recipe.id}
       style={styles.container}
     >
-      {recipe.imagen ? (
+      {recipe.image ? (
         <Image
-          source={{ uri: recipe.imagen }}
+          source={{ uri: recipe.image }}
           style={styles.image}
         />
       ) : null}
 
-      <Text style={styles.text_name}>{recipe.nombre}</Text>
+      <Text style={styles.text_name}>{recipe.name}</Text>
       <View style={styles.container2}>
         <View style={styles.containerTimer}>
           <Image
             source={timerIcon}
             style={styles.timerIcon}
           />
-          <Text style={styles.text_time}>{recipe.tiempo}</Text>
+          <Text style={styles.text_time}>{recipe.time} min</Text>
         </View>
         <TouchableOpacity
           style={styles.button}

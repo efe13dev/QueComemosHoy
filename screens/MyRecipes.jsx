@@ -1,9 +1,20 @@
 import { View, Text, StyleSheet, FlatList } from 'react-native';
 import Constants from 'expo-constants';
 import { RecipeCard } from '../components/RecipeCard';
-const recipes = require('../data/recipes.json');
+import { getRecipes } from '../data/api';
+import { useEffect, useState } from 'react';
+// const recipes = require('../data/recipes.json');
 
 const MyRecipes = () => {
+  const [recipes, setRecipes] = useState([]);
+
+  useEffect(() => {
+    const getListRecipes = async () => {
+      const data = await getRecipes();
+      setRecipes(data);
+    };
+    getListRecipes();
+  }, []);
   return (
     <View style={styles.container}>
       <Text style={styles.text_title}>Mis recetas</Text>
