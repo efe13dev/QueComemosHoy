@@ -40,7 +40,10 @@
     "extends": [
       "./node_modules/semistandard/eslintrc.json",
       "prettier"
-    ]
+    ],
+    "rules": {
+      "no-console": "warn"
+    }
   },
   "private": true
 }

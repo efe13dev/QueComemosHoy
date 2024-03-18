@@ -1,57 +1,72 @@
+import { useState, useEffect } from 'react';
 import { Text, StyleSheet, View, Image, ScrollView } from 'react-native';
+import { getRecipe } from '../data/api';
 // import { useNavigation } from '@react-navigation/native';
-const recipes = require('../data/recipes.json');
+// const recipes = require('../data/recipes.json');
 
 const DetailRecipe = ({ route }) => {
   const { id } = route.params;
 
-  const recipe = recipes.find((recipe) => recipe.id === id);
+  const [recipe, setRecipe] = useState();
+
+  useEffect(() => {
+    const getListRecipe = async (id) => {
+      const [data] = await getRecipe(id);
+      setRecipe(data);
+    };
+    getListRecipe(id);
+  }, []);
+  // const recipe = recipes.find((recipe) => recipe.id === id);
 
   return (
-    <ScrollView>
-      <View style={styles.container}>
-        <Image
-          source={{ uri: recipe.imagen }}
-          style={styles.image}
-        />
-        <Text style={styles.title}>{recipe.nombre}</Text>
-        <Text style={styles.textTime}>
-          Tiempo de preparación:{' '}
-          <Text style={styles.spanTime}>{recipe.tiempo}</Text>
-        </Text>
-      </View>
-      <Text style={styles.titleIngredientsInstructions}>Ingredientes:</Text>
-      <View style={styles.containerIngredientsInstructions}>
-        {recipe.ingredientes?.map((ingrediente, index) => (
-          <Text
-            key={index}
-            style={
-              index % 2 === 0
-                ? styles.listIngredientsInstructionsPar
-                : styles.listIngredientsInstructionsOdd
-            }
-          >
-            · {ingrediente}
-          </Text>
-        ))}
-      </View>
-      <Text style={styles.titleIngredientsInstructions}>Preparación:</Text>
-      <View style={styles.containerIngredientsInstructions}>
-        {recipe.preparacion?.map((paso, index) => (
-          <Text
-            key={index}
-            style={
-              index % 2 === 0
-                ? styles.listIngredientsInstructionsPar
-                : styles.listIngredientsInstructionsOdd
-            }
-          >
-            · {paso}
-          </Text>
-        ))}
-      </View>
-      <View />
-    </ScrollView>
+    <>
+      {recipe && (
+        <ScrollView>
+          <View style={styles.container}>
+            <Image
+              source={{ uri: recipe.image }}
+              style={styles.image}
+            />
+            <Text style={styles.title}>{recipe.name}</Text>
+            <Text style={styles.textTime}>
+              Tiempo de preparación:{' '}
+              <Text style={styles.spanTime}>{recipe.time}</Text>
+            </Text>
+          </View>
+          <Text style={styles.titleIngredientsInstructions}>Ingredientes:</Text>
+          <View style={styles.containerIngredientsInstructions}>
+            {recipe.ingredients?.map((ingredient, index) => (
+              <Text
+                key={index}
+                style={
+                  index % 2 === 0
+                    ? styles.listIngredientsInstructionsPar
+                    : styles.listIngredientsInstructionsOdd
+                }
+              >
+                · {ingredient}
+              </Text>
+            ))}
+          </View>
+          <Text style={styles.titleIngredientsInstructions}>Preparación:</Text>
+          <View style={styles.containerIngredientsInstructions}>
+            {recipe.preparation?.map((step, index) => (
+              <Text
+                key={index}
+                style={
+                  index % 2 === 0
+                    ? styles.listIngredientsInstructionsPar
+                    : styles.listIngredientsInstructionsOdd
+                }
+              >
+                · {step}
+              </Text>
+            ))}
+          </View>
+          <View />
+        </ScrollView>
+      )}
+    </>
   );
 };
 

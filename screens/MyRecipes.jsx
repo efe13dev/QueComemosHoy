@@ -3,7 +3,6 @@ import Constants from 'expo-constants';
 import { RecipeCard } from '../components/RecipeCard';
 import { getRecipes } from '../data/api';
 import { useEffect, useState } from 'react';
-// const recipes = require('../data/recipes.json');
 
 const MyRecipes = () => {
   const [recipes, setRecipes] = useState([]);
