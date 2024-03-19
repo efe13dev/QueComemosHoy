@@ -24,6 +24,7 @@ export function RecipeCard({ recipe }) {
       ) : null}
 
       <Text style={styles.text_name}>{recipe.name}</Text>
+
       <View style={styles.container2}>
         <View style={styles.containerTimer}>
           <Image
@@ -68,6 +69,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 5
   },
+
   text_name: {
     textShadowColor: '#B0A695',
     textShadowOffset: { width: 0.5, height: 0.5 },

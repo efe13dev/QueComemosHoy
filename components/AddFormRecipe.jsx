@@ -1,65 +1,120 @@
-import { View, Text, StyleSheet } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
+  Alert
+} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import Constants from 'expo-constants';
 import React, { useState } from 'react';
-import { TextInput } from 'react-native-gesture-handler';
 import RNPickerSelect from 'react-native-picker-select';
-const options = [
-  { label: 'Opción 1', value: '1' },
-  { label: 'Opción 2', value: '2' },
-  { label: 'Opción 3', value: '3' }
-];
-const AddFormRecipe = () => {
-  const [selectedValue, setSelectedValue] = useState('');
-  const handleValueChange = (value) => {
-    setSelectedValue(value);
-  };
+import { saveRecipe } from '../data/api';
 
+const AddFormRecipe = () => {
+  const navigation = useNavigation();
+  const [recipe, setRecipe] = useState({
+    name: '',
+    category: '',
+    time: 0,
+    image:
+      'https://i.pinimg.com/564x/5d/fb/70/5dfb70fe26266074c99911272330eb03.jpg',
+    people: 0,
+    ingredients: [],
+    preparation: []
+  });
+  const handleChange = (name, value) => {
+    if (name === 'ingredients' || name === 'preparation') {
+      const arrayValue = value.split(',').map((item) => item.trim());
+      setRecipe({ ...recipe, [name]: arrayValue });
+    } else {
+      setRecipe({ ...recipe, [name]: value });
+    }
+  };
+  const handleSubmit = () => {
+    saveRecipe(recipe);
+    showAlert();
+  };
+  const showAlert = () => {
+    Alert.alert(
+      'Receta añadida',
+      'Se ha añadido una nueva receta a tu lista',
+      [
+        {
+          text: 'Aceptar',
+          onPress: () => navigation.navigate('MyRecipesScreen')
+        }
+      ],
+      { cancelable: false }
+    );
+  };
   return (
-    <View style={styles.container}>
-      <Text style={styles.text_title}>Añade una receta</Text>
-      <View style={styles.form_container}>
-        <TextInput
-          style={styles.input}
-          placeholder='Nombre'
-        />
-        <RNPickerSelect
-          style={styles.input_select}
-          onValueChange={(value) => setSelectedValue(value)}
-          items={[
-            { label: 'Pescado', value: 'pescado' },
-            { label: 'Carne', value: 'carne' }
-          ]}
-          placeholder={{
-            label: 'Selecciona una opción...',
-            value: null
-          }}
-          value={selectedValue}
-          useNativeAndroidPickerStyle={false}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder='Tiempo'
-          keyboardType='numeric'
-        />
-        <TextInput
-          style={styles.input}
-          placeholder='Imagen'
-        />
-        <TextInput
-          style={styles.input}
-          placeholder='Personas'
-          keyboardType='numeric'
-        />
-        <TextInput
-          style={[styles.input, styles.height_input]}
-          placeholder='Ingredientes'
-        />
-        <TextInput
-          style={[styles.input, styles.height_input]}
-          placeholder='Preparación'
-        />
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      <View style={styles.container}>
+        <Text style={styles.text_title}>Añade una receta</Text>
+        <View style={styles.form_container}>
+          <TextInput
+            style={styles.input}
+            placeholder='Nombre'
+            onChangeText={(value) => handleChange('name', value)}
+          />
+          <RNPickerSelect
+            style={styles}
+            placeholder={{ label: 'Categoria...', value: null }}
+            onValueChange={(value) => handleChange('category', value)}
+            items={[
+              { label: 'Pasta & Arroces', value: 'Pasta & Arroces' },
+              { label: 'Pescados', value: 'Pescados' },
+              { label: 'Pollo', value: 'Pollo' },
+              { label: 'Otras carnes', value: 'Otras carnes' },
+              { label: 'Verduras', value: 'Verduras' }
+            ]}
+            useNativeAndroidPickerStyle={false}
+          />
+
+          <TextInput
+            style={styles.input}
+            placeholder='Tiempo... (min)'
+            keyboardType='numeric'
+            onChangeText={(value) => handleChange('time', Number(value))}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder='Imagen'
+            onChangeText={(value) => handleChange('image', value)}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder='Personas'
+            keyboardType='numeric'
+            onChangeText={(value) => handleChange('people', Number(value))}
+          />
+          <TextInput
+            style={[styles.input, styles.height_input]}
+            placeholder='Ingredientes... (separados por coma)'
+            onChangeText={(value) => handleChange('ingredients', value)}
+          />
+          <TextInput
+            style={[styles.input, styles.height_input]}
+            placeholder='Preparación... (pasos separados por coma)'
+            onChangeText={(value) => handleChange('preparation', value)}
+          />
+          <TouchableOpacity
+            style={styles.button}
+            onPress={handleSubmit}
+            disabled={!recipe.name.trim()}
+          >
+            <Text>Añadir receta</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -94,14 +149,22 @@ const styles = StyleSheet.create({
     width: '90%',
     height: 40
   },
-  input_select: {
+  inputAndroid: {
     paddingHorizontal: 5,
     fontSize: 16,
+    marginHorizontal: 10,
     borderWidth: 1,
     borderColor: '#884A39',
     borderRadius: 4,
-    width: '90%',
+    color: '#333',
+    width: 370,
     height: 40
+  },
+  button: {
+    marginTop: 15,
+    backgroundColor: '#D7C0AE',
+    padding: 8,
+    borderRadius: 10
   }
 });
 

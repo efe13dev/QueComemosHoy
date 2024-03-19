@@ -1,19 +1,26 @@
-import { View, Text, StyleSheet, FlatList } from 'react-native';
+import { View, Text, StyleSheet, FlatList, RefreshControl } from 'react-native';
 import Constants from 'expo-constants';
 import { RecipeCard } from '../components/RecipeCard';
 import { getRecipes } from '../data/api';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 const MyRecipes = () => {
   const [recipes, setRecipes] = useState([]);
+  const [refresing, setRefresing] = useState(false);
 
+  const getListRecipes = async () => {
+    const data = await getRecipes();
+    setRecipes(data);
+  };
   useEffect(() => {
-    const getListRecipes = async () => {
-      const data = await getRecipes();
-      setRecipes(data);
-    };
     getListRecipes();
   }, []);
+
+  const onRefresh = React.useCallback(async () => {
+    setRefresing(true);
+    await getListRecipes();
+    setRefresing(false);
+  });
   return (
     <View style={styles.container}>
       <Text style={styles.text_title}>Mis recetas</Text>
@@ -25,6 +32,13 @@ const MyRecipes = () => {
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refresing}
+            colors={['#884A39']}
+            onRefresh={onRefresh}
+          />
+        }
       />
     </View>
   );

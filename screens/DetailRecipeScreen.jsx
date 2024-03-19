@@ -1,12 +1,18 @@
 import { useState, useEffect } from 'react';
-import { Text, StyleSheet, View, Image, ScrollView } from 'react-native';
+import {
+  Text,
+  StyleSheet,
+  View,
+  Image,
+  ScrollView,
+  TouchableOpacity,
+  Alert
+} from 'react-native';
 import { getRecipe } from '../data/api';
-// import { useNavigation } from '@react-navigation/native';
-// const recipes = require('../data/recipes.json');
-
+import { useNavigation } from '@react-navigation/native';
 const DetailRecipe = ({ route }) => {
   const { id } = route.params;
-
+  const navigation = useNavigation();
   const [recipe, setRecipe] = useState();
 
   useEffect(() => {
@@ -16,18 +22,45 @@ const DetailRecipe = ({ route }) => {
     };
     getListRecipe(id);
   }, []);
-  // const recipe = recipes.find((recipe) => recipe.id === id);
+  const showAlert = () => {
+    Alert.alert(
+      'Eliminar receta',
+      'Estás seguro de que quieres eliminar esta receta',
+      [
+        {
+          text: 'Cancelar',
+
+          style: 'cancel'
+        },
+        {
+          text: 'Aceptar',
+          onPress: () => navigation.navigate('MyRecipes')
+        }
+      ],
+      { cancelable: false }
+    );
+  };
 
   return (
     <>
       {recipe && (
         <ScrollView>
           <View style={styles.container}>
-            <Image
-              source={{ uri: recipe.image }}
-              style={styles.image}
-            />
+            <View style={styles.imageContainer}>
+              <Image
+                source={{ uri: recipe.image }}
+                style={styles.image}
+              />
+
+              <TouchableOpacity
+                style={styles.button}
+                onPress={showAlert}
+              >
+                <Text style={styles.buttonText}>Eliminar</Text>
+              </TouchableOpacity>
+            </View>
             <Text style={styles.title}>{recipe.name}</Text>
+
             <Text style={styles.textTime}>
               Tiempo de preparación:{' '}
               <Text style={styles.spanTime}>{recipe.time} min</Text>
@@ -78,6 +111,25 @@ const styles = StyleSheet.create({
     marginTop: 10,
     flexGrow: 1
   },
+  imageContainer: {
+    position: 'relative'
+  },
+  button: {
+    position: 'absolute',
+    top: 5,
+    right: 5,
+    backgroundColor: '#800000', // Granate oscuro
+    paddingVertical: 8,
+    paddingHorizontal: 15,
+    borderRadius: 8
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 14,
+    fontWeight: 'bold',
+    textAlign: 'center'
+  },
+
   containerIngredientsInstructions: {
     flexWrap: 'nowrap',
     paddingHorizontal: 20,
@@ -116,11 +168,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     paddingHorizontal: 10
   },
-  button: {
-    backgroundColor: '#D7C0AE',
-    padding: 8,
-    borderRadius: 10
-  },
+
   image: {
     width: 400,
     height: 300,

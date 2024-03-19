@@ -2,7 +2,7 @@ import { StyleSheet, View } from 'react-native';
 import Constants from 'expo-constants';
 import AddFormRecipe from '../components/AddFormRecipe';
 
-const AddRecipeScreen = () => {
+const AddRecipeScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <AddFormRecipe />
