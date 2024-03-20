@@ -8,24 +8,24 @@ import {
   TouchableOpacity,
   Alert
 } from 'react-native';
-import { getRecipe } from '../data/api';
+import { getRecipe, deleteRecipe } from '../data/api';
 import { useNavigation } from '@react-navigation/native';
 const DetailRecipe = ({ route }) => {
   const { id } = route.params;
   const navigation = useNavigation();
   const [recipe, setRecipe] = useState();
 
+  const getListRecipe = async (id) => {
+    const [data] = await getRecipe(id);
+    setRecipe(data);
+  };
   useEffect(() => {
-    const getListRecipe = async (id) => {
-      const [data] = await getRecipe(id);
-      setRecipe(data);
-    };
     getListRecipe(id);
   }, []);
   const showAlert = () => {
     Alert.alert(
       'Eliminar receta',
-      'Estás seguro de que quieres eliminar esta receta',
+      '¿Estás seguro de que quieres eliminar esta receta?',
       [
         {
           text: 'Cancelar',
@@ -34,7 +34,21 @@ const DetailRecipe = ({ route }) => {
         },
         {
           text: 'Aceptar',
-          onPress: () => navigation.navigate('MyRecipes')
+          onPress: handleDelete
+        }
+      ],
+      { cancelable: false }
+    );
+  };
+  const handleDelete = async () => {
+    await deleteRecipe(id);
+    Alert.alert(
+      'Receta eliminada',
+      'La receta se eliminó correctamente',
+      [
+        {
+          text: 'Aceptar',
+          onPress: navigation.navigate('MyRecipes')
         }
       ],
       { cancelable: false }

@@ -14,7 +14,7 @@ const MyRecipes = () => {
   };
   useEffect(() => {
     getListRecipes();
-  }, []);
+  }, [recipes]);
 
   const onRefresh = React.useCallback(async () => {
     setRefresing(true);

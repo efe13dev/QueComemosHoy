@@ -33,7 +33,7 @@ export const getRecipe = async (id) => {
 
 export const saveRecipe = async (recipe) => {
   try {
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('recipes')
       .insert([
         {
@@ -50,9 +50,9 @@ export const saveRecipe = async (recipe) => {
     if (error) {
       console.error('Error adding recipe', error.message);
     }
-    if (data) {
+    /*  if (data) {
       console.log(data);
-    }
+    } */
   } catch (error) {
     console.error('Error adding recipe', error.message);
   }

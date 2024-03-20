@@ -19,12 +19,11 @@ const AddFormRecipe = () => {
   const [recipe, setRecipe] = useState({
     name: '',
     category: '',
-    time: 0,
-    image:
-      'https://i.pinimg.com/564x/5d/fb/70/5dfb70fe26266074c99911272330eb03.jpg',
-    people: 0,
-    ingredients: [],
-    preparation: []
+    time: '',
+    image: '',
+    people: '',
+    ingredients: '',
+    preparation: ''
   });
   const handleChange = (name, value) => {
     if (name === 'ingredients' || name === 'preparation') {
@@ -35,9 +34,24 @@ const AddFormRecipe = () => {
     }
   };
   const handleSubmit = () => {
+    if (recipe.image === '') {
+      recipe.image =
+        'https://i.pinimg.com/564x/5d/fb/70/5dfb70fe26266074c99911272330eb03.jpg';
+    }
     saveRecipe(recipe);
+    setRecipe({
+      name: '',
+      category: '',
+      time: '',
+      image: '',
+      people: '',
+      ingredients: '',
+      preparation: ''
+    });
+
     showAlert();
   };
+
   const showAlert = () => {
     Alert.alert(
       'Receta añadida',
@@ -45,7 +59,9 @@ const AddFormRecipe = () => {
       [
         {
           text: 'Aceptar',
-          onPress: () => navigation.navigate('MyRecipesScreen')
+          onPress: () => {
+            navigation.navigate('MyRecipesScreen');
+          }
         }
       ],
       { cancelable: false }
@@ -60,11 +76,13 @@ const AddFormRecipe = () => {
         <Text style={styles.text_title}>Añade una receta</Text>
         <View style={styles.form_container}>
           <TextInput
+            value={recipe.name}
             style={styles.input}
             placeholder='Nombre'
             onChangeText={(value) => handleChange('name', value)}
           />
           <RNPickerSelect
+            value={recipe.category}
             style={styles}
             placeholder={{ label: 'Categoria...', value: null }}
             onValueChange={(value) => handleChange('category', value)}
@@ -73,34 +91,40 @@ const AddFormRecipe = () => {
               { label: 'Pescados', value: 'Pescados' },
               { label: 'Pollo', value: 'Pollo' },
               { label: 'Otras carnes', value: 'Otras carnes' },
-              { label: 'Verduras', value: 'Verduras' }
+              { label: 'Verduras', value: 'Verduras' },
+              { label: 'Guisos', value: 'Guisos' }
             ]}
             useNativeAndroidPickerStyle={false}
           />
 
           <TextInput
+            value={recipe.time}
             style={styles.input}
             placeholder='Tiempo... (min)'
             keyboardType='numeric'
-            onChangeText={(value) => handleChange('time', Number(value))}
+            onChangeText={(value) => handleChange('time', value)}
           />
           <TextInput
+            value={recipe.image}
             style={styles.input}
             placeholder='Imagen'
             onChangeText={(value) => handleChange('image', value)}
           />
           <TextInput
+            value={recipe.people}
             style={styles.input}
             placeholder='Personas'
             keyboardType='numeric'
-            onChangeText={(value) => handleChange('people', Number(value))}
+            onChangeText={(value) => handleChange('people', value)}
           />
           <TextInput
+            value={recipe.ingredients}
             style={[styles.input, styles.height_input]}
             placeholder='Ingredientes... (separados por coma)'
             onChangeText={(value) => handleChange('ingredients', value)}
           />
           <TextInput
+            value={recipe.preparation}
             style={[styles.input, styles.height_input]}
             placeholder='Preparación... (pasos separados por coma)'
             onChangeText={(value) => handleChange('preparation', value)}
