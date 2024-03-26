@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Constants from 'expo-constants';
+import { GenerateMenu } from '../components/GenerateMenu';
 
 const HomeScreen = () => {
   // const [recipes, setRecipes] = useState();
@@ -15,20 +16,8 @@ const HomeScreen = () => {
           <Text style={styles.buttonText}>Crear Menú</Text>
         </TouchableOpacity>
       </View>
-      <Text>HomeScreen</Text>
-      {/* <FlatList
-        data={recipes}
-        ItemSeparatorComponent={() => <Text />}
-        renderItem={({ item: recipe, index }) => (
-          <>
-            <Text style={styles.text_day}>{getDayOfWeek(index)}</Text>
-            <RecipeCard recipe={recipe} />
-          </>
-        )}
-        keyExtractor={(recipe) => recipe.id}
-        contentContainerStyle={styles.listContent}
-        showsVerticalScrollIndicator={false}
-      /> */}
+
+      <GenerateMenu />
     </View>
   );
 };
@@ -38,7 +27,6 @@ const styles = StyleSheet.create({
   container: {
     marginTop: Constants.statusBarHeight + 10,
     marginBottom: Constants.statusBarHeight + 100,
-
     fontWeight: 'bold'
   },
   text_title: {
