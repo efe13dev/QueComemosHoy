@@ -1,21 +1,11 @@
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import Constants from 'expo-constants';
 import { GenerateMenu } from '../components/GenerateMenu';
 
 const HomeScreen = () => {
-  // const [recipes, setRecipes] = useState();
-
   return (
     <View style={styles.container}>
       <Text style={styles.text_title}>Menú semanal</Text>
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => {}}
-        >
-          <Text style={styles.buttonText}>Crear Menú</Text>
-        </TouchableOpacity>
-      </View>
 
       <GenerateMenu />
     </View>

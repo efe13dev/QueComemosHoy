@@ -9,7 +9,6 @@ import {
   Alert
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import Constants from 'expo-constants';
 import React, { useState } from 'react';
 import RNPickerSelect from 'react-native-picker-select';
 import { saveRecipe } from '../data/api';
@@ -73,7 +72,6 @@ const AddFormRecipe = () => {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <View style={styles.container}>
-        <Text style={styles.text_title}>Añade una receta</Text>
         <View style={styles.form_container}>
           <TextInput
             value={recipe.name}
@@ -146,26 +144,16 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
 
-    marginTop: Constants.statusBarHeight,
+    marginTop: 15,
     flexGrow: 1
   },
-  text_title: {
-    textShadowColor: 'black',
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 1,
-    color: '#884A39',
-    textAlign: 'center',
-    fontWeight: 'bold',
-    fontSize: 40
-  },
+
   form_container: {
-    flex: 1,
-    marginTop: 50,
     gap: 10,
     alignItems: 'center'
   },
   input: {
-    paddingHorizontal: 5,
+    paddingHorizontal: 10,
     fontSize: 16,
     borderWidth: 1,
     borderColor: '#884A39',
@@ -176,7 +164,7 @@ const styles = StyleSheet.create({
   inputAndroid: {
     paddingHorizontal: 5,
     fontSize: 16,
-    marginHorizontal: 10,
+    marginHorizontal: 15,
     borderWidth: 1,
     borderColor: '#884A39',
     borderRadius: 4,

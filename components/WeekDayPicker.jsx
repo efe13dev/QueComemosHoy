@@ -2,11 +2,12 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
 
-const WeekDayPicker = ({ day, handleChange, recipesName }) => {
+const WeekDayPicker = ({ day, handleChange, recipesName, selectedRecipe }) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.text_name}>{day}</Text>
+      <Text style={styles.text_name}>{day}:</Text>
       <RNPickerSelect
+        value={selectedRecipe}
         style={pickerSelectStyles}
         placeholder={{ label: 'Selecciona comida...', value: null }}
         onValueChange={(value) => handleChange(day, value)}
@@ -27,7 +28,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15
   },
   text_name: {
-    marginLeft: 10
+    marginLeft: 10,
+    fontSize: 15,
+    fontWeight: '500'
   }
 });
 
