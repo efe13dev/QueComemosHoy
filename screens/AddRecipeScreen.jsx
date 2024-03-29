@@ -14,7 +14,7 @@ const AddRecipeScreen = ({ navigation }) => {
 export default AddRecipeScreen;
 const styles = StyleSheet.create({
   container: {
-    marginTop: Constants.statusBarHeight + 10,
+    marginTop: Constants.statusBarHeight,
     flexGrow: 1
   },
 

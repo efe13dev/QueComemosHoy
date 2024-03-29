@@ -76,13 +76,15 @@ const AddFormRecipe = () => {
           <TextInput
             value={recipe.name}
             style={styles.input}
-            placeholder='Nombre'
+            placeholder='Nombre..'
+            placeholderTextColor='rgba(0, 0, 0, 0.3)'
             onChangeText={(value) => handleChange('name', value)}
           />
           <RNPickerSelect
             value={recipe.category}
             style={styles}
             placeholder={{ label: 'Categoria...', value: null }}
+            placeholderTextColor='rgba(0, 0, 0, 0.3)'
             onValueChange={(value) => handleChange('category', value)}
             items={[
               { label: 'Pasta & Arroces', value: 'Pasta & Arroces' },
@@ -92,26 +94,28 @@ const AddFormRecipe = () => {
               { label: 'Verduras', value: 'Verduras' },
               { label: 'Guisos', value: 'Guisos' }
             ]}
-            useNativeAndroidPickerStyle={false}
           />
 
           <TextInput
             value={recipe.time}
             style={styles.input}
             placeholder='Tiempo... (min)'
+            placeholderTextColor='rgba(0, 0, 0, 0.3)'
             keyboardType='numeric'
             onChangeText={(value) => handleChange('time', value)}
           />
           <TextInput
             value={recipe.image}
             style={styles.input}
-            placeholder='Imagen'
+            placeholder='Imagen...'
+            placeholderTextColor='rgba(0, 0, 0, 0.3)'
             onChangeText={(value) => handleChange('image', value)}
           />
           <TextInput
             value={recipe.people}
             style={styles.input}
-            placeholder='Personas'
+            placeholder='Personas...'
+            placeholderTextColor='rgba(0, 0, 0, 0.3)'
             keyboardType='numeric'
             onChangeText={(value) => handleChange('people', value)}
           />
@@ -119,12 +123,14 @@ const AddFormRecipe = () => {
             value={recipe.ingredients}
             style={[styles.input, styles.height_input]}
             placeholder='Ingredientes... (separados por coma)'
+            placeholderTextColor='rgba(0, 0, 0, 0.3)'
             onChangeText={(value) => handleChange('ingredients', value)}
           />
           <TextInput
             value={recipe.preparation}
             style={[styles.input, styles.height_input]}
             placeholder='Preparación... (pasos separados por coma)'
+            placeholderTextColor='rgba(0, 0, 0, 0.3)'
             onChangeText={(value) => handleChange('preparation', value)}
           />
           <TouchableOpacity
@@ -149,28 +155,21 @@ const styles = StyleSheet.create({
   },
 
   form_container: {
-    gap: 10,
+    gap: 40,
     alignItems: 'center'
   },
   input: {
     paddingHorizontal: 10,
     fontSize: 16,
-    borderWidth: 1,
-    borderColor: '#884A39',
-    borderRadius: 4,
+
     width: '90%',
     height: 40
   },
   inputAndroid: {
-    paddingHorizontal: 5,
     fontSize: 16,
     marginHorizontal: 15,
-    borderWidth: 1,
-    borderColor: '#884A39',
-    borderRadius: 4,
-    color: '#333',
-    width: 370,
-    height: 40
+
+    height: 45
   },
   button: {
     marginTop: 15,

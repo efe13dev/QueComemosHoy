@@ -6,7 +6,6 @@ const HomeScreen = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.text_title}>Menú semanal</Text>
-
       <GenerateMenu />
     </View>
   );
@@ -15,8 +14,7 @@ const HomeScreen = () => {
 export default HomeScreen;
 const styles = StyleSheet.create({
   container: {
-    marginTop: Constants.statusBarHeight + 10,
-    marginBottom: Constants.statusBarHeight + 100,
+    marginTop: Constants.statusBarHeight,
     fontWeight: 'bold'
   },
   text_title: {
@@ -34,11 +32,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 15
   },
-  listContent: {
-    paddingTop: 15,
-    flexGrow: 1,
-    alignItems: 'center'
-  },
+
   buttonContainer: {
     alignItems: 'flex-end',
     marginRight: 10,

@@ -109,8 +109,8 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderRadius: 10,
     width: 350,
-    height: 480,
-    marginTop: 25,
+    height: 560,
+    marginTop: 15,
     gap: 10,
     justifyContent: 'center',
     alignSelf: 'center'
@@ -118,7 +118,6 @@ const styles = StyleSheet.create({
   buttonContainer: {
     marginTop: 50,
     alignItems: 'center',
-
     paddingHorizontal: 10,
     paddingBottom: 10
   },

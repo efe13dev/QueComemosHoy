@@ -13,8 +13,9 @@ const MyRecipes = () => {
     setRecipes(data);
   };
   useEffect(() => {
+    console.log('hola');
     getListRecipes();
-  }, [recipes]);
+  }, []);
 
   const onRefresh = React.useCallback(async () => {
     setRefresing(true);
@@ -48,7 +49,7 @@ export default MyRecipes;
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: Constants.statusBarHeight + 10,
+    paddingTop: Constants.statusBarHeight,
     marginBottom: Constants.statusBarHeight + 50
   },
   text_title: {
