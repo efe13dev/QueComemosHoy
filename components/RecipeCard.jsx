@@ -1,7 +1,7 @@
 import React from 'react';
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import timerIcon from '../assets/relojIcono.png';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 
 export function RecipeCard({ recipe }) {
   const navigation = useNavigation();
@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
     maxWidth: '75%',
     width: 300,
     height: 260,
-    borderColor: '#D7C0AE',
+    borderColor: '#7AA2E3',
     borderWidth: 2,
     borderRadius: 10,
     justifyContent: 'center',
@@ -71,11 +71,12 @@ const styles = StyleSheet.create({
   },
 
   text_name: {
-    textShadowColor: '#B0A695',
+    textShadowColor: '#666',
     textShadowOffset: { width: 0.5, height: 0.5 },
     textShadowRadius: 1,
-    color: '#776B5D',
-    fontSize: 20
+    color: '#265073',
+    fontSize: 20,
+    fontWeight: '400'
   },
   image: {
     width: '80%',
@@ -87,16 +88,16 @@ const styles = StyleSheet.create({
     height: 20
   },
   text_time: {
-    color: '#594545',
+    color: '#393939',
     fontWeight: '500'
   },
   button: {
-    backgroundColor: '#D7C0AE',
+    backgroundColor: '#6AD4DD',
     padding: 8,
     borderRadius: 10
   },
   buttonText: {
-    color: '#594545',
+    color: '#393939',
     fontWeight: '500'
   }
 });

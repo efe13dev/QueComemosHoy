@@ -1,8 +1,8 @@
-import { View, StyleSheet, TouchableOpacity, Text, Alert } from 'react-native';
-import { getRecipes } from '../data/api';
 import React, { useEffect, useState } from 'react';
+import { View, StyleSheet, TouchableOpacity, Text, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import WeekDayPicker from './WeekDayPicker';
+import { getRecipes } from '../data/api';
 
 export function GenerateMenu() {
   const [recipesName, setRecipesName] = useState([]);
@@ -94,10 +94,10 @@ export function GenerateMenu() {
         ))}
       </View>
       <TouchableOpacity
-        style={styles.buttonContainer}
+        style={styles.button_container}
         onPress={resetMenu}
       >
-        <Text style={styles.button}>Eliminar Menú</Text>
+        <Text style={styles.button_text}>Eliminar Menú</Text>
       </TouchableOpacity>
     </>
   );
@@ -105,7 +105,7 @@ export function GenerateMenu() {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: 'white',
-    borderColor: '#D7C0AE',
+    borderColor: '#7AA2E3',
     borderWidth: 2,
     borderRadius: 10,
     width: 350,
@@ -115,15 +115,19 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignSelf: 'center'
   },
-  buttonContainer: {
+  button_container: {
+    width: 130,
     marginTop: 50,
-    alignItems: 'center',
+
+    alignSelf: 'center',
     paddingHorizontal: 10,
     paddingBottom: 10
   },
-  button: {
-    backgroundColor: '#D7C0AE',
+  button_text: {
+    color: '#393939',
+    backgroundColor: '#6AD4DD',
     padding: 8,
-    borderRadius: 10
+    borderRadius: 10,
+    fontWeight: '600'
   }
 });

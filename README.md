@@ -10,6 +10,8 @@
 - ✅ reseteo del form al agregar receta
 - traer ordeanadas las recetas por id
 - ✅ crear pantalla principal
-- arreglar estilos del addform
-- cuando elimine o añada una receta tengo que refrescar la lista de recetas
-- arreglar que el teclado no tape el ultimo input
+- ✅ arreglar estilos del addform
+- ✅ cuando elimine o añada una receta tengo que refrescar la lista de recetas
+- ✅ arreglar que el teclado no tape el ultimo input
+- ✅ crear pantalla de inicio
+- ✅ cambiar colores acorde al logo

@@ -18,30 +18,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
   },
   text_title: {
-    textShadowColor: 'black',
+    textShadowColor: 'darkblue',
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 1,
-    color: '#884A39',
+    color: '#7AA2E3',
     textAlign: 'center',
     fontWeight: 'bold',
     fontSize: 40,
     marginVertical: 10
-  },
-  text_day: {
-    color: '#884A39',
-    fontWeight: 'bold',
-    fontSize: 15
-  },
-
-  buttonContainer: {
-    alignItems: 'flex-end',
-    marginRight: 10,
-    paddingHorizontal: 10,
-    paddingBottom: 10
-  },
-  button: {
-    backgroundColor: '#D7C0AE',
-    padding: 8,
-    borderRadius: 10
   }
 });

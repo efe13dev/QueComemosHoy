@@ -22,16 +22,15 @@ const styles = StyleSheet.create({
   container: {
     height: 55,
     flexDirection: 'column',
-    // alignItems: 'center',
     marginBottom: 15,
 
     paddingHorizontal: 15
   },
   week_day_name: {
-    textShadowColor: 'brown',
+    textShadowColor: 'blue',
     textShadowOffset: { width: 0.5, height: 0.5 },
     textShadowRadius: 0.5,
-    color: '#776B5D',
+    color: '#7AA2E3',
     marginLeft: 10,
     fontSize: 18,
     fontWeight: 'bold'

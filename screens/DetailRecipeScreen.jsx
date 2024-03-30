@@ -8,8 +8,8 @@ import {
   TouchableOpacity,
   Alert
 } from 'react-native';
-import { getRecipe, deleteRecipe } from '../data/api';
 import { useNavigation } from '@react-navigation/native';
+import { getRecipe, deleteRecipe } from '../data/api';
 const DetailRecipe = ({ route }) => {
   const { id } = route.params;
   const navigation = useNavigation();
@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
     marginBottom: 20
   },
   title: {
-    color: '#884A39',
+    color: '#192655',
     fontSize: 35,
     fontWeight: 'bold',
     padding: 10
@@ -163,21 +163,21 @@ const styles = StyleSheet.create({
     padding: 10
   },
   titleIngredientsInstructions: {
-    color: '#884A39',
-    fontSize: 20,
+    color: '#2D9596',
+    fontSize: 24,
     fontWeight: 'bold',
     paddingVertical: 10,
     paddingHorizontal: 20,
     marginVertical: 10
   },
   listIngredientsInstructionsPar: {
-    color: '#C07F00',
+    color: '#3876BF',
     fontSize: 17,
     fontWeight: 'bold',
     paddingHorizontal: 10
   },
   listIngredientsInstructionsOdd: {
-    color: '#4C3D3D',
+    color: '#2D3250',
     fontSize: 17,
     fontWeight: 'bold',
     paddingHorizontal: 10

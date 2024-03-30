@@ -1,12 +1,12 @@
-import React from 'react';
-
+import { useEffect, useState } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { NavigationContainer } from '@react-navigation/native';
 import HomeScreen from './screens/HomeScreen';
 import MyRecipes from './screens/MyRecipesScreen';
 import DetailRecipe from './screens/DetailRecipeScreen';
 import AddRecipe from './screens/AddRecipeScreen';
+import SplashScreen from './screens/SplashScreen'; // Importa tu SplashScreen aquí
 
 import { FontAwesome, Entypo, Ionicons } from '@expo/vector-icons';
 
@@ -33,6 +33,7 @@ function HomeStack() {
     </MyStack.Navigator>
   );
 }
+
 function RecipesStack() {
   return (
     <MyStack.Navigator>
@@ -110,9 +111,19 @@ function MyTabs() {
 }
 
 export default function Navigation() {
+  const [isSplashScreenVisible, setSplashScreenVisible] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSplashScreenVisible(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <NavigationContainer>
-      <MyTabs />
+      {isSplashScreenVisible ? <SplashScreen /> : <MyTabs />}
     </NavigationContainer>
   );
 }

@@ -1,13 +1,19 @@
 import { StyleSheet, View, Text } from 'react-native';
 import Constants from 'expo-constants';
 import AddFormRecipe from '../components/AddFormRecipe';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
-const AddRecipeScreen = ({ navigation }) => {
+const AddRecipeScreen = () => {
   return (
-    <View style={styles.container}>
-      <Text style={styles.text_title}>Añade una receta</Text>
-      <AddFormRecipe />
-    </View>
+    <KeyboardAwareScrollView
+      // contentContainerStyle={styles.container}
+      keyboardShouldPersistTaps='handled'
+    >
+      <View style={styles.container}>
+        <Text style={styles.text_title}>Añade una receta</Text>
+        <AddFormRecipe />
+      </View>
+    </KeyboardAwareScrollView>
   );
 };
 
@@ -19,11 +25,12 @@ const styles = StyleSheet.create({
   },
 
   text_title: {
-    marginTop: 10,
-    textShadowColor: 'black',
+    marginVertical: 10,
+    marginBottom: 25,
+    textShadowColor: 'blue',
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 1,
-    color: '#884A39',
+    color: '#7AA2E3',
     textAlign: 'center',
     fontWeight: 'bold',
     fontSize: 40
