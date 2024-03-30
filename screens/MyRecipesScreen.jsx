@@ -54,7 +54,6 @@ export default MyRecipes;
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: Constants.statusBarHeight,
     marginBottom: Constants.statusBarHeight + 50
   },
   text_title: {

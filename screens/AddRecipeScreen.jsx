@@ -1,5 +1,4 @@
 import { StyleSheet, View, Text } from 'react-native';
-import Constants from 'expo-constants';
 import AddFormRecipe from '../components/AddFormRecipe';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
@@ -20,7 +19,6 @@ const AddRecipeScreen = () => {
 export default AddRecipeScreen;
 const styles = StyleSheet.create({
   container: {
-    marginTop: Constants.statusBarHeight,
     flexGrow: 1
   },
 

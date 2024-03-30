@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet } from 'react-native';
-import Constants from 'expo-constants';
+
 import { GenerateMenu } from '../components/GenerateMenu';
 
 const HomeScreen = () => {
@@ -14,7 +14,6 @@ const HomeScreen = () => {
 export default HomeScreen;
 const styles = StyleSheet.create({
   container: {
-    marginTop: Constants.statusBarHeight,
     fontWeight: 'bold'
   },
   text_title: {
