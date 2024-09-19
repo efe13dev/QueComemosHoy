@@ -122,74 +122,83 @@ export default DetailRecipe;
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
-    marginTop: 10,
-    flexGrow: 1
+    marginTop: 20,
+    flexGrow: 1,
+    backgroundColor: '#f9f9f9'
   },
   imageContainer: {
-    position: 'relative'
+    position: 'relative',
+    width: '100%',
+    height: 300,
+    overflow: 'hidden',
+    borderRadius: 20,
+    marginBottom: 20
+  },
+  image: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover'
   },
   button: {
     position: 'absolute',
-    top: 5,
-    right: 5,
-    backgroundColor: '#800000', // Granate oscuro
-    paddingVertical: 8,
-    paddingHorizontal: 15,
-    borderRadius: 8
+    top: 15,
+    right: 15,
+    backgroundColor: 'rgba(128, 0, 0, 0.8)',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 25
   },
   buttonText: {
     color: 'white',
-    fontSize: 14,
-    fontWeight: 'bold',
-    textAlign: 'center'
-  },
-
-  containerIngredientsInstructions: {
-    flexWrap: 'nowrap',
-    paddingHorizontal: 20,
-    gap: 10,
-    marginBottom: 20
+    fontSize: 16,
+    fontWeight: 'bold'
   },
   title: {
     color: '#192655',
-    fontSize: 35,
+    fontSize: 32,
     fontWeight: 'bold',
-    padding: 10
+    marginBottom: 10,
+    textAlign: 'center'
   },
   textTime: {
-    color: '#1a1a1a',
-    fontSize: 20,
-    fontWeight: 'bold',
-    padding: 10
+    color: '#4a4a4a',
+    fontSize: 18,
+    marginBottom: 20
+  },
+  spanTime: {
+    color: '#ff6b35',
+    fontWeight: 'bold'
   },
   titleIngredientsInstructions: {
     color: '#2D9596',
     fontSize: 24,
     fontWeight: 'bold',
-    paddingVertical: 10,
+    paddingVertical: 15,
     paddingHorizontal: 20,
-    marginVertical: 10
+    marginTop: 20,
+    borderBottomWidth: 2,
+    borderBottomColor: '#e0e0e0'
+  },
+  containerIngredientsInstructions: {
+    paddingHorizontal: 20,
+    paddingVertical: 10
   },
   listIngredientsInstructionsPar: {
     color: '#3876BF',
-    fontSize: 17,
-    fontWeight: 'bold',
-    paddingHorizontal: 10
+    fontSize: 16,
+    paddingVertical: 8,
+    paddingHorizontal: 15,
+    backgroundColor: '#f0f8ff',
+    borderRadius: 10,
+    marginBottom: 10
   },
   listIngredientsInstructionsOdd: {
     color: '#2D3250',
-    fontSize: 17,
-    fontWeight: 'bold',
-    paddingHorizontal: 10
-  },
-
-  image: {
-    width: 400,
-    height: 300,
-    borderRadius: 10
-  },
-  spanTime: {
-    color: 'darkorange',
-    fontWeight: 'bold'
+    fontSize: 16,
+    paddingVertical: 8,
+    paddingHorizontal: 15,
+    backgroundColor: '#f5f5f5',
+    borderRadius: 10,
+    marginBottom: 10
   }
 });

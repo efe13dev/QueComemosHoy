@@ -1,16 +1,29 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, RefreshControl } from 'react-native';
+import React, { useEffect, useState, useMemo } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  RefreshControl,
+  useWindowDimensions,
+  TextInput
+} from 'react-native';
 import Constants from 'expo-constants';
 import { RecipeCard } from '../components/RecipeCard';
 import { getRecipes } from '../data/api';
 
 const MyRecipes = ({ navigation }) => {
   const [recipes, setRecipes] = useState([]);
-  const [refresing, setRefresing] = useState(false);
+  const [filteredRecipes, setFilteredRecipes] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
+  const [searchText, setSearchText] = useState('');
+  const { width } = useWindowDimensions();
+
+  const numColumns = 2; // Definimos esto como una constante
 
   const getListRecipes = async () => {
     const data = await getRecipes();
-    const sortedData = data.sort((a, b) => a.id - b.id);
+    const sortedData = data.sort((a, b) => a.name.localeCompare(b.name));
     setRecipes(sortedData);
   };
 
@@ -22,25 +35,48 @@ const MyRecipes = ({ navigation }) => {
     return unsubscribe;
   }, [navigation]);
 
+  useEffect(() => {
+    const filtered = recipes.filter((recipe) =>
+      recipe.name.toLowerCase().startsWith(searchText.toLowerCase())
+    );
+    setFilteredRecipes(filtered);
+  }, [searchText, recipes]);
+
   const onRefresh = React.useCallback(async () => {
-    setRefresing(true);
+    setRefreshing(true);
     await getListRecipes();
-    setRefresing(false);
-  });
+    setRefreshing(false);
+  }, []);
+
+  const renderItem = ({ item }) => (
+    <View style={styles.recipeCardContainer}>
+      <RecipeCard recipe={item} />
+    </View>
+  );
+
+  // Usamos useMemo para crear una key única basada en el ancho de la pantalla
+  const flatListKey = useMemo(() => `flatList-${width}`, [width]);
+
   return (
     <View style={styles.container}>
       <Text style={styles.text_title}>Mis recetas</Text>
-
+      <TextInput
+        style={styles.searchInput}
+        placeholder='Buscar receta...'
+        value={searchText}
+        onChangeText={setSearchText}
+      />
       <FlatList
-        data={recipes}
-        ItemSeparatorComponent={() => <Text />}
-        renderItem={({ item: recipe }) => <RecipeCard recipe={recipe} />}
-        keyExtractor={(item) => item.id}
+        key={flatListKey}
+        data={filteredRecipes}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id.toString()}
+        numColumns={numColumns}
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
-            refreshing={refresing}
+            refreshing={refreshing}
             colors={['#9AD0C2']}
             onRefresh={onRefresh}
           />
@@ -50,11 +86,10 @@ const MyRecipes = ({ navigation }) => {
   );
 };
 
-export default MyRecipes;
-
 const styles = StyleSheet.create({
   container: {
-    marginBottom: Constants.statusBarHeight + 50
+    flex: 1,
+    paddingTop: Constants.statusBarHeight - 20
   },
   text_title: {
     textShadowColor: 'blue',
@@ -64,12 +99,25 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: 'bold',
     fontSize: 40,
-    marginVertical: 10
+    marginVertical: 20
   },
-
   listContent: {
-    paddingTop: 15,
-    flexGrow: 1,
-    alignItems: 'center'
+    paddingHorizontal: 0
+  },
+  recipeCardContainer: {
+    flex: 1,
+    margin: 5,
+    width: '100%' // Hacemos las tarjetas un poco más anchas
+  },
+  searchInput: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    marginHorizontal: 10,
+    marginBottom: 10
   }
 });
+
+export default MyRecipes;

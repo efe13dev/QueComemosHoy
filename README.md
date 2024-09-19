@@ -1,17 +1,12 @@
 ### TODO
 
-- ✅ implementar el delete en el botón
-- ✅ crear navegación del detalle en la vista principal
-- ✅ agregar un boton en la vista principal que genera un nuevo menú semanal
-- ✅ eliminar lógica que genere menú dependiendo del dia de la semana
-- ✅ agregar formulario para añadir una receta
-- ✅ añadido refresco automático al agregar o eliminar imagen
-- ✅ agregada logica de imagen por defecto
-- ✅ reseteo del form al agregar receta
-- traer ordeanadas las recetas por id
-- ✅ crear pantalla principal
-- ✅ arreglar estilos del addform
-- ✅ cuando elimine o añada una receta tengo que refrescar la lista de recetas
-- ✅ arreglar que el teclado no tape el ultimo input
-- ✅ crear pantalla de inicio
-- ✅ cambiar colores acorde al logo
+v 2.0
+
+- [ ] Añadir opción de actualizar receta
+- [ ] Crear tabla de menú semanal para sincronizar todos los dispositivos
+- [ ] Añadir un input para buscar receta tanto en myrecipes como en el menu semanal
+- [ ] Mejorar el formulario de agregar receta
+- [x] En la vista myrecipes traer la lista de recetas ordenadas por nombre
+- [ ] Añadir confirmacion para eliminar menu semanal
+- [x] Mostrar dos columnas en el listado de mis recetas
+- [ ] Gestionar los de la autorización en supabase

@@ -11,6 +11,7 @@ export function RecipeCard({ recipe }) {
       id: recipe.id
     });
   };
+
   return (
     <View
       key={recipe.id}
@@ -23,9 +24,9 @@ export function RecipeCard({ recipe }) {
         />
       ) : null}
 
-      <Text style={styles.text_name}>{recipe.name}</Text>
+      <View style={styles.contentContainer}>
+        <Text style={styles.text_name}>{recipe.name}</Text>
 
-      <View style={styles.container2}>
         <View style={styles.containerTimer}>
           <Image
             source={timerIcon}
@@ -33,71 +34,83 @@ export function RecipeCard({ recipe }) {
           />
           <Text style={styles.text_time}>{recipe.time} min</Text>
         </View>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={changeScreen}
-        >
-          <Text style={styles.buttonText}>Ver receta</Text>
-        </TouchableOpacity>
       </View>
+
+      <TouchableOpacity
+        style={styles.button}
+        onPress={changeScreen}
+      >
+        <Text style={styles.buttonText}>Ver receta</Text>
+      </TouchableOpacity>
     </View>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'white',
-    maxWidth: '75%',
-    width: 300,
-    height: 260,
-    borderColor: '#7AA2E3',
-    borderWidth: 2,
-    borderRadius: 10,
-    justifyContent: 'center',
-    gap: 10,
-    alignItems: 'center',
-    marginHorizontal: 10,
-    marginVertical: 5
-  },
-  container2: {
+    backgroundColor: '#FFFFFF',
     width: '100%',
-    flexDirection: 'row',
+    height: 300,
+    borderColor: '#7AA2E3',
+    borderWidth: 1,
+    borderRadius: 15,
+    justifyContent: 'space-between',
     alignItems: 'center',
-    justifyContent: 'space-around'
+    marginVertical: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.23,
+    shadowRadius: 2.62,
+    elevation: 4,
+    overflow: 'hidden'
+  },
+  contentContainer: {
+    width: '100%',
+    padding: 10,
+    alignItems: 'center'
   },
   containerTimer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 5
+    gap: 5,
+    marginTop: 5
   },
-
   text_name: {
-    textShadowColor: '#666',
-    textShadowOffset: { width: 0.5, height: 0.5 },
-    textShadowRadius: 1,
     color: '#265073',
     fontSize: 20,
-    fontWeight: '400'
+    fontWeight: '600',
+    textAlign: 'center',
+    paddingHorizontal: 10
   },
   image: {
-    width: '80%',
+    width: '100%',
     height: '50%',
-    borderRadius: 10
+    borderTopLeftRadius: 15,
+    borderTopRightRadius: 15
   },
   timerIcon: {
-    width: 20,
-    height: 20
+    width: 18,
+    height: 18,
+    tintColor: '#7AA2E3'
   },
   text_time: {
-    color: '#393939',
+    color: '#555',
     fontWeight: '500'
   },
   button: {
     backgroundColor: '#6AD4DD',
-    padding: 8,
-    borderRadius: 10
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+    width: '90%',
+    alignItems: 'center',
+    marginBottom: 10
   },
   buttonText: {
-    color: '#393939',
-    fontWeight: '500'
+    color: '#FFFFFF',
+    fontWeight: '600'
   }
 });
