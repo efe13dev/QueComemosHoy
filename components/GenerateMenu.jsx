@@ -11,10 +11,12 @@ export function GenerateMenu() {
   const getListRecipesName = async () => {
     const data = await getRecipes();
     const dataName = data.map((item) => item.name);
-    const recipeList = dataName.map((item) => ({
-      label: item,
-      value: item
-    }));
+    const recipeList = dataName
+      .map((item) => ({
+        label: item,
+        value: item
+      }))
+      .sort((a, b) => a.label.localeCompare(b.label)); // Ordenar por nombre
 
     setRecipesName(recipeList);
   };
@@ -64,6 +66,24 @@ export function GenerateMenu() {
     }
   };
 
+  const confirmResetMenu = () => {
+    Alert.alert(
+      'Confirmación',
+      '¿Estás seguro de que deseas eliminar el menú?',
+      [
+        {
+          text: 'Cancelar',
+          style: 'cancel'
+        },
+        {
+          text: 'Eliminar',
+          onPress: resetMenu
+        }
+      ],
+      { cancelable: false }
+    );
+  };
+
   const daysOfWeek = [
     'Lunes',
     'Martes',
@@ -95,7 +115,7 @@ export function GenerateMenu() {
       </View>
       <TouchableOpacity
         style={styles.button_container}
-        onPress={resetMenu}
+        onPress={confirmResetMenu}
       >
         <Text style={styles.button_text}>Eliminar Menú</Text>
       </TouchableOpacity>
@@ -105,29 +125,34 @@ export function GenerateMenu() {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: 'white',
-    borderColor: '#7AA2E3',
+    borderColor: '#999',
     borderWidth: 2,
     borderRadius: 10,
     width: 350,
-    height: 560,
+    height: 600, // Aumentado la altura del componente
     marginTop: 15,
     gap: 10,
     justifyContent: 'center',
     alignSelf: 'center'
   },
   button_container: {
-    width: 130,
-    marginTop: 50,
-
+    width: 150, // Aumentado el ancho del botón
+    marginTop: 30,
     alignSelf: 'center',
-    paddingHorizontal: 10,
-    paddingBottom: 10
+    paddingHorizontal: 15, // Aumentado el padding horizontal
+    paddingVertical: 10, // Añadido padding vertical
+    backgroundColor: '#FF6B6B', // Cambiado el color de fondo
+    borderRadius: 10,
+    shadowColor: '#000', // Añadida sombra
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3.84,
+    elevation: 5 // Añadida elevación para Android
   },
   button_text: {
-    color: '#393939',
-    backgroundColor: '#6AD4DD',
-    padding: 8,
-    borderRadius: 10,
-    fontWeight: '600'
+    color: '#FFF', // Cambiado el color del texto a blanco
+    fontSize: 16, // Aumentado el tamaño de la fuente
+    fontWeight: 'bold',
+    textAlign: 'center'
   }
 });

@@ -1,13 +1,16 @@
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import splashImage from '../assets/splash_image.png';
+import * as Animatable from 'react-native-animatable';
 
 const SplashScreen = () => {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>¡Que comemos hoy!</Text>
-      <Image
+      <Text style={styles.text}>¡Que comemos hoy! v2.0</Text>
+      <Animatable.Image
+        animation='bounceIn'
+        duration={2000}
         source={splashImage}
-        // style={styles.image}
+        style={styles.image}
       />
     </View>
   );

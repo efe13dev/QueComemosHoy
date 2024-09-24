@@ -1,10 +1,16 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, StatusBar } from 'react-native';
 
 import { GenerateMenu } from '../components/GenerateMenu';
+import Constants from 'expo-constants';
 
 const HomeScreen = () => {
   return (
     <View style={styles.container}>
+      <StatusBar
+        barStyle='dark-content'
+        translucent
+        backgroundColor='transparent'
+      />
       <Text style={styles.text_title}>Menú semanal</Text>
       <GenerateMenu />
     </View>
@@ -14,7 +20,9 @@ const HomeScreen = () => {
 export default HomeScreen;
 const styles = StyleSheet.create({
   container: {
-    fontWeight: 'bold'
+    flex: 1, // Añadido para ocupar toda la pantalla
+    fontWeight: 'bold',
+    paddingTop: Constants.statusBarHeight
   },
   text_title: {
     textShadowColor: 'darkblue',

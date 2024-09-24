@@ -8,11 +8,11 @@ const WeekDayPicker = ({ day, handleChange, recipesName, selectedRecipe }) => {
       <Text style={styles.week_day_name}>{day}:</Text>
       <RNPickerSelect
         value={selectedRecipe}
-        // style={pickerSelectStyles}
+        style={pickerSelectStyles}
         placeholder={{ label: 'Selecciona comida...', value: null }}
         onValueChange={(value) => handleChange(day, value)}
         items={recipesName}
-        useNativeAndroidPickerStyle
+        useNativeAndroidPickerStyle={false}
       />
     </View>
   );
@@ -23,30 +23,44 @@ const styles = StyleSheet.create({
     height: 55,
     flexDirection: 'column',
     marginBottom: 15,
-
-    paddingHorizontal: 15
+    paddingHorizontal: 15,
+    backgroundColor: '#f4f4f4',
+    borderRadius: 10,
+    borderColor: '#ddd',
+    justifyContent: 'center'
   },
   week_day_name: {
-    textShadowColor: 'blue',
-    textShadowOffset: { width: 0.5, height: 0.5 },
-    textShadowRadius: 0.5,
-    color: '#7AA2E3',
+    textShadowColor: 'rgba(0, 0, 0, 0.1)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 1,
+    color: '#333',
     marginLeft: 10,
     fontSize: 18,
     fontWeight: 'bold'
   }
 });
 
-/* const pickerSelectStyles = StyleSheet.create({
+const pickerSelectStyles = StyleSheet.create({
   inputAndroid: {
     paddingHorizontal: 10,
     paddingVertical: 8,
-
+    borderWidth: 1,
     borderColor: 'gray',
     borderRadius: 8,
     color: 'black',
-    paddingRight: 30
+    paddingRight: 30,
+    backgroundColor: '#fff'
+  },
+  inputIOS: {
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    borderWidth: 1,
+    borderColor: 'gray',
+    borderRadius: 8,
+    color: 'black',
+    paddingRight: 30,
+    backgroundColor: '#fff'
   }
-}); */
+});
 
 export default WeekDayPicker;

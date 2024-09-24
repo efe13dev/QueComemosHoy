@@ -7,6 +7,6 @@ v 2.0
 - [ ] Añadir un input para buscar receta tanto en myrecipes como en el menu semanal
 - [ ] Mejorar el formulario de agregar receta
 - [x] En la vista myrecipes traer la lista de recetas ordenadas por nombre
-- [ ] Añadir confirmacion para eliminar menu semanal
+- [x] Añadir confirmacion para eliminar menu semanal
 - [x] Mostrar dos columnas en el listado de mis recetas
 - [ ] Gestionar los de la autorización en supabase

@@ -89,7 +89,7 @@ const MyRecipes = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: Constants.statusBarHeight - 20
+    paddingTop: Constants.statusBarHeight
   },
   text_title: {
     textShadowColor: 'blue',
