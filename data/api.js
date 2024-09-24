@@ -68,3 +68,25 @@ export const deleteRecipe = async (id) => {
     console.error('Error delete recipe:', error.message);
   }
 };
+
+export const updateRecipe = async (id, updatedRecipe) => {
+  try {
+    const { error } = await supabase
+      .from('recipes')
+      .update({
+        name: updatedRecipe.name,
+        category: updatedRecipe.category,
+        time: updatedRecipe.time,
+        image: updatedRecipe.image,
+        people: updatedRecipe.people,
+        ingredients: updatedRecipe.ingredients,
+        preparation: updatedRecipe.preparation
+      })
+      .eq('id', id);
+    if (error) {
+      console.error('Error updating recipe:', error.message);
+    }
+  } catch (error) {
+    console.error('Error updating recipe:', error.message);
+  }
+};

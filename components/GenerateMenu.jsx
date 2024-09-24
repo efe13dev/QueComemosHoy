@@ -1,5 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, Text, Alert } from 'react-native';
+import React, { useEffect, useState, useCallback } from 'react';
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Text,
+  Alert,
+  ScrollView,
+  RefreshControl
+} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import WeekDayPicker from './WeekDayPicker';
 import { getRecipes } from '../data/api';
@@ -7,6 +15,7 @@ import { getRecipes } from '../data/api';
 export function GenerateMenu() {
   const [recipesName, setRecipesName] = useState([]);
   const [weekMenu, setweekMenu] = useState({});
+  const [refreshing, setRefreshing] = useState(false);
 
   const getListRecipesName = async () => {
     const data = await getRecipes();
@@ -100,8 +109,21 @@ export function GenerateMenu() {
     saveMenuToStorage();
   };
 
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    getListRecipesName().then(() => setRefreshing(false));
+  }, []);
+
   return (
-    <>
+    <ScrollView
+      contentContainerStyle={styles.scrollViewContent}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+        />
+      }
+    >
       <View style={styles.container}>
         {daysOfWeek.map((day) => (
           <WeekDayPicker
@@ -119,9 +141,10 @@ export function GenerateMenu() {
       >
         <Text style={styles.button_text}>Eliminar Menú</Text>
       </TouchableOpacity>
-    </>
+    </ScrollView>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     backgroundColor: 'white',
@@ -130,7 +153,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: 350,
     height: 600, // Aumentado la altura del componente
-    marginTop: 15,
+
     gap: 10,
     justifyContent: 'center',
     alignSelf: 'center'
@@ -154,5 +177,10 @@ const styles = StyleSheet.create({
     fontSize: 16, // Aumentado el tamaño de la fuente
     fontWeight: 'bold',
     textAlign: 'center'
+  },
+  scrollViewContent: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
   }
 });

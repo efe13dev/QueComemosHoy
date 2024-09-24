@@ -23,11 +23,18 @@ function HomeStack() {
           headerShown: false
         }}
       />
-      <MyStack.Screen
+      {/* <MyStack.Screen
         name='DetailRecipe'
         component={DetailRecipe}
         options={{
           headerTitle: 'Volver'
+        }}
+      /> */}
+      <MyStack.Screen
+        name='AddRecipe'
+        component={AddRecipe}
+        options={{
+          headerTitle: 'Actualizar Receta'
         }}
       />
     </MyStack.Navigator>
@@ -49,6 +56,13 @@ function RecipesStack() {
         component={DetailRecipe}
         options={{
           headerTitle: 'Volver'
+        }}
+      />
+      <MyStack.Screen
+        name='AddRecipe'
+        component={AddRecipe}
+        options={{
+          headerTitle: 'Actualizar Receta'
         }}
       />
     </MyStack.Navigator>
