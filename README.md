@@ -2,8 +2,8 @@
 
 v 2.0
 
-- [?] Añadir opción de actualizar receta (hay que crear un input por cada ingrediente y por cada paso)
-- [ ] modificar la imagen inicial
+- [x] Añadir opción de actualizar receta (hay que crear un input por cada ingrediente y por cada paso)
+- [x] modificar la imagen inicial
 - [ ] Crear tabla de menú semanal para sincronizar todos los dispositivos
 - [x] Añadir un input para buscar receta en myrecipes
 - [x] Mejorar el formulario de agregar receta
