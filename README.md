@@ -1,16 +1,19 @@
-# Mi aplicación de Recetas
+# Que comemos hoy v2.0
 
 ## Descripción
 
-Esta aplicación te permite gestionar tus recetas favoritas, crear menús semanales
+Esta aplicación te permite gestionar tus recetas favoritas y crear menús semanales
 
 ## Cómo usar la aplicación
 
-Aquí puedes insertar una imagen o gif que muestre cómo usar la aplicación.
+Para usar la aplicacion se genera una apk desde expo, se instala en el dispositivo movil y se ejecuta.
 
-![Descripción de la imagen](ruta/a/la/imagen)
+![Vista del listado de recetas](./assets/Vista_mis_recetas.jpg)
+![Vista del detalle](./assets/Vista_detalle_receta.jpg)
+![Vista de añadir receta](./assets/Vista_añadir_receta.jpg)
+![Vista de menú semanal](./assets/Vista_menu_semanal.jpg)
 
-## TODO
+## Novedades
 
 ### v 2.0
 
