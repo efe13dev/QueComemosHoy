@@ -8,10 +8,10 @@ Esta aplicación te permite gestionar tus recetas favoritas y crear menús seman
 
 Para usar la aplicacion se genera una apk desde expo, se instala en el dispositivo movil y se ejecuta.
 
-![Vista del listado de recetas](./assets/Vista_mis_recetas.jpg)
-![Vista del detalle](./assets/Vista_detalle_receta.jpg)
-![Vista de añadir receta](./assets/Vista_añadir_receta.jpg)
-![Vista de menú semanal](./assets/Vista_menu_semanal.jpg)
+<img src="./assets/Vista_mis_recetas.jpg" width="400">
+<img src="./assets/Vista_detalle_receta.jpg" width="400">
+<img src="./assets/Vista_añadir_receta.jpg" width="400">
+<img src="./assets/Vista_menu_semanal.jpg" width="400">
 
 ## Novedades
 
