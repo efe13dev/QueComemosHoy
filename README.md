@@ -1,6 +1,16 @@
-### TODO
+# Mi aplicación de Recetas
 
-v 2.0
+## Descripción
+
+Esta aplicación te permite gestionar tus recetas favoritas, crear menús semanales y compartirlos con tus amigos y familiares. 
+
+## Cómo usar la aplicación
+
+Aquí puedes insertar una imagen o gif que muestre cómo usar la aplicación.
+
+## TODO
+
+### v 2.0
 
 - [x] Añadir opción de actualizar receta (hay que crear un input por cada ingrediente y por cada paso)
 - [x] modificar la imagen inicial
