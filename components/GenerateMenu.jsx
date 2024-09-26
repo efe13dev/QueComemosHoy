@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
   },
   button_text: {
     color: '#FFF', // Cambiado el color del texto a blanco
-    fontSize: 16, // Aumentado el tamaño de la fuente
+    fontSize: 18, // Aumentado el tamaño de la fuente
     fontWeight: 'bold',
     textAlign: 'center'
   },

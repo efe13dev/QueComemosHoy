@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { getRecipe, deleteRecipe, updateRecipe } from '../data/api';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const DetailRecipe = ({ route }) => {
   const { id } = route.params;
@@ -67,10 +68,10 @@ const DetailRecipe = ({ route }) => {
   };
 
   const handleSave = async () => {
-    // Asegúrate de que el campo 'time' sea un número
     const updatedRecipeWithNumberTime = {
       ...updatedRecipe,
-      time: parseInt(updatedRecipe.time, 10)
+      time: parseInt(updatedRecipe.time, 10),
+      people: parseInt(updatedRecipe.people, 10)
     };
 
     await updateRecipe(id, updatedRecipeWithNumberTime);
@@ -86,6 +87,34 @@ const DetailRecipe = ({ route }) => {
       ],
       { cancelable: false }
     );
+  };
+
+  const handleIngredientChange = (text, index) => {
+    const newIngredients = [...updatedRecipe.ingredients];
+    newIngredients[index] = text;
+    setUpdatedRecipe({ ...updatedRecipe, ingredients: newIngredients });
+  };
+
+  const handlePreparationChange = (text, index) => {
+    const newPreparation = [...updatedRecipe.preparation];
+    newPreparation[index] = text;
+    setUpdatedRecipe({ ...updatedRecipe, preparation: newPreparation });
+  };
+
+  const addInput = (field) => {
+    setUpdatedRecipe({
+      ...updatedRecipe,
+      [field]: [...updatedRecipe[field], '']
+    });
+  };
+
+  const removeInput = (field, index) => {
+    const updatedArray = [...updatedRecipe[field]];
+    updatedArray.splice(index, 1);
+    setUpdatedRecipe({
+      ...updatedRecipe,
+      [field]: updatedArray
+    });
   };
 
   return (
@@ -123,7 +152,7 @@ const DetailRecipe = ({ route }) => {
                 />
                 <Text style={styles.label}>Categoría</Text>
                 <Text style={styles.categoryText}>{recipe.category}</Text>
-                <Text style={styles.label}>Tiempo</Text>
+                <Text style={styles.label}>Tiempo (min)</Text>
                 <TextInput
                   style={styles.input}
                   value={updatedRecipe.time.toString()} // Asegúrate de que sea una cadena
@@ -132,7 +161,7 @@ const DetailRecipe = ({ route }) => {
                   }
                   keyboardType='numeric' // Asegúrate de que el teclado sea numérico
                 />
-                <Text style={styles.label}>Imagen</Text>
+                <Text style={styles.label}>Imagen (URL)</Text>
                 <TextInput
                   style={styles.input}
                   value={updatedRecipe.image}
@@ -150,27 +179,92 @@ const DetailRecipe = ({ route }) => {
                   keyboardType='numeric' // Asegúrate de que el teclado sea numérico
                 />
                 <Text style={styles.label}>Ingredientes</Text>
-                <TextInput
-                  style={styles.input}
-                  value={updatedRecipe.ingredients.join(', ')} // Convierte el array a una cadena
-                  onChangeText={(text) =>
-                    setUpdatedRecipe({
-                      ...updatedRecipe,
-                      ingredients: text.split(', ')
-                    })
-                  }
-                />
+                {updatedRecipe.ingredients.map((ingredient, index) => (
+                  <View
+                    key={`ingredient-${index}`}
+                    style={styles.inputRow}
+                  >
+                    <TextInput
+                      style={[styles.input, styles.inputFlex]}
+                      value={ingredient}
+                      onChangeText={(text) =>
+                        handleIngredientChange(text, index)
+                      }
+                    />
+                    {index === updatedRecipe.ingredients.length - 1 && (
+                      <TouchableOpacity
+                        style={styles.iconButton}
+                        onPress={() => addInput('ingredients')}
+                      >
+                        <Icon
+                          name='add-circle'
+                          size={30}
+                          color='#28a745'
+                        />
+                      </TouchableOpacity>
+                    )}
+                    {updatedRecipe.ingredients.length > 1 && (
+                      <TouchableOpacity
+                        style={styles.iconButton}
+                        onPress={() => removeInput('ingredients', index)}
+                      >
+                        <Icon
+                          name='remove-circle'
+                          size={30}
+                          color='#dc3545'
+                        />
+                      </TouchableOpacity>
+                    )}
+                  </View>
+                ))}
                 <Text style={styles.label}>Preparación</Text>
-                <TextInput
-                  style={styles.input}
-                  value={updatedRecipe.preparation.join(', ')} // Convierte el array a una cadena
-                  onChangeText={(text) =>
-                    setUpdatedRecipe({
-                      ...updatedRecipe,
-                      preparation: text.split(', ')
-                    })
-                  }
-                />
+                {updatedRecipe.preparation.map((step, index) => (
+                  <View
+                    key={`preparation-${index}`}
+                    style={styles.inputRow}
+                  >
+                    <TextInput
+                      style={[
+                        styles.input,
+                        styles.inputFlex,
+                        styles.preparationInput
+                      ]}
+                      value={step}
+                      onChangeText={(text) =>
+                        handlePreparationChange(text, index)
+                      }
+                      multiline
+                      numberOfLines={1}
+                      textAlignVertical='center'
+                      blurOnSubmit
+                      onSubmitEditing={() => {}}
+                    />
+                    {index === updatedRecipe.preparation.length - 1 && (
+                      <TouchableOpacity
+                        style={styles.iconButton}
+                        onPress={() => addInput('preparation')}
+                      >
+                        <Icon
+                          name='add-circle'
+                          size={30}
+                          color='#28a745'
+                        />
+                      </TouchableOpacity>
+                    )}
+                    {updatedRecipe.preparation.length > 1 && (
+                      <TouchableOpacity
+                        style={styles.iconButton}
+                        onPress={() => removeInput('preparation', index)}
+                      >
+                        <Icon
+                          name='remove-circle'
+                          size={30}
+                          color='#dc3545'
+                        />
+                      </TouchableOpacity>
+                    )}
+                  </View>
+                ))}
                 <TouchableOpacity
                   style={styles.saveButton}
                   onPress={handleSave}
@@ -256,11 +350,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 25
   },
-  buttonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold'
-  },
   title: {
     color: '#192655',
     fontSize: 32,
@@ -319,30 +408,76 @@ const styles = StyleSheet.create({
     borderRadius: 25
   },
   input: {
-    height: 40,
-    borderColor: 'gray',
+    height: 50,
+    borderColor: '#ddd',
     borderWidth: 1,
-    marginBottom: 10,
-    paddingHorizontal: 10,
-    width: '80%'
+    borderRadius: 10,
+    marginBottom: 15,
+    paddingHorizontal: 15,
+    width: '90%',
+    fontSize: 16,
+    backgroundColor: '#fff',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 3
   },
   saveButton: {
-    backgroundColor: 'rgba(0, 128, 0, 0.8)',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
+    backgroundColor: '#28a745',
+    paddingVertical: 12,
+    paddingHorizontal: 25,
     borderRadius: 25,
-    marginTop: 10
+    marginTop: 20,
+    marginBottom: 30,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5
   },
   label: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 5,
-    marginTop: 10,
-    width: '80%'
+    marginBottom: 8,
+    marginTop: 15,
+    width: '90%',
+    color: '#333'
+  },
+  inputRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '90%',
+    marginBottom: 15
+  },
+  inputFlex: {
+    flex: 1,
+    marginRight: 5 // Reducido de 10 a 5
+  },
+  iconButton: {
+    padding: 5, // Reducido de 10 a 5
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 5 // Reducido de 10 a 5
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: 'bold'
   },
   categoryText: {
     fontSize: 16,
     marginBottom: 10,
-    width: '80%'
+    width: '90%',
+    color: '#666',
+    fontStyle: 'italic'
+  },
+  preparationInput: {
+    height: 'auto',
+    minHeight: 50,
+    textAlignVertical: 'center',
+    justifyContent: 'center',
+    paddingTop: 10,
+    paddingBottom: 10
   }
 });

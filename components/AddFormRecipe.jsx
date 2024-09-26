@@ -11,6 +11,7 @@ import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
 import RNPickerSelect from 'react-native-picker-select';
 import { saveRecipe } from '../data/api';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const AddFormRecipe = () => {
   const navigation = useNavigation();
@@ -146,18 +147,26 @@ const AddFormRecipe = () => {
           />
           {index === recipe.ingredients.length - 1 && (
             <TouchableOpacity
-              style={styles.add_button}
+              style={styles.icon_button}
               onPress={() => addInput('ingredients')}
             >
-              <Text style={styles.add_button_text}>+</Text>
+              <Icon
+                name='add-circle'
+                size={30}
+                color='#28a745'
+              />
             </TouchableOpacity>
           )}
           {recipe.ingredients.length > 1 && (
             <TouchableOpacity
-              style={styles.remove_button}
+              style={styles.icon_button}
               onPress={() => removeInput('ingredients', index)}
             >
-              <Text style={styles.remove_button_text}>-</Text>
+              <Icon
+                name='remove-circle'
+                size={30}
+                color='#dc3545'
+              />
             </TouchableOpacity>
           )}
         </View>
@@ -178,18 +187,26 @@ const AddFormRecipe = () => {
           />
           {index === recipe.preparation.length - 1 && (
             <TouchableOpacity
-              style={styles.add_button}
+              style={styles.icon_button}
               onPress={() => addInput('preparation')}
             >
-              <Text style={styles.add_button_text}>+</Text>
+              <Icon
+                name='add-circle'
+                size={30}
+                color='#28a745'
+              />
             </TouchableOpacity>
           )}
           {recipe.preparation.length > 1 && (
             <TouchableOpacity
-              style={styles.remove_button}
+              style={styles.icon_button}
               onPress={() => removeInput('preparation', index)}
             >
-              <Text style={styles.remove_button_text}>-</Text>
+              <Icon
+                name='remove-circle'
+                size={30}
+                color='#dc3545'
+              />
             </TouchableOpacity>
           )}
         </View>
@@ -227,48 +244,52 @@ const AddFormRecipe = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-    paddingVertical: 20,
-    marginTop: 15,
-    flexGrow: 1,
-    backgroundColor: '#f8f9fa' // Fondo claro para todo el contenedor
-  },
   form_container: {
-    gap: 20, // Espaciado más pequeño entre los elementos
+    gap: 20,
     alignItems: 'center',
-    paddingHorizontal: 20 // Añadir padding horizontal
+    paddingHorizontal: 20
   },
   input: {
-    borderRadius: 8, // Bordes más redondeados
-    paddingHorizontal: 15, // Más padding horizontal
+    height: 50,
+    borderColor: '#ddd',
+    borderWidth: 1,
+    borderRadius: 10,
+    marginBottom: 15,
+    paddingHorizontal: 15,
+    width: '100%',
     fontSize: 16,
-    backgroundColor: '#ffffff', // Fondo blanco
-    width: '100%', // Ancho completo
-    height: 50, // Altura mayor
-    marginBottom: 10, // Espaciado inferior
-    borderColor: '#ced4da', // Color del borde
-    borderWidth: 1 // Ancho del borde
+    backgroundColor: '#fff',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 3
   },
   inputAndroid: {
-    borderRadius: 8, // Bordes más redondeados
-    paddingHorizontal: 15, // Más padding horizontal
+    height: 50,
+    borderColor: '#ddd',
+    borderWidth: 1,
+    borderRadius: 10,
+    marginBottom: 15,
+    paddingHorizontal: 15,
+    width: '100%',
     fontSize: 16,
-    backgroundColor: '#ffffff', // Fondo blanco
-    width: '100%', // Ancho completo
-    height: 50, // Altura mayor
-    marginBottom: 10, // Espaciado inferior
-    borderColor: '#ced4da', // Color del borde
-    borderWidth: 1 // Ancho del borde
+    backgroundColor: '#fff',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 3
   },
   input_row: {
     flexDirection: 'row',
-    alignItems: 'stretch', // Asegura que los elementos estén centrados verticalmente
+    alignItems: 'center',
     width: '100%',
-    marginBottom: 10 // Añadir un margen inferior para separar las filas
+    marginBottom: 15
   },
   input_flex: {
-    flex: 1
+    flex: 1,
+    marginRight: 10
   },
   height_input: {
     height: 100 // Altura mayor para inputs de texto largo
@@ -293,67 +314,17 @@ const styles = StyleSheet.create({
     fontWeight: 'bold', // Texto en negrita
     textAlign: 'center' // Asegura que el texto esté centrado horizontalmente
   },
-  button: {
-    backgroundColor: '#7AA2E3',
-    padding: 15,
-    borderRadius: 10,
-    alignItems: 'center',
-    marginVertical: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.8,
-    shadowRadius: 2,
-    elevation: 5
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold'
-  },
-  add_button: {
-    backgroundColor: '#28a745',
+
+  icon_button: {
     padding: 10,
-    borderRadius: 50, // Bordes redondeados
     alignItems: 'center',
     justifyContent: 'center',
-    marginLeft: 10,
-    height: 50,
-    width: 50, // Ancho igual a la altura para hacer un botón circular
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 5
-  },
-  add_button_text: {
-    color: '#fff',
-    fontSize: 24, // Tamaño de fuente mayor
-    fontWeight: 'bold'
+    marginLeft: 10
   },
   label: {
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10
-  },
-  remove_button: {
-    backgroundColor: '#dc3545',
-    padding: 10,
-    borderRadius: 50, // Bordes redondeados
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginLeft: 10,
-    height: 50,
-    width: 50, // Ancho igual a la altura para hacer un botón circular
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 5
-  },
-  remove_button_text: {
-    color: '#fff',
-    fontSize: 24, // Tamaño de fuente mayor
-    fontWeight: 'bold'
   }
 });
 

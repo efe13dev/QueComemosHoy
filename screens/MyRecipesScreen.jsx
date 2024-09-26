@@ -6,11 +6,13 @@ import {
   FlatList,
   RefreshControl,
   useWindowDimensions,
-  TextInput
+  TextInput,
+  TouchableOpacity // Añade esta importación
 } from 'react-native';
 import Constants from 'expo-constants';
 import { RecipeCard } from '../components/RecipeCard';
 import { getRecipes } from '../data/api';
+import { Ionicons } from '@expo/vector-icons'; // Añade esta importación
 
 const MyRecipes = ({ navigation }) => {
   const [recipes, setRecipes] = useState([]);
@@ -57,15 +59,34 @@ const MyRecipes = ({ navigation }) => {
   // Usamos useMemo para crear una key única basada en el ancho de la pantalla
   const flatListKey = useMemo(() => `flatList-${width}`, [width]);
 
+  const clearSearchText = () => {
+    setSearchText('');
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.text_title}>Mis recetas</Text>
-      <TextInput
-        style={styles.searchInput}
-        placeholder='Buscar receta...'
-        value={searchText}
-        onChangeText={setSearchText}
-      />
+      <View style={styles.searchContainer}>
+        <TextInput
+          style={styles.searchInput}
+          placeholder='Buscar receta...'
+          value={searchText}
+          onChangeText={setSearchText}
+        />
+        {searchText !== '' && (
+          <TouchableOpacity
+            style={styles.clearButton}
+            onPress={clearSearchText}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <Ionicons
+              name='close-circle'
+              size={24}
+              color='gray'
+            />
+          </TouchableOpacity>
+        )}
+      </View>
       <FlatList
         key={flatListKey}
         data={filteredRecipes}
@@ -109,14 +130,27 @@ const styles = StyleSheet.create({
     margin: 5,
     width: '100%' // Hacemos las tarjetas un poco más anchas
   },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: 10,
+    marginBottom: 10,
+    position: 'relative'
+  },
   searchInput: {
+    flex: 1,
     height: 40,
     borderColor: 'gray',
     borderWidth: 1,
     borderRadius: 5,
     paddingHorizontal: 10,
-    marginHorizontal: 10,
-    marginBottom: 10
+    paddingRight: 40 // Añade espacio para el botón
+  },
+  clearButton: {
+    position: 'absolute',
+    right: 8,
+    top: '50%',
+    transform: [{ translateY: -12 }] // Mitad del tamaño del icono
   }
 });
 

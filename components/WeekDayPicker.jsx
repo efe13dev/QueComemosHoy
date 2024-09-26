@@ -45,21 +45,29 @@ const pickerSelectStyles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 8,
     borderWidth: 1,
-    borderColor: 'gray',
+    borderColor: '#ccc',
     borderRadius: 8,
-    color: 'black',
+    color: '#333',
     paddingRight: 30,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
+    fontSize: 16,
+    fontFamily: 'Roboto'
   },
   inputIOS: {
     paddingHorizontal: 10,
-    paddingVertical: 8,
+    paddingVertical: 12,
     borderWidth: 1,
-    borderColor: 'gray',
+    borderColor: '#ccc',
     borderRadius: 8,
-    color: 'black',
+    color: '#333',
     paddingRight: 30,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
+    fontSize: 16,
+    fontFamily: 'San Francisco'
+  },
+  iconContainer: {
+    top: 10,
+    right: 12
   }
 });
 

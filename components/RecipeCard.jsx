@@ -93,8 +93,7 @@ const styles = StyleSheet.create({
   },
   timerIcon: {
     width: 18,
-    height: 18,
-    tintColor: '#7AA2E3'
+    height: 18
   },
   text_time: {
     color: '#555',

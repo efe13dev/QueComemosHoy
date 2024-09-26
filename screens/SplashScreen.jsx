@@ -1,11 +1,11 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import splashImage from '../assets/splash_image.png';
 import * as Animatable from 'react-native-animatable';
 
 const SplashScreen = () => {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>¡Que comemos hoy! v2.0</Text>
+      {/* <Text style={styles.text}>¡Que comemos hoy! v2.0</Text> */}
       <Animatable.Image
         animation='bounceIn'
         duration={2000}
@@ -32,6 +32,11 @@ const styles = StyleSheet.create({
     textShadowRadius: 1,
     color: '#7AA2E3',
     textAlign: 'center'
+  },
+  image: {
+    width: 600, // Ajusta este valor según el tamaño deseado
+    height: 600, // Ajusta este valor según el tamaño deseado
+    resizeMode: 'contain'
   }
 });
 
