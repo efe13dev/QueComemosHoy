@@ -2,7 +2,7 @@
 
 ## Descripción
 
-Esta aplicación te permite gestionar tus recetas favoritas, crear menús semanales y compartirlos con tus amigos y familiares. 
+Esta aplicación te permite gestionar tus recetas favoritas, crear menús semanales
 
 ## Cómo usar la aplicación
 
