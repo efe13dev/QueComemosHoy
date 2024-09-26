@@ -8,6 +8,8 @@ Esta aplicación te permite gestionar tus recetas favoritas, crear menús semana
 
 Aquí puedes insertar una imagen o gif que muestre cómo usar la aplicación.
 
+![Descripción de la imagen](ruta/a/la/imagen)
+
 ## TODO
 
 ### v 2.0
