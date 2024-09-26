@@ -12,9 +12,7 @@ Los menús semanales se guardan en el storage del dispositivo para que sigan dis
 
 Para usar la aplicacion se genera una apk desde expo, se instala en el dispositivo movil y se ejecuta.
 
-<img src="./assets/Vista_mis_recetas.jpg" width="200">
-<img src="./assets/Vista_detalle_receta.jpg" width="200">
-<img src="./assets/Vista_añadir_receta.jpg" width="200">
+<img src="./assets/Vista_mis_recetas.jpg" width="200"><img src="./assets/Vista_detalle_receta.jpg" width="200"><img src="./assets/Vista_añadir_receta.jpg" width="200">
 
 ## Novedades
 
