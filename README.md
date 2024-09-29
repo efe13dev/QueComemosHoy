@@ -26,4 +26,4 @@ Para usar la aplicación se genera una apk desde expo, se instala en el disposit
 - [x] Añadida confirmación para eliminar menú semanal
 - [x] En el listado de mis recetas ahora se muestran dos columnas
 - [x] Mejoras visuales en todas las vistas
-- [ ] Gestionar los de la autorización en supabase
+- [x] Gestionar los de la autorización en supabase

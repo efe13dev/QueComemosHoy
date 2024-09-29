@@ -50,9 +50,6 @@ export const saveRecipe = async (recipe) => {
     if (error) {
       console.error('Error adding recipe', error.message);
     }
-    /*  if (data) {
-      console.log(data);
-    } */
   } catch (error) {
     console.error('Error adding recipe', error.message);
   }
