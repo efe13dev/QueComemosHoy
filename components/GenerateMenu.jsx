@@ -33,8 +33,8 @@ export function GenerateMenu() {
       const dataName = data.map((item) => item.name);
       const recipeList = dataName
         .map((item) => ({
-          label: item,
-          value: item,
+          label: item.trim(),
+          value: item.trim(),
         }))
         .sort((a, b) => a.label.localeCompare(b.label));
 
@@ -73,13 +73,27 @@ export function GenerateMenu() {
 
   const handleChange = useCallback(async (day, value) => {
     try {
+      // Evitar actualizaciones si el valor es el mismo
+      if (weekMenu[day] === value) {
+        console.log(`Valor para ${day} sin cambios, no se actualiza`);
+        return;
+      }
+
+      console.log(`Actualizando ${day} con valor: "${value}"`);
+      
+      // Actualizar el estado local primero
       setweekMenu((prev) => ({
         ...prev,
         [day]: value,
       }));
 
-      const { error } = await actualizarRecetaDelDia(day, value || ' ');
+      // Asegurarse de que value no sea null o undefined antes de enviarlo
+      const valueToSend = value || '';
+      const { error } = await actualizarRecetaDelDia(day, valueToSend);
+      
       if (error) {
+        console.error(`Error al actualizar ${day}:`, error);
+        // Revertir al valor anterior en caso de error
         setweekMenu((prev) => ({
           ...prev,
           [day]: prev[day],
@@ -89,7 +103,7 @@ export function GenerateMenu() {
     } catch (error) {
       handleError(error, 'No se pudo actualizar el menú');
     }
-  }, []); // No tiene dependencias porque solo usa funciones externas y setState
+  }, [weekMenu]); // Añadir weekMenu como dependencia para comparar valores
 
   const resetMenu = useCallback(async () => {
     try {
@@ -164,13 +178,10 @@ export function GenerateMenu() {
             />
           ))}
         </View>
+        <TouchableOpacity style={styles.resetButton} onPress={confirmResetMenu}>
+          <Text style={styles.resetButtonText}>Eliminar Menú</Text>
+        </TouchableOpacity>
       </View>
-      <TouchableOpacity
-        style={styles.resetButton}
-        onPress={confirmResetMenu}
-      >
-        <Text style={styles.resetButtonText}>Eliminar Menú</Text>
-      </TouchableOpacity>
     </ScrollView>
   );
 }
@@ -178,28 +189,27 @@ export function GenerateMenu() {
 const styles = StyleSheet.create({
   scrollViewContent: {
     flexGrow: 1,
-    paddingVertical: 20,
-    backgroundColor: '#FFF5E6', // Color crema suave, como masa de pan
+    paddingVertical: 15,
+    paddingHorizontal: 15,
   },
   container: {
     flex: 1,
-    alignItems: 'center',
-    paddingHorizontal: 16,
   },
   title: {
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: 'bold',
-    color: '#8B4513', // Marrón cálido, como canela
-    marginBottom: 20,
-    textShadowColor: 'rgba(0, 0, 0, 0.1)',
+    marginBottom: 15,
+    textAlign: 'center',
+    color: '#663300',
+    textShadowColor: 'rgba(102, 51, 0, 0.1)',
     textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 2,
+    textShadowRadius: 1,
   },
   menuContainer: {
     width: '100%',
     backgroundColor: '#FFFFFF',
     borderRadius: 15,
-    padding: 16,
+    padding: 12,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -209,14 +219,14 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
     borderWidth: 1,
-    borderColor: '#FFE4B5', // Color melocotón claro
+    borderColor: '#FFE4B5',
   },
   resetButton: {
-    backgroundColor: '#FF6B6B', // Rojo suave, como tomate
-    paddingVertical: 12,
-    paddingHorizontal: 24,
+    backgroundColor: '#FFE4B5',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
     borderRadius: 25,
-    marginTop: 20,
+    marginTop: 30,
     alignSelf: 'center',
     shadowColor: '#000',
     shadowOffset: {
@@ -230,7 +240,7 @@ const styles = StyleSheet.create({
     borderColor: '#FF5252',
   },
   resetButtonText: {
-    color: '#FFFFFF',
+    color: '#663300',
     fontSize: 16,
     fontWeight: 'bold',
     textAlign: 'center',

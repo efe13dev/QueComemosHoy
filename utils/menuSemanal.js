@@ -3,15 +3,21 @@ import { supabase } from './supabase';
 export const actualizarRecetaDelDia = async (dia, nuevaReceta) => {
   try {
     // Asegurarnos de que menu_data nunca sea null o cadena vacía
-    const menu_data = nuevaReceta?.trim() || ' ';
+    // Usar un espacio en blanco si no hay receta
+    const menu_data = nuevaReceta?.trim() ? nuevaReceta.trim() : ' ';
     const diaLowerCase = dia.toLowerCase();
+
+    console.log(`Guardando en Supabase - Día: ${diaLowerCase}, Receta: "${menu_data}"`);
 
     const { data, error } = await supabase.from('weekly_menus').upsert({
       id: diaLowerCase,
       menu_data
     });
 
-    if (error) throw error;
+    if (error) {
+      console.error('Error en upsert:', error);
+      throw error;
+    }
     return { data, error: null };
   } catch (error) {
     // eslint-disable-next-line no-console

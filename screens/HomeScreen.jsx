@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
   icon: {
-    shadowColor: '#000',
+    shadowColor: '#8B4513',
     shadowOffset: {
       width: 0,
       height: 2,
