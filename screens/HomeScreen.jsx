@@ -1,37 +1,47 @@
-import { View, Text, StyleSheet, StatusBar } from 'react-native';
-
-import { GenerateMenu } from '../components/GenerateMenu';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Constants from 'expo-constants';
+import React from 'react';
+import { StatusBar, StyleSheet, View } from 'react-native';
+import { GenerateMenu } from '../components/GenerateMenu';
 
-const HomeScreen = () => {
+export default function HomeScreen() {
   return (
     <View style={styles.container}>
       <StatusBar
-        barStyle='dark-content'
+        barStyle="dark-content"
+        backgroundColor="transparent"
         translucent
-        backgroundColor='transparent'
       />
-      <Text style={styles.text_title}>Menú semanal</Text>
+      <View style={styles.iconContainer}>
+        <MaterialCommunityIcons
+          name="chef-hat"
+          size={50}
+          color="#8B4513"
+          style={styles.icon}
+        />
+      </View>
       <GenerateMenu />
     </View>
   );
-};
+}
 
-export default HomeScreen;
 const styles = StyleSheet.create({
   container: {
-    flex: 1, // Añadido para ocupar toda la pantalla
-    fontWeight: 'bold',
-    paddingTop: Constants.statusBarHeight
+    flex: 1,
+    backgroundColor: '#FFF5E6',
   },
-  text_title: {
-    textShadowColor: 'darkblue',
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 1,
-    color: '#7AA2E3',
-    textAlign: 'center',
-    fontWeight: 'bold',
-    fontSize: 40,
-    marginVertical: 10
-  }
+  iconContainer: {
+    alignItems: 'center',
+    paddingTop: Constants.statusBarHeight,
+    paddingBottom: 10,
+  },
+  icon: {
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
 });

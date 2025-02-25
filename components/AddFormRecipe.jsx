@@ -21,14 +21,14 @@ const AddFormRecipe = () => {
     time: '',
     image: '',
     people: '',
-    ingredients: [''],
-    preparation: ['']
+    ingredients: [{ id: `${'ing-'}${Date.now()}`, text: '' }],
+    preparation: [{ id: `${'prep-'}${Date.now()}`, text: '' }]
   });
 
   const handleChange = (name, value, index) => {
     if (name === 'ingredients' || name === 'preparation') {
       const updatedArray = [...recipe[name]];
-      updatedArray[index] = value;
+      updatedArray[index] = { ...updatedArray[index], text: value };
       setRecipe({ ...recipe, [name]: updatedArray });
     } else {
       setRecipe({ ...recipe, [name]: value });
@@ -36,7 +36,11 @@ const AddFormRecipe = () => {
   };
 
   const addInput = (name) => {
-    setRecipe({ ...recipe, [name]: [...recipe[name], ''] });
+    const prefix = name === 'ingredients' ? 'ing' : 'prep';
+    setRecipe({
+      ...recipe,
+      [name]: [...recipe[name], { id: `${prefix}-${Date.now()}`, text: '' }]
+    });
   };
 
   const removeInput = (name, index) => {
@@ -50,45 +54,34 @@ const AddFormRecipe = () => {
       recipe.image =
         'https://i.pinimg.com/564x/5d/fb/70/5dfb70fe26266074c99911272330eb03.jpg';
     }
-    saveRecipe(recipe);
-    setRecipe({
-      name: '',
-      category: '',
-      time: '',
-      image: '',
-      people: '',
-      ingredients: [''],
-      preparation: ['']
-    });
 
-    showAlert();
-  };
+    // Convertir los ingredientes y pasos a formato simple antes de enviar
+    const recipeToSave = {
+      ...recipe,
+      ingredients: recipe.ingredients.map(ing => ing.text),
+      preparation: recipe.preparation.map(step => step.text)
+    };
 
-  const showAlert = () => {
-    Alert.alert(
-      'Receta añadida',
-      'Se ha añadido una nueva receta a tu lista',
-      [
-        {
-          text: 'Aceptar',
-          onPress: () => {
-            navigation.navigate('MyRecipesScreen');
-          }
-        }
-      ],
-      { cancelable: false }
-    );
+    saveRecipe(recipeToSave)
+      .then(() => {
+        Alert.alert('Éxito', 'Receta guardada correctamente');
+        navigation.goBack();
+      })
+      .catch((error) => {
+        Alert.alert('Error', 'No se pudo guardar la receta');
+        console.error(error);
+      });
   };
 
   return (
     <ScrollView contentContainerStyle={styles.form_container}>
       <TextInput
-        value={recipe.name}
         style={styles.input}
-        placeholder='Nombre..'
-        placeholderTextColor='rgba(0, 0, 0, 0.3)'
+        placeholder="Nombre de la receta"
+        value={recipe.name}
         onChangeText={(value) => handleChange('name', value)}
       />
+
       <RNPickerSelect
         value={recipe.category}
         style={{
@@ -109,64 +102,47 @@ const AddFormRecipe = () => {
       />
 
       <TextInput
-        value={recipe.time}
         style={styles.input}
-        placeholder='Tiempo... (min)'
-        placeholderTextColor='rgba(0, 0, 0, 0.3)'
-        keyboardType='numeric'
+        placeholder="Tiempo de preparación"
+        value={recipe.time}
+        keyboardType="numeric"
         onChangeText={(value) => handleChange('time', value)}
       />
+
       <TextInput
-        value={recipe.image}
         style={styles.input}
-        placeholder='Imagen...'
-        placeholderTextColor='rgba(0, 0, 0, 0.3)'
+        placeholder="Imagen..."
+        value={recipe.image}
         onChangeText={(value) => handleChange('image', value)}
       />
+
       <TextInput
-        value={recipe.people}
         style={styles.input}
-        placeholder='Personas...'
-        placeholderTextColor='rgba(0, 0, 0, 0.3)'
-        keyboardType='numeric'
+        placeholder="Número de personas"
+        value={recipe.people}
+        keyboardType="numeric"
         onChangeText={(value) => handleChange('people', value)}
       />
 
       <Text style={styles.label}>Ingredientes:</Text>
       {recipe.ingredients.map((ingredient, index) => (
         <View
-          key={index}
+          key={ingredient.id}
           style={styles.input_row}
         >
           <TextInput
-            value={ingredient}
-            style={[styles.input, styles.input_flex]}
-            placeholder={`Ingrediente ${index + 1}`}
-            placeholderTextColor='rgba(0, 0, 0, 0.3)'
+            style={styles.input}
+            placeholder="Ingrediente"
+            value={ingredient.text}
             onChangeText={(value) => handleChange('ingredients', value, index)}
           />
-          {index === recipe.ingredients.length - 1 && (
-            <TouchableOpacity
-              style={styles.icon_button}
-              onPress={() => addInput('ingredients')}
-            >
-              <Icon
-                name='add-circle'
-                size={30}
-                color='#28a745'
-              />
+          {index === recipe.ingredients.length - 1 ? (
+            <TouchableOpacity onPress={() => addInput('ingredients')}>
+              <Icon name="add-circle" size={24} color="#007BFF" />
             </TouchableOpacity>
-          )}
-          {recipe.ingredients.length > 1 && (
-            <TouchableOpacity
-              style={styles.icon_button}
-              onPress={() => removeInput('ingredients', index)}
-            >
-              <Icon
-                name='remove-circle'
-                size={30}
-                color='#dc3545'
-              />
+          ) : (
+            <TouchableOpacity onPress={() => removeInput('ingredients', index)}>
+              <Icon name="remove-circle" size={24} color="#FF6B6B" />
             </TouchableOpacity>
           )}
         </View>
@@ -175,38 +151,22 @@ const AddFormRecipe = () => {
       <Text style={styles.label}>Preparación:</Text>
       {recipe.preparation.map((step, index) => (
         <View
-          key={index}
+          key={step.id}
           style={styles.input_row}
         >
           <TextInput
-            value={step}
-            style={[styles.input, styles.input_flex]}
-            placeholder={`Paso ${index + 1}`}
-            placeholderTextColor='rgba(0, 0, 0, 0.3)'
+            style={styles.input}
+            placeholder="Paso"
+            value={step.text}
             onChangeText={(value) => handleChange('preparation', value, index)}
           />
-          {index === recipe.preparation.length - 1 && (
-            <TouchableOpacity
-              style={styles.icon_button}
-              onPress={() => addInput('preparation')}
-            >
-              <Icon
-                name='add-circle'
-                size={30}
-                color='#28a745'
-              />
+          {index === recipe.preparation.length - 1 ? (
+            <TouchableOpacity onPress={() => addInput('preparation')}>
+              <Icon name="add-circle" size={24} color="#007BFF" />
             </TouchableOpacity>
-          )}
-          {recipe.preparation.length > 1 && (
-            <TouchableOpacity
-              style={styles.icon_button}
-              onPress={() => removeInput('preparation', index)}
-            >
-              <Icon
-                name='remove-circle'
-                size={30}
-                color='#dc3545'
-              />
+          ) : (
+            <TouchableOpacity onPress={() => removeInput('preparation', index)}>
+              <Icon name="remove-circle" size={24} color="#FF6B6B" />
             </TouchableOpacity>
           )}
         </View>
@@ -217,24 +177,24 @@ const AddFormRecipe = () => {
           styles.button_container,
           {
             backgroundColor:
-              !recipe.name.trim() ||
+              !recipe.name?.trim() ||
               !recipe.category ||
-              !(recipe.time && recipe.time.trim()) ||
-              !(recipe.people && recipe.people.trim()) ||
-              !recipe.ingredients[0].trim() ||
-              !recipe.preparation[0].trim()
-                ? '#cccccc' // Color gris cuando está deshabilitado
-                : '#007BFF' // Color azul cuando está habilitado
+              !recipe.time?.trim() ||
+              !recipe.people?.trim() ||
+              !recipe.ingredients[0]?.text?.trim() ||
+              !recipe.preparation[0]?.text?.trim()
+                ? '#cccccc'
+                : '#007BFF'
           }
         ]}
         onPress={handleSubmit}
         disabled={
-          !recipe.name.trim() ||
+          !recipe.name?.trim() ||
           !recipe.category ||
-          !(recipe.time && recipe.time.trim()) ||
-          !(recipe.people && recipe.people.trim()) ||
-          !recipe.ingredients[0].trim() ||
-          !recipe.preparation[0].trim()
+          !recipe.time?.trim() ||
+          !recipe.people?.trim() ||
+          !recipe.ingredients[0]?.text?.trim() ||
+          !recipe.preparation[0]?.text?.trim()
         }
       >
         <Text style={styles.button_text}>Añadir receta</Text>

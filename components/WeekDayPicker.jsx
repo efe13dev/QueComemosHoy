@@ -3,9 +3,11 @@ import { View, Text, StyleSheet } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
 
 const WeekDayPicker = ({ day, handleChange, recipesName, selectedRecipe }) => {
+  const capitalizedDay = day.charAt(0).toUpperCase() + day.slice(1);
+
   return (
     <View style={styles.container}>
-      <Text style={styles.week_day_name}>{day}:</Text>
+      <Text style={styles.week_day_name}>{capitalizedDay}:</Text>
       <RNPickerSelect
         value={selectedRecipe}
         style={pickerSelectStyles}

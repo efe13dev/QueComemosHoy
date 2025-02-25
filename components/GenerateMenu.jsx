@@ -1,186 +1,238 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import {
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  Text,
   Alert,
+  RefreshControl,
   ScrollView,
-  RefreshControl
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import WeekDayPicker from './WeekDayPicker';
 import { getRecipes } from '../data/api';
+import {
+  actualizarRecetaDelDia,
+  obtenerMenuSemanal,
+} from '../utils/menuSemanal';
+import WeekDayPicker from './WeekDayPicker';
+
+const handleError = (error, message) => {
+  // eslint-disable-next-line no-console
+  console.error(error);
+  Alert.alert('Error', message);
+};
 
 export function GenerateMenu() {
   const [recipesName, setRecipesName] = useState([]);
   const [weekMenu, setweekMenu] = useState({});
   const [refreshing, setRefreshing] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const getListRecipesName = async () => {
-    const data = await getRecipes();
-    const dataName = data.map((item) => item.name);
-    const recipeList = dataName
-      .map((item) => ({
-        label: item,
-        value: item
-      }))
-      .sort((a, b) => a.label.localeCompare(b.label)); // Ordenar por nombre
+  const getListRecipesName = useCallback(async () => {
+    try {
+      const data = await getRecipes();
+      const dataName = data.map((item) => item.name);
+      const recipeList = dataName
+        .map((item) => ({
+          label: item,
+          value: item,
+        }))
+        .sort((a, b) => a.label.localeCompare(b.label));
 
-    setRecipesName(recipeList);
-  };
+      setRecipesName(recipeList);
+    } catch (error) {
+      handleError(error, 'No se pudieron cargar las recetas');
+    }
+  }, []); // No tiene dependencias porque solo usa funciones externas y setState
+
+  const loadMenuFromSupabase = useCallback(async () => {
+    try {
+      const { data: menu, error } = await obtenerMenuSemanal();
+      if (error) throw error;
+
+      const menuObject = {};
+      for (const item of menu) {
+        const newValue = item.menu_data?.trim() || '';
+        if (menuObject[item.id] !== newValue) {
+          menuObject[item.id] = newValue;
+        }
+      }
+      setweekMenu(menuObject);
+    } catch (error) {
+      handleError(error, 'No se pudo cargar el menú');
+    } finally {
+      setIsLoading(false);
+    }
+  }, []); // No tiene dependencias porque solo usa funciones externas y setState
+
   useEffect(() => {
-    getListRecipesName();
-    loadMenuFromStorage();
-  }, []);
+    if (isLoading) {
+      getListRecipesName();
+      loadMenuFromSupabase();
+    }
+  }, [isLoading, getListRecipesName, loadMenuFromSupabase]);
 
-  const loadMenuFromStorage = async () => {
+  const handleChange = useCallback(async (day, value) => {
     try {
-      const menu = await AsyncStorage.getItem('weekMenu');
-      if (menu !== null) {
-        setweekMenu(JSON.parse(menu));
+      setweekMenu((prev) => ({
+        ...prev,
+        [day]: value,
+      }));
+
+      const { error } = await actualizarRecetaDelDia(day, value || ' ');
+      if (error) {
+        setweekMenu((prev) => ({
+          ...prev,
+          [day]: prev[day],
+        }));
+        throw error;
       }
     } catch (error) {
-      console.error('Error loading menu from AsyncStorage:', error);
+      handleError(error, 'No se pudo actualizar el menú');
     }
-  };
+  }, []); // No tiene dependencias porque solo usa funciones externas y setState
 
-  const saveMenuToStorage = async () => {
+  const resetMenu = useCallback(async () => {
     try {
-      const alMenosUnoNoEsNull = Object.values(weekMenu).some(
-        (valor) => valor !== null
+      const promises = daysOfWeek.map((day) =>
+        actualizarRecetaDelDia(day, ' ')
       );
+      await Promise.all(promises);
 
-      if (alMenosUnoNoEsNull) {
-        await AsyncStorage.setItem('weekMenu', JSON.stringify(weekMenu));
-      }
-    } catch (error) {
-      console.error('Error saving menu to AsyncStorage:', error);
-    }
-  };
-  const resetMenu = async () => {
-    try {
-      await AsyncStorage.removeItem('weekMenu');
       const updatedWeekMenu = {};
       for (const day of daysOfWeek) {
         updatedWeekMenu[day] = '';
       }
-      Alert.alert(
-        'Valores borrados',
-        'Los valores se han reseteado y el AsyncStorage ha sido borrado.'
-      );
       setweekMenu(updatedWeekMenu);
+      Alert.alert('Menú borrado', 'El menú semanal ha sido reiniciado.');
     } catch (error) {
-      console.error('Error resetting menu and AsyncStorage:', error);
+      handleError(error, 'No se pudo reiniciar el menú');
     }
-  };
+  }, []); // No tiene dependencias porque solo usa constantes y setState
 
-  const confirmResetMenu = () => {
+  const confirmResetMenu = useCallback(() => {
     Alert.alert(
       'Confirmación',
       '¿Estás seguro de que deseas eliminar el menú?',
       [
         {
           text: 'Cancelar',
-          style: 'cancel'
+          style: 'cancel',
         },
         {
           text: 'Eliminar',
-          onPress: resetMenu
-        }
+          onPress: resetMenu,
+        },
       ],
       { cancelable: false }
     );
-  };
-
-  const daysOfWeek = [
-    'Lunes',
-    'Martes',
-    'Miércoles',
-    'Jueves',
-    'Viernes',
-    'Sábado',
-    'Domingo'
-  ];
-
-  const handleChange = (day, value) => {
-    const updateMenu = { ...weekMenu, [day]: value };
-    setweekMenu(updateMenu);
-    saveMenuToStorage();
-  };
+  }, [resetMenu]); // Depende de resetMenu porque lo usa como callback
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    getListRecipesName().then(() => setRefreshing(false));
-  }, []);
+    Promise.all([getListRecipesName(), loadMenuFromSupabase()]).finally(() => {
+      setRefreshing(false);
+    });
+  }, [getListRecipesName, loadMenuFromSupabase]); // Depende de las funciones que llama
+
+  const daysOfWeek = [
+    'lunes',
+    'martes',
+    'miercoles',
+    'jueves',
+    'viernes',
+    'sabado',
+    'domingo',
+  ];
 
   return (
     <ScrollView
       contentContainerStyle={styles.scrollViewContent}
       refreshControl={
-        <RefreshControl
-          refreshing={refreshing}
-          onRefresh={onRefresh}
-        />
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
     >
       <View style={styles.container}>
-        {daysOfWeek.map((day) => (
-          <WeekDayPicker
-            key={day}
-            day={day}
-            handleChange={handleChange}
-            recipesName={recipesName}
-            selectedRecipe={weekMenu[day]}
-          />
-        ))}
+        <Text style={styles.title}>Menú Semanal</Text>
+        <View style={styles.menuContainer}>
+          {daysOfWeek.map((day) => (
+            <WeekDayPicker
+              key={day}
+              day={day}
+              handleChange={handleChange}
+              recipesName={recipesName}
+              selectedRecipe={weekMenu[day]}
+            />
+          ))}
+        </View>
       </View>
       <TouchableOpacity
-        style={styles.button_container}
+        style={styles.resetButton}
         onPress={confirmResetMenu}
       >
-        <Text style={styles.button_text}>Eliminar Menú</Text>
+        <Text style={styles.resetButtonText}>Eliminar Menú</Text>
       </TouchableOpacity>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: 'white',
-    borderColor: '#999',
-    borderWidth: 2,
-    borderRadius: 10,
-    width: 350,
-    height: 600, // Aumentado la altura del componente
-
-    gap: 10,
-    justifyContent: 'center',
-    alignSelf: 'center'
-  },
-  button_container: {
-    width: 150, // Aumentado el ancho del botón
-    marginTop: 30,
-    alignSelf: 'center',
-    paddingHorizontal: 15, // Aumentado el padding horizontal
-    paddingVertical: 10, // Añadido padding vertical
-    backgroundColor: '#FF6B6B', // Cambiado el color de fondo
-    borderRadius: 10,
-    shadowColor: '#000', // Añadida sombra
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 3.84,
-    elevation: 5 // Añadida elevación para Android
-  },
-  button_text: {
-    color: '#FFF', // Cambiado el color del texto a blanco
-    fontSize: 18, // Aumentado el tamaño de la fuente
-    fontWeight: 'bold',
-    textAlign: 'center'
-  },
   scrollViewContent: {
     flexGrow: 1,
-    justifyContent: 'center',
-    alignItems: 'center'
-  }
+    paddingVertical: 20,
+    backgroundColor: '#FFF5E6', // Color crema suave, como masa de pan
+  },
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    paddingHorizontal: 16,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#8B4513', // Marrón cálido, como canela
+    marginBottom: 20,
+    textShadowColor: 'rgba(0, 0, 0, 0.1)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
+  },
+  menuContainer: {
+    width: '100%',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 15,
+    padding: 16,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    borderWidth: 1,
+    borderColor: '#FFE4B5', // Color melocotón claro
+  },
+  resetButton: {
+    backgroundColor: '#FF6B6B', // Rojo suave, como tomate
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 25,
+    marginTop: 20,
+    alignSelf: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    borderWidth: 1,
+    borderColor: '#FF5252',
+  },
+  resetButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
 });
