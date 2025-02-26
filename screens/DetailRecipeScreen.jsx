@@ -23,23 +23,22 @@ const DetailRecipe = ({ route }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [updatedRecipe, setUpdatedRecipe] = useState({});
   // Generador de ID único
-  const generateUniqueId = () => `id_${Math.random().toString(36).substr(2, 9)}`;
+  const generateUniqueId = () =>
+    `id_${Math.random().toString(36).substr(2, 9)}`;
 
   const getListRecipe = async (id) => {
     const [data] = await getRecipe(id);
     // Asignar IDs únicos a ingredientes y pasos si no los tienen
     const enhancedData = {
       ...data,
-      ingredients: data.ingredients.map(ingredient => 
-        typeof ingredient === 'string' 
-          ? { id: generateUniqueId(), text: ingredient } 
+      ingredients: data.ingredients.map((ingredient) =>
+        typeof ingredient === 'string'
+          ? { id: generateUniqueId(), text: ingredient }
           : ingredient
       ),
-      preparation: data.preparation.map(step => 
-        typeof step === 'string' 
-          ? { id: generateUniqueId(), text: step } 
-          : step
-      )
+      preparation: data.preparation.map((step) =>
+        typeof step === 'string' ? { id: generateUniqueId(), text: step } : step
+      ),
     };
     setRecipe(enhancedData);
     setUpdatedRecipe(enhancedData);
@@ -92,8 +91,8 @@ const DetailRecipe = ({ route }) => {
       ...updatedRecipe,
       time: Number.parseInt(updatedRecipe.time, 10),
       people: Number.parseInt(updatedRecipe.people, 10),
-      ingredients: updatedRecipe.ingredients.map(item => item.text),
-      preparation: updatedRecipe.preparation.map(item => item.text)
+      ingredients: updatedRecipe.ingredients.map((item) => item.text),
+      preparation: updatedRecipe.preparation.map((item) => item.text),
     };
 
     await updateRecipe(id, simplifiedRecipe);
@@ -112,14 +111,14 @@ const DetailRecipe = ({ route }) => {
   };
 
   const handleIngredientChange = (text, ingredientId) => {
-    const newIngredients = updatedRecipe?.ingredients?.map(item => 
+    const newIngredients = updatedRecipe?.ingredients?.map((item) =>
       item.id === ingredientId ? { ...item, text } : item
     );
     setUpdatedRecipe({ ...updatedRecipe, ingredients: newIngredients });
   };
 
   const handlePreparationChange = (text, stepId) => {
-    const newPreparation = updatedRecipe?.preparation?.map(item => 
+    const newPreparation = updatedRecipe?.preparation?.map((item) =>
       item.id === stepId ? { ...item, text } : item
     );
     setUpdatedRecipe({ ...updatedRecipe, preparation: newPreparation });
@@ -134,7 +133,9 @@ const DetailRecipe = ({ route }) => {
   };
 
   const removeInput = (field, itemId) => {
-    const updatedArray = updatedRecipe[field].filter(item => item.id !== itemId);
+    const updatedArray = updatedRecipe[field].filter(
+      (item) => item.id !== itemId
+    );
     setUpdatedRecipe({
       ...updatedRecipe,
       [field]: updatedArray,
@@ -206,9 +207,13 @@ const DetailRecipe = ({ route }) => {
               <TextInput
                 style={[styles.input, styles.inputFlex]}
                 value={ingredient.text}
-                onChangeText={(text) => handleIngredientChange(text, ingredient.id)}
+                onChangeText={(text) =>
+                  handleIngredientChange(text, ingredient.id)
+                }
               />
-              {ingredient.id === updatedRecipe?.ingredients[updatedRecipe.ingredients.length - 1]?.id && (
+              {ingredient.id ===
+                updatedRecipe?.ingredients[updatedRecipe.ingredients.length - 1]
+                  ?.id && (
                 <TouchableOpacity
                   style={styles.iconButton}
                   onPress={() => addInput('ingredients')}
@@ -243,7 +248,9 @@ const DetailRecipe = ({ route }) => {
                 blurOnSubmit
                 onSubmitEditing={() => {}}
               />
-              {step.id === updatedRecipe?.preparation[updatedRecipe.preparation.length - 1]?.id && (
+              {step.id ===
+                updatedRecipe?.preparation[updatedRecipe.preparation.length - 1]
+                  ?.id && (
                 <TouchableOpacity
                   style={styles.iconButton}
                   onPress={() => addInput('preparation')}
@@ -320,7 +327,7 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     backgroundColor: '#FFF5E6',
-    paddingTop: Constants.statusBarHeight,
+    paddingTop: 20,
   },
   imageContainer: {
     position: 'relative',

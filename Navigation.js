@@ -9,13 +9,24 @@ import AddRecipe from './screens/AddRecipeScreen';
 import SplashScreen from './screens/SplashScreen'; // Importa tu SplashScreen aquí
 
 import { FontAwesome, Entypo, Ionicons } from '@expo/vector-icons';
+import { Text, View } from 'react-native';
 
 const Tab = createBottomTabNavigator();
 const MyStack = createNativeStackNavigator();
 
 function HomeStack() {
   return (
-    <MyStack.Navigator>
+    <MyStack.Navigator
+      screenOptions={{
+        headerStyle: {
+          backgroundColor: '#FFF5E6',
+        },
+        headerTintColor: '#663300',
+        headerTitleStyle: {
+          fontWeight: 'bold',
+        },
+      }}
+    >
       <MyStack.Screen
         name='HomeScreenStack'
         component={HomeScreen}
@@ -43,7 +54,17 @@ function HomeStack() {
 
 function RecipesStack() {
   return (
-    <MyStack.Navigator>
+    <MyStack.Navigator
+      screenOptions={{
+        headerStyle: {
+          backgroundColor: '#FFF5E6',
+        },
+        headerTintColor: '#663300',
+        headerTitleStyle: {
+          fontWeight: 'bold',
+        },
+      }}
+    >
       <MyStack.Screen
         name='MyRecipes'
         component={MyRecipes}
@@ -71,19 +92,55 @@ function RecipesStack() {
 
 function MyTabs() {
   return (
-    <Tab.Navigator>
+    <Tab.Navigator
+      screenOptions={{
+        tabBarStyle: {
+          backgroundColor: '#FFF5E6',
+          borderTopColor: '#FFE4B5',
+          height: 60,
+          paddingBottom: 5,
+          paddingTop: 5,
+          elevation: 8, // Sombra para Android
+          shadowOpacity: 0.1, // Sombra para iOS
+          shadowRadius: 4,
+        },
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: '500',
+        },
+        tabBarActiveTintColor: '#A0522D', // Color más suave, marrón siena
+        tabBarInactiveTintColor: '#663300',
+      }}
+    >
       <Tab.Screen
         name='Home'
         component={HomeStack}
         options={{
-          tabBarActiveTintColor: '#116A7B',
-          tabBarLabel: 'Inicio',
-          tabBarIcon: ({ color, size }) => (
-            <FontAwesome
-              name='home'
-              size={24}
-              color={color}
-            />
+          tabBarLabel: ({ focused }) => (
+            <Text style={{ 
+              color: focused ? '#A0522D' : '#663300',
+              fontSize: focused ? 13 : 12,
+              fontWeight: focused ? 'bold' : '500',
+              marginTop: -5
+            }}>
+              Inicio
+            </Text>
+          ),
+          tabBarIcon: ({ color, size, focused }) => (
+            <View style={focused ? {
+              shadowColor: '#A0522D',
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.5, // Reducida la opacidad de la sombra
+              shadowRadius: 2,
+              elevation: 3, // Reducida la elevación
+            } : {}}>
+              <FontAwesome
+                name='home'
+                size={focused ? 30 : 24} // Aún más grande cuando está activo
+                color={color}
+                style={focused ? { marginBottom: -3 } : {}}
+              />
+            </View>
           ),
           headerShown: false
         }}
@@ -92,14 +149,31 @@ function MyTabs() {
         name='MyRecipesScreen'
         component={RecipesStack}
         options={{
-          tabBarActiveTintColor: '#116A7B',
-          tabBarLabel: 'Mis recetas',
-          tabBarIcon: ({ color, size }) => (
-            <Entypo
-              name='bowl'
-              size={24}
-              color={color}
-            />
+          tabBarLabel: ({ focused }) => (
+            <Text style={{ 
+              color: focused ? '#A0522D' : '#663300',
+              fontSize: focused ? 13 : 12,
+              fontWeight: focused ? 'bold' : '500',
+              marginTop: -5
+            }}>
+              Mis recetas
+            </Text>
+          ),
+          tabBarIcon: ({ color, size, focused }) => (
+            <View style={focused ? {
+              shadowColor: '#A0522D',
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.5, // Reducida la opacidad de la sombra
+              shadowRadius: 2,
+              elevation: 3, // Reducida la elevación
+            } : {}}>
+              <Entypo
+                name='bowl'
+                size={focused ? 30 : 24} // Aún más grande cuando está activo
+                color={color}
+                style={focused ? { marginBottom: -3 } : {}}
+              />
+            </View>
           ),
           headerShown: false
         }}
@@ -108,14 +182,31 @@ function MyTabs() {
         name='AddRecipeScreen'
         component={AddRecipe}
         options={{
-          tabBarActiveTintColor: '#116A7B',
-          tabBarLabel: 'Añadir receta',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons
-              name='add-circle'
-              size={24}
-              color={color}
-            />
+          tabBarLabel: ({ focused }) => (
+            <Text style={{ 
+              color: focused ? '#A0522D' : '#663300',
+              fontSize: focused ? 13 : 12,
+              fontWeight: focused ? 'bold' : '500',
+              marginTop: -5
+            }}>
+              Añadir receta
+            </Text>
+          ),
+          tabBarIcon: ({ color, size, focused }) => (
+            <View style={focused ? {
+              shadowColor: '#A0522D',
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.5, // Reducida la opacidad de la sombra
+              shadowRadius: 2,
+              elevation: 3, // Reducida la elevación
+            } : {}}>
+              <Ionicons
+                name='add-circle'
+                size={focused ? 30 : 24} // Aún más grande cuando está activo
+                color={color}
+                style={focused ? { marginBottom: -3 } : {}}
+              />
+            </View>
           ),
           headerShown: false
         }}

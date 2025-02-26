@@ -103,7 +103,8 @@ const MyRecipes = ({ navigation }) => {
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
-            colors={['#8B4513']}
+            colors={['#A0522D']}
+            tintColor={'#A0522D'}
             onRefresh={onRefresh}
           />
         }

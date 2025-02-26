@@ -12,6 +12,7 @@ import { getRecipes } from '../data/api';
 import {
   actualizarRecetaDelDia,
   obtenerMenuSemanal,
+  obtenerMenuSemanalSinInicializar
 } from '../utils/menuSemanal';
 import WeekDayPicker from './WeekDayPicker';
 
@@ -46,7 +47,8 @@ export function GenerateMenu() {
 
   const loadMenuFromSupabase = useCallback(async () => {
     try {
-      const { data: menu, error } = await obtenerMenuSemanal();
+      // Usamos la nueva función que solo obtiene datos sin inicializar
+      const { data: menu, error } = await obtenerMenuSemanalSinInicializar();
       if (error) throw error;
 
       const menuObject = {};
@@ -82,7 +84,10 @@ export function GenerateMenu() {
 
         console.log(`Actualizando ${day} con valor: "${value}"`);
 
-        // Actualizar el estado local primero
+        // Guardar el valor anterior para poder revertir en caso de error
+        const previousValue = weekMenu[day];
+
+        // Actualizar el estado local primero para una experiencia de usuario más fluida
         setweekMenu((prev) => ({
           ...prev,
           [day]: value,
@@ -97,10 +102,12 @@ export function GenerateMenu() {
           // Revertir al valor anterior en caso de error
           setweekMenu((prev) => ({
             ...prev,
-            [day]: prev[day],
+            [day]: previousValue,
           }));
           throw error;
         }
+        
+        console.log(`${day} actualizado exitosamente.`);
       } catch (error) {
         handleError(error, 'No se pudo actualizar el menú');
       }
@@ -110,16 +117,36 @@ export function GenerateMenu() {
 
   const resetMenu = useCallback(async () => {
     try {
-      const promises = daysOfWeek.map((day) =>
-        actualizarRecetaDelDia(day, ' ')
-      );
-      await Promise.all(promises);
+      const diasSemana = [
+        'lunes',
+        'martes',
+        'miercoles',
+        'jueves',
+        'viernes',
+        'sabado',
+        'domingo',
+      ];
+      
+      console.log('Iniciando reseteo del menú semanal...');
+      
+      // Realizamos las actualizaciones una por una para mayor seguridad
+      for (const dia of diasSemana) {
+        console.log(`Reseteando ${dia}...`);
+        const { error } = await actualizarRecetaDelDia(dia, ' ');
+        if (error) {
+          console.error(`Error al resetear ${dia}:`, error);
+          throw error;
+        }
+      }
 
+      // Actualizamos el estado local después de que todas las operaciones de DB sean exitosas
       const updatedWeekMenu = {};
-      for (const day of daysOfWeek) {
-        updatedWeekMenu[day] = '';
+      for (const dia of diasSemana) {
+        updatedWeekMenu[dia] = '';
       }
       setweekMenu(updatedWeekMenu);
+      
+      console.log('Menú semanal reseteado exitosamente.');
       Alert.alert('Menú borrado', 'El menú semanal ha sido reiniciado.');
     } catch (error) {
       handleError(error, 'No se pudo reiniciar el menú');
@@ -146,6 +173,7 @@ export function GenerateMenu() {
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
+    // Usamos la función sin inicializar para el refresco también
     Promise.all([getListRecipesName(), loadMenuFromSupabase()]).finally(() => {
       setRefreshing(false);
     });
@@ -165,7 +193,12 @@ export function GenerateMenu() {
     <ScrollView
       contentContainerStyle={styles.scrollViewContent}
       refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        <RefreshControl 
+          refreshing={refreshing} 
+          onRefresh={onRefresh} 
+          colors={['#A0522D']} 
+          tintColor={'#A0522D'}
+        />
       }
     >
       <View style={styles.container}>
