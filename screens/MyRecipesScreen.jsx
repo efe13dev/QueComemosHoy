@@ -1,18 +1,19 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import { Ionicons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import Constants from 'expo-constants';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
   FlatList,
   RefreshControl,
-  useWindowDimensions,
+  StyleSheet,
+  Text,
   TextInput,
-  TouchableOpacity // Añade esta importación
+  TouchableOpacity,
+  View,
+  useWindowDimensions,
 } from 'react-native';
-import Constants from 'expo-constants';
 import { RecipeCard } from '../components/RecipeCard';
 import { getRecipes } from '../data/api';
-import { Ionicons } from '@expo/vector-icons'; // Añade esta importación
 
 const MyRecipes = ({ navigation }) => {
   const [recipes, setRecipes] = useState([]);
@@ -23,11 +24,11 @@ const MyRecipes = ({ navigation }) => {
 
   const numColumns = 2; // Definimos esto como una constante
 
-  const getListRecipes = async () => {
+  const getListRecipes = useCallback(async () => {
     const data = await getRecipes();
     const sortedData = data.sort((a, b) => a.name.localeCompare(b.name));
     setRecipes(sortedData);
-  };
+  }, []);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -35,7 +36,7 @@ const MyRecipes = ({ navigation }) => {
     });
 
     return unsubscribe;
-  }, [navigation]);
+  }, [navigation, getListRecipes]);
 
   useEffect(() => {
     const filtered = recipes.filter((recipe) =>
@@ -44,11 +45,11 @@ const MyRecipes = ({ navigation }) => {
     setFilteredRecipes(filtered);
   }, [searchText, recipes]);
 
-  const onRefresh = React.useCallback(async () => {
+  const onRefresh = useCallback(async () => {
     setRefreshing(true);
     await getListRecipes();
     setRefreshing(false);
-  }, []);
+  }, [getListRecipes]);
 
   const renderItem = ({ item }) => (
     <View style={styles.recipeCardContainer}>
@@ -65,11 +66,19 @@ const MyRecipes = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+      <View style={styles.iconContainer}>
+        <MaterialCommunityIcons
+          name="silverware-fork-knife"
+          size={50}
+          color="#8B4513"
+          style={styles.recipeIcon}
+        />
+      </View>
       <Text style={styles.text_title}>Mis recetas</Text>
       <View style={styles.searchContainer}>
         <TextInput
           style={styles.searchInput}
-          placeholder='Buscar receta...'
+          placeholder="Buscar receta..."
           value={searchText}
           onChangeText={setSearchText}
         />
@@ -79,11 +88,7 @@ const MyRecipes = ({ navigation }) => {
             onPress={clearSearchText}
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           >
-            <Ionicons
-              name='close-circle'
-              size={24}
-              color='gray'
-            />
+            <Ionicons name="close-circle" size={24} color="#8B4513" />
           </TouchableOpacity>
         )}
       </View>
@@ -98,7 +103,7 @@ const MyRecipes = ({ navigation }) => {
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
-            colors={['#9AD0C2']}
+            colors={['#8B4513']}
             onRefresh={onRefresh}
           />
         }
@@ -110,48 +115,68 @@ const MyRecipes = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: Constants.statusBarHeight
+    backgroundColor: '#FFF5E6',
+  },
+  iconContainer: {
+    alignItems: 'center',
+    paddingTop: Constants.statusBarHeight,
+    paddingBottom: 10,
   },
   text_title: {
-    textShadowColor: 'blue',
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 1,
-    color: '#7AA2E3',
+    color: '#663300',
     textAlign: 'center',
     fontWeight: 'bold',
-    fontSize: 40,
-    marginVertical: 20
+    fontSize: 24,
+    marginBottom: 15,
+    shadowColor: '#8B4513',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
   listContent: {
-    paddingHorizontal: 0
+    paddingHorizontal: 15,
+    paddingBottom: 15,
   },
   recipeCardContainer: {
     flex: 1,
     margin: 5,
-    width: '100%' // Hacemos las tarjetas un poco más anchas
+    width: '100%',
   },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginHorizontal: 10,
-    marginBottom: 10,
-    position: 'relative'
+    marginHorizontal: 15,
+    marginBottom: 15,
+    position: 'relative',
   },
   searchInput: {
     flex: 1,
     height: 40,
-    borderColor: 'gray',
+    borderColor: '#8B4513',
     borderWidth: 1,
     borderRadius: 5,
     paddingHorizontal: 10,
-    paddingRight: 40 // Añade espacio para el botón
+    paddingRight: 40,
+    backgroundColor: '#FFFFFF',
   },
   clearButton: {
     position: 'absolute',
     right: 8,
     top: '50%',
-    transform: [{ translateY: -12 }] // Mitad del tamaño del icono
-  }
+    transform: [{ translateY: -12 }],
+  },
+  recipeIcon: {
+    shadowColor: '#8B4513',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
 });
 
 export default MyRecipes;

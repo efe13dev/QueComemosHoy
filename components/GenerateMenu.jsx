@@ -71,39 +71,42 @@ export function GenerateMenu() {
     }
   }, [isLoading, getListRecipesName, loadMenuFromSupabase]);
 
-  const handleChange = useCallback(async (day, value) => {
-    try {
-      // Evitar actualizaciones si el valor es el mismo
-      if (weekMenu[day] === value) {
-        console.log(`Valor para ${day} sin cambios, no se actualiza`);
-        return;
-      }
+  const handleChange = useCallback(
+    async (day, value) => {
+      try {
+        // Evitar actualizaciones si el valor es el mismo
+        if (weekMenu[day] === value) {
+          console.log(`Valor para ${day} sin cambios, no se actualiza`);
+          return;
+        }
 
-      console.log(`Actualizando ${day} con valor: "${value}"`);
-      
-      // Actualizar el estado local primero
-      setweekMenu((prev) => ({
-        ...prev,
-        [day]: value,
-      }));
+        console.log(`Actualizando ${day} con valor: "${value}"`);
 
-      // Asegurarse de que value no sea null o undefined antes de enviarlo
-      const valueToSend = value || '';
-      const { error } = await actualizarRecetaDelDia(day, valueToSend);
-      
-      if (error) {
-        console.error(`Error al actualizar ${day}:`, error);
-        // Revertir al valor anterior en caso de error
+        // Actualizar el estado local primero
         setweekMenu((prev) => ({
           ...prev,
-          [day]: prev[day],
+          [day]: value,
         }));
-        throw error;
+
+        // Asegurarse de que value no sea null o undefined antes de enviarlo
+        const valueToSend = value || '';
+        const { error } = await actualizarRecetaDelDia(day, valueToSend);
+
+        if (error) {
+          console.error(`Error al actualizar ${day}:`, error);
+          // Revertir al valor anterior en caso de error
+          setweekMenu((prev) => ({
+            ...prev,
+            [day]: prev[day],
+          }));
+          throw error;
+        }
+      } catch (error) {
+        handleError(error, 'No se pudo actualizar el menú');
       }
-    } catch (error) {
-      handleError(error, 'No se pudo actualizar el menú');
-    }
-  }, [weekMenu]); // Añadir weekMenu como dependencia para comparar valores
+    },
+    [weekMenu]
+  ); // Añadir weekMenu como dependencia para comparar valores
 
   const resetMenu = useCallback(async () => {
     try {
@@ -225,7 +228,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFE4B5',
     paddingVertical: 10,
     paddingHorizontal: 20,
-    borderRadius: 25,
+    borderRadius: 15,
     marginTop: 30,
     alignSelf: 'center',
     shadowColor: '#000',
@@ -237,7 +240,7 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
     borderWidth: 1,
-    borderColor: '#FF5252',
+    borderColor: '#c63636',
   },
   resetButtonText: {
     color: '#663300',

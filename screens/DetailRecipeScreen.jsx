@@ -1,17 +1,17 @@
-import { useState, useEffect } from 'react';
+import { useNavigation } from '@react-navigation/native';
+import { useEffect, useState } from 'react';
 import {
-  Text,
-  StyleSheet,
-  View,
+  Alert,
   Image,
   ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
   TouchableOpacity,
-  Alert,
-  TextInput
+  View,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { getRecipe, deleteRecipe, updateRecipe } from '../data/api';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { deleteRecipe, getRecipe, updateRecipe } from '../data/api';
 
 const DetailRecipe = ({ route }) => {
   const { id } = route.params;
@@ -37,12 +37,12 @@ const DetailRecipe = ({ route }) => {
       [
         {
           text: 'Cancelar',
-          style: 'cancel'
+          style: 'cancel',
         },
         {
           text: 'Aceptar',
-          onPress: handleDelete
-        }
+          onPress: handleDelete,
+        },
       ],
       { cancelable: false }
     );
@@ -56,8 +56,8 @@ const DetailRecipe = ({ route }) => {
       [
         {
           text: 'Aceptar',
-          onPress: navigation.navigate('MyRecipes')
-        }
+          onPress: navigation.navigate('MyRecipes'),
+        },
       ],
       { cancelable: false }
     );
@@ -70,8 +70,8 @@ const DetailRecipe = ({ route }) => {
   const handleSave = async () => {
     const updatedRecipeWithNumberTime = {
       ...updatedRecipe,
-      time: parseInt(updatedRecipe.time, 10),
-      people: parseInt(updatedRecipe.people, 10)
+      time: Number.parseInt(updatedRecipe.time, 10),
+      people: Number.parseInt(updatedRecipe.people, 10),
     };
 
     await updateRecipe(id, updatedRecipeWithNumberTime);
@@ -82,8 +82,8 @@ const DetailRecipe = ({ route }) => {
       [
         {
           text: 'Aceptar',
-          onPress: () => getListRecipe(id)
-        }
+          onPress: () => getListRecipe(id),
+        },
       ],
       { cancelable: false }
     );
@@ -104,7 +104,7 @@ const DetailRecipe = ({ route }) => {
   const addInput = (field) => {
     setUpdatedRecipe({
       ...updatedRecipe,
-      [field]: [...updatedRecipe[field], '']
+      [field]: [...updatedRecipe[field], ''],
     });
   };
 
@@ -113,7 +113,7 @@ const DetailRecipe = ({ route }) => {
     updatedArray.splice(index, 1);
     setUpdatedRecipe({
       ...updatedRecipe,
-      [field]: updatedArray
+      [field]: updatedArray,
     });
   };
 
@@ -123,20 +123,14 @@ const DetailRecipe = ({ route }) => {
         <ScrollView>
           <View style={styles.container}>
             <View style={styles.imageContainer}>
-              <Image
-                source={{ uri: recipe.image }}
-                style={styles.image}
-              />
+              <Image source={{ uri: recipe.image }} style={styles.image} />
               <TouchableOpacity
                 style={styles.updateButton}
                 onPress={handleUpdate}
               >
                 <Text style={styles.buttonText}>Actualizar</Text>
               </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.button}
-                onPress={showAlert}
-              >
+              <TouchableOpacity style={styles.button} onPress={showAlert}>
                 <Text style={styles.buttonText}>Eliminar</Text>
               </TouchableOpacity>
             </View>
@@ -159,7 +153,7 @@ const DetailRecipe = ({ route }) => {
                   onChangeText={(text) =>
                     setUpdatedRecipe({ ...updatedRecipe, time: text })
                   }
-                  keyboardType='numeric' // Asegúrate de que el teclado sea numérico
+                  keyboardType="numeric" // Asegúrate de que el teclado sea numérico
                 />
                 <Text style={styles.label}>Imagen (URL)</Text>
                 <TextInput
@@ -176,14 +170,11 @@ const DetailRecipe = ({ route }) => {
                   onChangeText={(text) =>
                     setUpdatedRecipe({ ...updatedRecipe, people: text })
                   }
-                  keyboardType='numeric' // Asegúrate de que el teclado sea numérico
+                  keyboardType="numeric" // Asegúrate de que el teclado sea numérico
                 />
                 <Text style={styles.label}>Ingredientes</Text>
                 {updatedRecipe.ingredients.map((ingredient, index) => (
-                  <View
-                    key={`ingredient-${index}`}
-                    style={styles.inputRow}
-                  >
+                  <View key={`ingredient-${index}`} style={styles.inputRow}>
                     <TextInput
                       style={[styles.input, styles.inputFlex]}
                       value={ingredient}
@@ -196,11 +187,7 @@ const DetailRecipe = ({ route }) => {
                         style={styles.iconButton}
                         onPress={() => addInput('ingredients')}
                       >
-                        <Icon
-                          name='add-circle'
-                          size={30}
-                          color='#28a745'
-                        />
+                        <Icon name="add-circle" size={30} color="#28a745" />
                       </TouchableOpacity>
                     )}
                     {updatedRecipe.ingredients.length > 1 && (
@@ -208,26 +195,19 @@ const DetailRecipe = ({ route }) => {
                         style={styles.iconButton}
                         onPress={() => removeInput('ingredients', index)}
                       >
-                        <Icon
-                          name='remove-circle'
-                          size={30}
-                          color='#dc3545'
-                        />
+                        <Icon name="remove-circle" size={30} color="#dc3545" />
                       </TouchableOpacity>
                     )}
                   </View>
                 ))}
                 <Text style={styles.label}>Preparación</Text>
                 {updatedRecipe.preparation.map((step, index) => (
-                  <View
-                    key={`preparation-${index}`}
-                    style={styles.inputRow}
-                  >
+                  <View key={`preparation-${index}`} style={styles.inputRow}>
                     <TextInput
                       style={[
                         styles.input,
                         styles.inputFlex,
-                        styles.preparationInput
+                        styles.preparationInput,
                       ]}
                       value={step}
                       onChangeText={(text) =>
@@ -235,7 +215,7 @@ const DetailRecipe = ({ route }) => {
                       }
                       multiline
                       numberOfLines={1}
-                      textAlignVertical='center'
+                      textAlignVertical="center"
                       blurOnSubmit
                       onSubmitEditing={() => {}}
                     />
@@ -244,11 +224,7 @@ const DetailRecipe = ({ route }) => {
                         style={styles.iconButton}
                         onPress={() => addInput('preparation')}
                       >
-                        <Icon
-                          name='add-circle'
-                          size={30}
-                          color='#28a745'
-                        />
+                        <Icon name="add-circle" size={30} color="#28a745" />
                       </TouchableOpacity>
                     )}
                     {updatedRecipe.preparation.length > 1 && (
@@ -256,11 +232,7 @@ const DetailRecipe = ({ route }) => {
                         style={styles.iconButton}
                         onPress={() => removeInput('preparation', index)}
                       >
-                        <Icon
-                          name='remove-circle'
-                          size={30}
-                          color='#dc3545'
-                        />
+                        <Icon name="remove-circle" size={30} color="#dc3545" />
                       </TouchableOpacity>
                     )}
                   </View>
@@ -326,7 +298,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 20,
     flexGrow: 1,
-    backgroundColor: '#f9f9f9'
+    backgroundColor: '#f9f9f9',
   },
   imageContainer: {
     position: 'relative',
@@ -334,12 +306,12 @@ const styles = StyleSheet.create({
     height: 300,
     overflow: 'hidden',
     borderRadius: 20,
-    marginBottom: 20
+    marginBottom: 20,
   },
   image: {
     width: '100%',
     height: '100%',
-    resizeMode: 'cover'
+    resizeMode: 'cover',
   },
   button: {
     position: 'absolute',
@@ -348,23 +320,23 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(128, 0, 0, 0.8)',
     paddingVertical: 10,
     paddingHorizontal: 20,
-    borderRadius: 25
+    borderRadius: 25,
   },
   title: {
     color: '#192655',
     fontSize: 32,
     fontWeight: 'bold',
     marginBottom: 10,
-    textAlign: 'center'
+    textAlign: 'center',
   },
   textTime: {
     color: '#4a4a4a',
     fontSize: 18,
-    marginBottom: 20
+    marginBottom: 20,
   },
   spanTime: {
     color: '#ff6b35',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   titleIngredientsInstructions: {
     color: '#2D9596',
@@ -374,11 +346,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     marginTop: 20,
     borderBottomWidth: 2,
-    borderBottomColor: '#e0e0e0'
+    borderBottomColor: '#e0e0e0',
   },
   containerIngredientsInstructions: {
     paddingHorizontal: 20,
-    paddingVertical: 10
+    paddingVertical: 10,
   },
   listIngredientsInstructionsPar: {
     color: '#3876BF',
@@ -387,7 +359,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     backgroundColor: '#f0f8ff',
     borderRadius: 10,
-    marginBottom: 10
+    marginBottom: 10,
   },
   listIngredientsInstructionsOdd: {
     color: '#2D3250',
@@ -396,7 +368,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     backgroundColor: '#f5f5f5',
     borderRadius: 10,
-    marginBottom: 10
+    marginBottom: 10,
   },
   updateButton: {
     position: 'absolute',
@@ -405,7 +377,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 128, 0, 0.8)',
     paddingVertical: 10,
     paddingHorizontal: 20,
-    borderRadius: 25
+    borderRadius: 25,
   },
   input: {
     height: 50,
@@ -421,7 +393,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.2,
     shadowRadius: 2,
-    elevation: 3
+    elevation: 3,
   },
   saveButton: {
     backgroundColor: '#28a745',
@@ -434,7 +406,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-    elevation: 5
+    elevation: 5,
   },
   label: {
     fontSize: 18,
@@ -442,35 +414,35 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     marginTop: 15,
     width: '90%',
-    color: '#333'
+    color: '#333',
   },
   inputRow: {
     flexDirection: 'row',
     alignItems: 'center',
     width: '90%',
-    marginBottom: 15
+    marginBottom: 15,
   },
   inputFlex: {
     flex: 1,
-    marginRight: 5 // Reducido de 10 a 5
+    marginRight: 5, // Reducido de 10 a 5
   },
   iconButton: {
     padding: 5, // Reducido de 10 a 5
     alignItems: 'center',
     justifyContent: 'center',
-    marginLeft: 5 // Reducido de 10 a 5
+    marginLeft: 5, // Reducido de 10 a 5
   },
   buttonText: {
     color: 'white',
     fontSize: 18,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   categoryText: {
     fontSize: 16,
     marginBottom: 10,
     width: '90%',
     color: '#666',
-    fontStyle: 'italic'
+    fontStyle: 'italic',
   },
   preparationInput: {
     height: 'auto',
@@ -478,6 +450,6 @@ const styles = StyleSheet.create({
     textAlignVertical: 'center',
     justifyContent: 'center',
     paddingTop: 10,
-    paddingBottom: 10
-  }
+    paddingBottom: 10,
+  },
 });
