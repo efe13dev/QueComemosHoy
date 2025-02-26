@@ -5,13 +5,16 @@ import {
   TextInput,
   TouchableOpacity,
   Alert,
-  ScrollView
+  ScrollView,
+  Modal,
+  Pressable
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
 import RNPickerSelect from 'react-native-picker-select';
 import { saveRecipe } from '../data/api';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { Ionicons } from '@expo/vector-icons';
 
 const AddFormRecipe = () => {
   const navigation = useNavigation();
@@ -24,6 +27,7 @@ const AddFormRecipe = () => {
     ingredients: [{ id: `${'ing-'}${Date.now()}`, text: '' }],
     preparation: [{ id: `${'prep-'}${Date.now()}`, text: '' }]
   });
+  const [successModalVisible, setSuccessModalVisible] = useState(false);
 
   const handleChange = (name, value, index) => {
     if (name === 'ingredients' || name === 'preparation') {
@@ -76,8 +80,7 @@ const AddFormRecipe = () => {
 
     saveRecipe(recipeToSave)
       .then(() => {
-        Alert.alert('Éxito', 'Receta guardada correctamente');
-        resetForm(); // Resetear el formulario después de guardar exitosamente
+        setSuccessModalVisible(true);
       })
       .catch((error) => {
         Alert.alert('Error', 'No se pudo guardar la receta');
@@ -85,8 +88,39 @@ const AddFormRecipe = () => {
       });
   };
 
+  const handleSuccessConfirm = () => {
+    setSuccessModalVisible(false);
+    resetForm(); // Resetear el formulario después de guardar exitosamente
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.form_container}>
+      {/* Modal de confirmación de adición exitosa */}
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={successModalVisible}
+        onRequestClose={handleSuccessConfirm}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <View style={styles.iconContainer}>
+              <Ionicons name="checkmark-circle-outline" size={40} color="#28A745" />
+            </View>
+            <Text style={styles.modalTitle}>¡Receta añadida!</Text>
+            <Text style={styles.modalText}>
+              La receta se ha guardado correctamente
+            </Text>
+            <Pressable
+              style={[styles.modalButton, styles.buttonSuccess]}
+              onPress={handleSuccessConfirm}
+            >
+              <Text style={styles.buttonSuccessText}>Aceptar</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
+
       <TextInput
         style={styles.input}
         placeholder="Nombre de la receta"
@@ -327,7 +361,66 @@ const styles = StyleSheet.create({
     color: '#663300',
     alignSelf: 'flex-start',
     marginLeft: 5
-  }
+  },
+
+  // Estilos para el modal personalizado
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalView: {
+    width: '80%',
+    backgroundColor: '#FFF5E6',
+    borderRadius: 20,
+    padding: 25,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    borderWidth: 1,
+    borderColor: '#FFE4B5',
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 15,
+    color: '#663300',
+    textAlign: 'center',
+  },
+  iconContainer: {
+    marginBottom: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  modalText: {
+    marginBottom: 20,
+    textAlign: 'center',
+    fontSize: 16,
+    color: '#663300',
+    lineHeight: 22,
+  },
+  modalButton: {
+    borderRadius: 10,
+    padding: 12,
+    elevation: 2,
+    minWidth: '80%',
+    alignItems: 'center',
+  },
+  buttonSuccess: {
+    backgroundColor: '#A0522D',
+  },
+  buttonSuccessText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
 });
 
 export default AddFormRecipe;

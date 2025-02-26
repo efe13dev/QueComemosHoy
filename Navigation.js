@@ -221,7 +221,7 @@ export default function Navigation() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setSplashScreenVisible(false);
-    }, 2000);
+    }, 2500); // Reducimos el tiempo de 3500ms a 2500ms para que el splash screen se muestre menos tiempo
 
     return () => clearTimeout(timer);
   }, []);

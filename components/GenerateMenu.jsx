@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import {
-  Alert,
   RefreshControl,
   ScrollView,
   StyleSheet,
@@ -15,11 +14,11 @@ import {
   obtenerMenuSemanalSinInicializar
 } from '../utils/menuSemanal';
 import WeekDayPicker from './WeekDayPicker';
+import CustomModal from './CustomModal';
 
 const handleError = (error, message) => {
   // eslint-disable-next-line no-console
   console.error(error);
-  Alert.alert('Error', message);
 };
 
 export function GenerateMenu() {
@@ -27,6 +26,18 @@ export function GenerateMenu() {
   const [weekMenu, setweekMenu] = useState({});
   const [refreshing, setRefreshing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [resetModalVisible, setResetModalVisible] = useState(false);
+  const [successModalVisible, setSuccessModalVisible] = useState(false);
+  const [errorModalVisible, setErrorModalVisible] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [isResetting, setIsResetting] = useState(false);
+
+  const handleError = useCallback((error, message) => {
+    // eslint-disable-next-line no-console
+    console.error(error);
+    setErrorMessage(message);
+    setErrorModalVisible(true);
+  }, []);
 
   const getListRecipesName = useCallback(async () => {
     try {
@@ -117,6 +128,8 @@ export function GenerateMenu() {
 
   const resetMenu = useCallback(async () => {
     try {
+      setIsResetting(true);
+      
       const diasSemana = [
         'lunes',
         'martes',
@@ -147,29 +160,28 @@ export function GenerateMenu() {
       setweekMenu(updatedWeekMenu);
       
       console.log('Menú semanal reseteado exitosamente.');
-      Alert.alert('Menú borrado', 'El menú semanal ha sido reiniciado.');
+      // Cerramos el modal de confirmación
+      setResetModalVisible(false);
+      // Pequeña pausa antes de mostrar el modal de éxito
+      setTimeout(() => {
+        // Mostramos el modal de éxito
+        setSuccessModalVisible(true);
+      }, 300);
     } catch (error) {
       handleError(error, 'No se pudo reiniciar el menú');
+    } finally {
+      setIsResetting(false);
     }
   }, []); // No tiene dependencias porque solo usa constantes y setState
 
   const confirmResetMenu = useCallback(() => {
-    Alert.alert(
-      'Confirmación',
-      '¿Estás seguro de que deseas eliminar el menú?',
-      [
-        {
-          text: 'Cancelar',
-          style: 'cancel',
-        },
-        {
-          text: 'Eliminar',
-          onPress: resetMenu,
-        },
-      ],
-      { cancelable: false }
-    );
-  }, [resetMenu]); // Depende de resetMenu porque lo usa como callback
+    // Mostramos el modal de confirmación en lugar del Alert
+    setResetModalVisible(true);
+  }, []); // Ya no depende de resetMenu porque no lo llama directamente
+
+  const handleConfirmReset = useCallback(() => {
+    resetMenu();
+  }, [resetMenu]);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -214,10 +226,62 @@ export function GenerateMenu() {
             />
           ))}
         </View>
-        <TouchableOpacity style={styles.resetButton} onPress={confirmResetMenu}>
-          <Text style={styles.resetButtonText}>Eliminar Menú</Text>
+        <TouchableOpacity 
+          style={[styles.resetButton, isResetting && styles.resetButtonDisabled]} 
+          onPress={confirmResetMenu}
+          disabled={isResetting}
+        >
+          <Text style={styles.resetButtonText}>
+            {isResetting ? 'Eliminando...' : 'Eliminar Menú'}
+          </Text>
         </TouchableOpacity>
       </View>
+
+      {/* Modal de confirmación para resetear el menú */}
+      <CustomModal
+        visible={resetModalVisible}
+        onClose={() => setResetModalVisible(false)}
+        title="Confirmación"
+        message="¿Estás seguro de que deseas eliminar el menú semanal?"
+        icon="alert-circle"
+        iconColor="#c63636"
+        buttons={[
+          {
+            text: "Cancelar",
+            onPress: () => setResetModalVisible(false),
+            style: "cancel",
+            disabled: isResetting
+          },
+          {
+            text: "Eliminar",
+            loadingText: "Eliminando...",
+            loading: isResetting,
+            onPress: () => {
+              handleConfirmReset();
+            }
+          }
+        ]}
+      />
+
+      {/* Modal de éxito después de resetear el menú */}
+      <CustomModal
+        visible={successModalVisible}
+        onClose={() => setSuccessModalVisible(false)}
+        title="Menú Eliminado"
+        message="El menú semanal ha sido reiniciado exitosamente."
+        icon="checkmark-circle"
+        iconColor="#8B4513"
+      />
+
+      {/* Modal de error */}
+      <CustomModal
+        visible={errorModalVisible}
+        onClose={() => setErrorModalVisible(false)}
+        title="Error"
+        message={errorMessage}
+        icon="alert-circle"
+        iconColor="#c63636"
+      />
     </ScrollView>
   );
 }
@@ -259,21 +323,22 @@ const styles = StyleSheet.create({
   },
   resetButton: {
     backgroundColor: '#FFE4B5',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
     borderRadius: 15,
-    marginTop: 30,
-    alignSelf: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    padding: 12,
+    marginTop: 20,
+    alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#c63636',
+    borderColor: '#8B4513',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 1,
+    elevation: 2,
+  },
+  resetButtonDisabled: {
+    backgroundColor: '#F5DEB3',
+    borderColor: '#D2B48C',
+    opacity: 0.7,
   },
   resetButtonText: {
     color: '#663300',

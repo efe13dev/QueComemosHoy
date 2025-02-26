@@ -5,6 +5,8 @@ import { useEffect, useState } from 'react';
 import {
   Alert,
   Image,
+  Modal,
+  Pressable,
   ScrollView,
   StatusBar,
   StyleSheet,
@@ -14,6 +16,7 @@ import {
   View,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { Ionicons } from '@expo/vector-icons';
 import { deleteRecipe, getRecipe, updateRecipe } from '../data/api';
 
 const DetailRecipe = ({ route }) => {
@@ -22,6 +25,11 @@ const DetailRecipe = ({ route }) => {
   const [recipe, setRecipe] = useState();
   const [isEditing, setIsEditing] = useState(false);
   const [updatedRecipe, setUpdatedRecipe] = useState({});
+  const [inputHeights, setInputHeights] = useState({});
+  const [modalVisible, setModalVisible] = useState(false);
+  const [successModalVisible, setSuccessModalVisible] = useState(false);
+  const [updateModalVisible, setUpdateModalVisible] = useState(false);
+
   // Generador de ID único
   const generateUniqueId = () =>
     `id_${Math.random().toString(36).substr(2, 9)}`;
@@ -49,36 +57,18 @@ const DetailRecipe = ({ route }) => {
   }, []);
 
   const showAlert = () => {
-    Alert.alert(
-      'Eliminar receta',
-      '¿Estás seguro de que quieres eliminar esta receta?',
-      [
-        {
-          text: 'Cancelar',
-          style: 'cancel',
-        },
-        {
-          text: 'Aceptar',
-          onPress: handleDelete,
-        },
-      ],
-      { cancelable: false }
-    );
+    setModalVisible(true);
   };
 
   const handleDelete = async () => {
+    setModalVisible(false);
     await deleteRecipe(id);
-    Alert.alert(
-      'Receta eliminada',
-      'La receta se eliminó correctamente',
-      [
-        {
-          text: 'Aceptar',
-          onPress: navigation.navigate('MyRecipes'),
-        },
-      ],
-      { cancelable: false }
-    );
+    setSuccessModalVisible(true);
+  };
+
+  const handleSuccessConfirm = () => {
+    setSuccessModalVisible(false);
+    navigation.navigate('MyRecipes');
   };
 
   const handleUpdate = () => {
@@ -97,17 +87,12 @@ const DetailRecipe = ({ route }) => {
 
     await updateRecipe(id, simplifiedRecipe);
     setIsEditing(false);
-    Alert.alert(
-      'Receta actualizada',
-      'La receta se actualizó correctamente',
-      [
-        {
-          text: 'Aceptar',
-          onPress: () => getListRecipe(id),
-        },
-      ],
-      { cancelable: false }
-    );
+    setUpdateModalVisible(true);
+  };
+
+  const handleUpdateConfirm = () => {
+    setUpdateModalVisible(false);
+    getListRecipe(id);
   };
 
   const handleIngredientChange = (text, ingredientId) => {
@@ -142,6 +127,14 @@ const DetailRecipe = ({ route }) => {
     });
   };
 
+  // Función para manejar el cambio de altura del input
+  const handleContentSizeChange = (id, height) => {
+    setInputHeights(prev => ({
+      ...prev,
+      [id]: height
+    }));
+  };
+
   return (
     <ScrollView
       contentContainerStyle={styles.container}
@@ -152,6 +145,91 @@ const DetailRecipe = ({ route }) => {
         backgroundColor="transparent"
         translucent
       />
+      {/* Modal de confirmación personalizado */}
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <View style={styles.iconContainer}>
+              <Ionicons name="warning-outline" size={40} color="#FF6B6B" />
+            </View>
+            <Text style={styles.modalTitle}>Eliminar receta</Text>
+            <Text style={styles.modalText}>
+              ¿Estás seguro de que quieres eliminar esta receta?
+            </Text>
+            <View style={styles.modalButtons}>
+              <Pressable
+                style={[styles.modalButton, styles.buttonCancel]}
+                onPress={() => setModalVisible(false)}
+              >
+                <Text style={styles.buttonCancelText}>Cancelar</Text>
+              </Pressable>
+              <Pressable
+                style={[styles.modalButton, styles.buttonDelete]}
+                onPress={handleDelete}
+              >
+                <Text style={styles.buttonDeleteText}>Eliminar</Text>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Modal de confirmación de eliminación exitosa */}
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={successModalVisible}
+        onRequestClose={handleSuccessConfirm}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <View style={styles.iconContainer}>
+              <Ionicons name="checkmark-circle-outline" size={40} color="#28A745" />
+            </View>
+            <Text style={styles.modalTitle}>Receta eliminada</Text>
+            <Text style={styles.modalText}>
+              La receta se eliminó correctamente
+            </Text>
+            <Pressable
+              style={[styles.modalButton, styles.buttonSuccess]}
+              onPress={handleSuccessConfirm}
+            >
+              <Text style={styles.buttonSuccessText}>Aceptar</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Modal de confirmación de actualización exitosa */}
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={updateModalVisible}
+        onRequestClose={handleUpdateConfirm}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <View style={styles.iconContainer}>
+              <Ionicons name="checkmark-circle-outline" size={40} color="#28A745" />
+            </View>
+            <Text style={styles.modalTitle}>Receta actualizada</Text>
+            <Text style={styles.modalText}>
+              La receta se actualizó correctamente
+            </Text>
+            <Pressable
+              style={[styles.modalButton, styles.buttonUpdate]}
+              onPress={handleUpdateConfirm}
+            >
+              <Text style={styles.buttonUpdateText}>Aceptar</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
       {recipe && (
         <View style={styles.imageContainer}>
           <Image source={{ uri: recipe.image }} style={styles.image} />
@@ -205,10 +283,19 @@ const DetailRecipe = ({ route }) => {
           {updatedRecipe?.ingredients?.map((ingredient) => (
             <View key={ingredient.id} style={styles.inputRow}>
               <TextInput
-                style={[styles.input, styles.inputFlex]}
+                style={[
+                  styles.input, 
+                  styles.inputFlex,
+                  { height: Math.max(50, inputHeights[ingredient.id] || 50) }
+                ]}
                 value={ingredient.text}
                 onChangeText={(text) =>
                   handleIngredientChange(text, ingredient.id)
+                }
+                multiline
+                textAlignVertical="top"
+                onContentSizeChange={(e) => 
+                  handleContentSizeChange(ingredient.id, e.nativeEvent.contentSize.height + 20)
                 }
               />
               {ingredient.id ===
@@ -239,12 +326,15 @@ const DetailRecipe = ({ route }) => {
                   styles.input,
                   styles.inputFlex,
                   styles.preparationInput,
+                  { height: Math.max(50, inputHeights[step.id] || 50) }
                 ]}
                 value={step.text}
                 onChangeText={(text) => handlePreparationChange(text, step.id)}
                 multiline
-                numberOfLines={1}
-                textAlignVertical="center"
+                textAlignVertical="top"
+                onContentSizeChange={(e) => 
+                  handleContentSizeChange(step.id, e.nativeEvent.contentSize.height + 20)
+                }
                 blurOnSubmit
                 onSubmitEditing={() => {}}
               />
@@ -465,12 +555,13 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   input: {
-    height: 50,
+    minHeight: 50,
     borderColor: '#FFE4B5',
     borderWidth: 1,
     borderRadius: 10,
     marginBottom: 15,
     paddingHorizontal: 15,
+    paddingVertical: 10,
     width: '90%',
     fontSize: 16,
     backgroundColor: '#FFFFFF',
@@ -537,5 +628,96 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingTop: 10,
     paddingBottom: 10,
+  },
+  // Estilos para el modal personalizado
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalView: {
+    width: '80%',
+    backgroundColor: '#FFF5E6',
+    borderRadius: 20,
+    padding: 25,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    borderWidth: 1,
+    borderColor: '#FFE4B5',
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 15,
+    color: '#663300',
+    textAlign: 'center',
+  },
+  iconContainer: {
+    marginBottom: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  modalText: {
+    marginBottom: 20,
+    textAlign: 'center',
+    fontSize: 16,
+    color: '#663300',
+    lineHeight: 22,
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  modalButton: {
+    borderRadius: 10,
+    padding: 12,
+    elevation: 2,
+    minWidth: '45%',
+    alignItems: 'center',
+  },
+  buttonCancel: {
+    backgroundColor: '#E0E0E0',
+    borderWidth: 1,
+    borderColor: '#D0D0D0',
+  },
+  buttonCancelText: {
+    color: '#666666',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  buttonDelete: {
+    backgroundColor: '#8B4513',
+  },
+  buttonDeleteText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  buttonSuccess: {
+    backgroundColor: '#A0522D',
+    minWidth: '80%',
+  },
+  buttonSuccessText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  buttonUpdate: {
+    backgroundColor: '#A0522D',
+    minWidth: '80%',
+  },
+  buttonUpdateText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
 });
