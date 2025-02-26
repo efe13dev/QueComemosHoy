@@ -49,6 +49,18 @@ const AddFormRecipe = () => {
     setRecipe({ ...recipe, [name]: updatedArray });
   };
 
+  const resetForm = () => {
+    setRecipe({
+      name: '',
+      category: '',
+      time: '',
+      image: '',
+      people: '',
+      ingredients: [{ id: `${'ing-'}${Date.now()}`, text: '' }],
+      preparation: [{ id: `${'prep-'}${Date.now()}`, text: '' }]
+    });
+  };
+
   const handleSubmit = () => {
     if (recipe.image === '') {
       recipe.image =
@@ -65,7 +77,7 @@ const AddFormRecipe = () => {
     saveRecipe(recipeToSave)
       .then(() => {
         Alert.alert('Éxito', 'Receta guardada correctamente');
-        navigation.goBack();
+        resetForm(); // Resetear el formulario después de guardar exitosamente
       })
       .catch((error) => {
         Alert.alert('Error', 'No se pudo guardar la receta');
@@ -131,20 +143,21 @@ const AddFormRecipe = () => {
           style={styles.input_row}
         >
           <TextInput
-            style={styles.input}
+            style={[styles.input, styles.input_flex]}
             placeholder="Ingrediente"
             value={ingredient.text}
             onChangeText={(value) => handleChange('ingredients', value, index)}
           />
-          {index === recipe.ingredients.length - 1 ? (
-            <TouchableOpacity onPress={() => addInput('ingredients')}>
-              <Icon name="add-circle" size={24} color="#007BFF" />
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity onPress={() => removeInput('ingredients', index)}>
-              <Icon name="remove-circle" size={24} color="#FF6B6B" />
-            </TouchableOpacity>
-          )}
+          <TouchableOpacity 
+            style={[styles.actionButton, index !== recipe.ingredients.length - 1 ? styles.removeButton : styles.addButton]} 
+            onPress={() => index === recipe.ingredients.length - 1 ? addInput('ingredients') : removeInput('ingredients', index)}
+          >
+            <Icon 
+              name={index === recipe.ingredients.length - 1 ? "add" : "remove"} 
+              size={18} 
+              color="#FFF" 
+            />
+          </TouchableOpacity>
         </View>
       ))}
 
@@ -155,20 +168,21 @@ const AddFormRecipe = () => {
           style={styles.input_row}
         >
           <TextInput
-            style={styles.input}
+            style={[styles.input, styles.input_flex]}
             placeholder="Paso"
             value={step.text}
             onChangeText={(value) => handleChange('preparation', value, index)}
           />
-          {index === recipe.preparation.length - 1 ? (
-            <TouchableOpacity onPress={() => addInput('preparation')}>
-              <Icon name="add-circle" size={24} color="#007BFF" />
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity onPress={() => removeInput('preparation', index)}>
-              <Icon name="remove-circle" size={24} color="#FF6B6B" />
-            </TouchableOpacity>
-          )}
+          <TouchableOpacity 
+            style={[styles.actionButton, index !== recipe.preparation.length - 1 ? styles.removeButton : styles.addButton]} 
+            onPress={() => index === recipe.preparation.length - 1 ? addInput('preparation') : removeInput('preparation', index)}
+          >
+            <Icon 
+              name={index === recipe.preparation.length - 1 ? "add" : "remove"} 
+              size={18} 
+              color="#FFF" 
+            />
+          </TouchableOpacity>
         </View>
       ))}
 
@@ -184,7 +198,7 @@ const AddFormRecipe = () => {
               !recipe.ingredients[0]?.text?.trim() ||
               !recipe.preparation[0]?.text?.trim()
                 ? '#cccccc'
-                : '#007BFF'
+                : '#FFE4B5'
           }
         ]}
         onPress={handleSubmit}
@@ -207,39 +221,40 @@ const styles = StyleSheet.create({
   form_container: {
     gap: 20,
     alignItems: 'center',
-    paddingHorizontal: 20
+    paddingHorizontal: 20,
+    backgroundColor: '#FFF5E6'
   },
   input: {
     height: 50,
-    borderColor: '#ddd',
+    borderColor: '#FFE4B5',
     borderWidth: 1,
     borderRadius: 10,
     marginBottom: 15,
     paddingHorizontal: 15,
     width: '100%',
     fontSize: 16,
-    backgroundColor: '#fff',
-    shadowColor: '#000',
+    backgroundColor: '#FFFFFF',
+    shadowColor: '#8B4513',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.2,
     shadowRadius: 2,
-    elevation: 3
+    elevation: 2
   },
   inputAndroid: {
     height: 50,
-    borderColor: '#ddd',
+    borderColor: '#FFE4B5',
     borderWidth: 1,
     borderRadius: 10,
     marginBottom: 15,
     paddingHorizontal: 15,
     width: '100%',
     fontSize: 16,
-    backgroundColor: '#fff',
-    shadowColor: '#000',
+    backgroundColor: '#FFFFFF',
+    shadowColor: '#8B4513',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.2,
     shadowRadius: 2,
-    elevation: 3
+    elevation: 2
   },
   input_row: {
     flexDirection: 'row',
@@ -251,28 +266,52 @@ const styles = StyleSheet.create({
     flex: 1,
     marginRight: 10
   },
-  height_input: {
-    height: 100 // Altura mayor para inputs de texto largo
+  actionButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 1.41,
+    elevation: 2,
+  },
+  addButton: {
+    backgroundColor: '#8B4513',
+  },
+  removeButton: {
+    backgroundColor: '#c63636',
   },
   button_container: {
-    marginTop: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#007BFF', // Color de fondo azul
-    borderRadius: 8, // Bordes redondeados
-    paddingVertical: 15, // Espaciado vertical mayor
-    paddingHorizontal: 30, // Espaciado horizontal mayor
-    shadowColor: '#000', // Sombra
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3, // Menor opacidad de la sombra
-    shadowRadius: 4, // Radio de sombra mayor
-    elevation: 5
+    backgroundColor: '#FFE4B5',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 15,
+    marginTop: 30,
+    marginBottom: 20,
+    alignSelf: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    borderWidth: 1,
+    borderColor: '#D2B48C',
   },
   button_text: {
-    color: '#fff', // Texto blanco
-    fontSize: 18, // Tamaño de fuente mayor
-    fontWeight: 'bold', // Texto en negrita
-    textAlign: 'center' // Asegura que el texto esté centrado horizontalmente
+    color: '#663300',
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center'
   },
 
   icon_button: {
@@ -284,7 +323,10 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 10
+    marginBottom: 10,
+    color: '#663300',
+    alignSelf: 'flex-start',
+    marginLeft: 5
   }
 });
 

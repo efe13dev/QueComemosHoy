@@ -1,15 +1,24 @@
-import { StyleSheet, View, Text } from 'react-native';
-import AddFormRecipe from '../components/AddFormRecipe';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Constants from 'expo-constants';
+import { StyleSheet, Text, View } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import AddFormRecipe from '../components/AddFormRecipe';
 
 const AddRecipeScreen = () => {
   return (
     <View style={styles.container}>
-      <Text style={styles.text_title}>Añade una receta</Text>
+      <View style={styles.iconContainer}>
+        <MaterialCommunityIcons
+          name="notebook-plus"
+          size={40}
+          color="#8B4513"
+          style={styles.icon}
+        />
+        <Text style={styles.text_title}>Añade una receta</Text>
+      </View>
       <KeyboardAwareScrollView
         contentContainerStyle={styles.scroll_container}
-        keyboardShouldPersistTaps='handled'
+        keyboardShouldPersistTaps="handled"
       >
         <View style={styles.form_container}>
           <AddFormRecipe />
@@ -24,32 +33,40 @@ export default AddRecipeScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: Constants.statusBarHeight
+
+    backgroundColor: '#FFF5E6',
+  },
+  iconContainer: {
+    alignItems: 'center',
+    paddingTop: Constants.statusBarHeight,
+    paddingBottom: 10,
+  },
+  icon: {
+    shadowColor: '#8B4513',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    marginBottom: 5,
   },
   text_title: {
-    position: 'absolute',
-    top: Constants.statusBarHeight,
-    left: 0,
-    right: 0,
-    marginBottom: 25,
-    textShadowColor: 'blue',
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 1,
-    color: '#7AA2E3',
+    color: '#663300',
     textAlign: 'center',
     fontWeight: 'bold',
-    fontSize: 40,
-    zIndex: 1,
-    backgroundColor: '#eee', // Cambiar fondo a transparente
-    paddingVertical: 10
+    fontSize: 24,
+    marginTop: 10,
+    marginBottom: 10,
   },
   scroll_container: {
     paddingTop: 20,
-    flexGrow: 1
+    flexGrow: 1,
+    paddingHorizontal: 15,
   },
   form_container: {
     flexGrow: 1,
-    marginTop: 80, // Aumentar el margen superior para evitar superposición
-    marginBottom: 20
-  }
+    marginTop: 10,
+    marginBottom: 20,
+  },
 });
