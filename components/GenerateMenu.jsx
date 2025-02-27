@@ -7,12 +7,12 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { getRecipes } from '../data/api';
-import {
-  actualizarRecetaDelDia,
-  obtenerMenuSemanal,
-  obtenerMenuSemanalSinInicializar
-} from '../utils/menuSemanal';
+import { 
+  getRecipes, 
+  actualizarRecetaDelDia, 
+  obtenerMenuSemanal, 
+  obtenerMenuSemanalSinInicializar 
+} from '../data/api';
 import WeekDayPicker from './WeekDayPicker';
 import CustomModal from './CustomModal';
 
@@ -54,7 +54,7 @@ export function GenerateMenu() {
     } catch (error) {
       handleError(error, 'No se pudieron cargar las recetas');
     }
-  }, []); // No tiene dependencias porque solo usa funciones externas y setState
+  }, [handleError]); // Añadir handleError como dependencia
 
   const loadMenuFromSupabase = useCallback(async () => {
     try {
@@ -75,7 +75,7 @@ export function GenerateMenu() {
     } finally {
       setIsLoading(false);
     }
-  }, []); // No tiene dependencias porque solo usa funciones externas y setState
+  }, [handleError]); // Añadir handleError como dependencia
 
   useEffect(() => {
     if (isLoading) {
@@ -123,8 +123,8 @@ export function GenerateMenu() {
         handleError(error, 'No se pudo actualizar el menú');
       }
     },
-    [weekMenu]
-  ); // Añadir weekMenu como dependencia para comparar valores
+    [weekMenu, handleError]
+  ); // Añadir weekMenu y handleError como dependencias
 
   const resetMenu = useCallback(async () => {
     try {
@@ -172,7 +172,7 @@ export function GenerateMenu() {
     } finally {
       setIsResetting(false);
     }
-  }, []); // No tiene dependencias porque solo usa constantes y setState
+  }, [handleError]); // Añadir handleError como dependencia
 
   const confirmResetMenu = useCallback(() => {
     // Mostramos el modal de confirmación en lugar del Alert

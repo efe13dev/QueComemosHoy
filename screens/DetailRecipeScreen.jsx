@@ -1,7 +1,7 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import Constants from 'expo-constants';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import {
   Alert,
   Image,
@@ -31,10 +31,10 @@ const DetailRecipe = ({ route }) => {
   const [updateModalVisible, setUpdateModalVisible] = useState(false);
 
   // Generador de ID único
-  const generateUniqueId = () =>
-    `id_${Math.random().toString(36).substr(2, 9)}`;
+  const generateUniqueId = useCallback(() =>
+    `id_${Math.random().toString(36).substr(2, 9)}`, []);
 
-  const getListRecipe = async (id) => {
+  const getListRecipe = useCallback(async (id) => {
     const [data] = await getRecipe(id);
     // Asignar IDs únicos a ingredientes y pasos si no los tienen
     const enhancedData = {
@@ -50,32 +50,32 @@ const DetailRecipe = ({ route }) => {
     };
     setRecipe(enhancedData);
     setUpdatedRecipe(enhancedData);
-  };
+  }, [generateUniqueId]);
 
   useEffect(() => {
     getListRecipe(id);
+  }, [id, getListRecipe]);
+
+  const showAlert = useCallback(() => {
+    setModalVisible(true);
   }, []);
 
-  const showAlert = () => {
-    setModalVisible(true);
-  };
-
-  const handleDelete = async () => {
+  const handleDelete = useCallback(async () => {
     setModalVisible(false);
     await deleteRecipe(id);
     setSuccessModalVisible(true);
-  };
+  }, [id]);
 
-  const handleSuccessConfirm = () => {
+  const handleSuccessConfirm = useCallback(() => {
     setSuccessModalVisible(false);
     navigation.navigate('MyRecipes');
-  };
+  }, [navigation]);
 
-  const handleUpdate = () => {
+  const handleUpdate = useCallback(() => {
     setIsEditing(true);
-  };
+  }, []);
 
-  const handleSave = async () => {
+  const handleSave = useCallback(async () => {
     // Convertir de vuelta a formato simple para guardar
     const simplifiedRecipe = {
       ...updatedRecipe,
@@ -88,44 +88,50 @@ const DetailRecipe = ({ route }) => {
     await updateRecipe(id, simplifiedRecipe);
     setIsEditing(false);
     setUpdateModalVisible(true);
-  };
+  }, [updatedRecipe, id]);
 
-  const handleUpdateConfirm = () => {
+  const handleUpdateConfirm = useCallback(() => {
     setUpdateModalVisible(false);
     getListRecipe(id);
-  };
+  }, [getListRecipe, id]);
 
-  const handleIngredientChange = (text, ingredientId) => {
-    const newIngredients = updatedRecipe?.ingredients?.map((item) =>
-      item.id === ingredientId ? { ...item, text } : item
-    );
-    setUpdatedRecipe({ ...updatedRecipe, ingredients: newIngredients });
-  };
+  const handleIngredientChange = useCallback((text, ingredientId) => {
+    setUpdatedRecipe((prev) => {
+      const newIngredients = prev.ingredients.map((item) =>
+        item.id === ingredientId ? { ...item, text } : item
+      );
+      return { ...prev, ingredients: newIngredients };
+    });
+  }, []);
 
-  const handlePreparationChange = (text, stepId) => {
-    const newPreparation = updatedRecipe?.preparation?.map((item) =>
-      item.id === stepId ? { ...item, text } : item
-    );
-    setUpdatedRecipe({ ...updatedRecipe, preparation: newPreparation });
-  };
+  const handlePreparationChange = useCallback((text, stepId) => {
+    setUpdatedRecipe((prev) => {
+      const newPreparation = prev.preparation.map((item) =>
+        item.id === stepId ? { ...item, text } : item
+      );
+      return { ...prev, preparation: newPreparation };
+    });
+  }, []);
 
-  const addInput = (field) => {
+  const addInput = useCallback((field) => {
     const newItem = { id: generateUniqueId(), text: '' };
-    setUpdatedRecipe({
-      ...updatedRecipe,
-      [field]: [...(updatedRecipe[field] || []), newItem],
-    });
-  };
+    setUpdatedRecipe((prev) => ({
+      ...prev,
+      [field]: [...(prev[field] || []), newItem],
+    }));
+  }, [generateUniqueId]);
 
-  const removeInput = (field, itemId) => {
-    const updatedArray = updatedRecipe[field].filter(
-      (item) => item.id !== itemId
-    );
-    setUpdatedRecipe({
-      ...updatedRecipe,
-      [field]: updatedArray,
+  const removeInput = useCallback((field, itemId) => {
+    setUpdatedRecipe((prev) => {
+      const updatedArray = prev[field].filter(
+        (item) => item.id !== itemId
+      );
+      return {
+        ...prev,
+        [field]: updatedArray,
+      };
     });
-  };
+  }, []);
 
   // Función para manejar el cambio de altura del input
   const handleContentSizeChange = (id, height) => {
@@ -285,7 +291,6 @@ const DetailRecipe = ({ route }) => {
               <TextInput
                 style={[
                   styles.input, 
-                  styles.inputFlex,
                   { height: Math.max(50, inputHeights[ingredient.id] || 50) }
                 ]}
                 value={ingredient.text}
@@ -302,18 +307,20 @@ const DetailRecipe = ({ route }) => {
                 updatedRecipe?.ingredients[updatedRecipe.ingredients.length - 1]
                   ?.id && (
                 <TouchableOpacity
-                  style={styles.iconButton}
+                  style={[styles.actionButton, styles.addButton]}
                   onPress={() => addInput('ingredients')}
                 >
-                  <Icon name="add-circle" size={30} color="#8B4513" />
+                  <Icon name="add" size={18} color="#FFF" />
                 </TouchableOpacity>
               )}
-              {updatedRecipe?.ingredients?.length > 1 && (
+              {updatedRecipe?.ingredients?.length > 1 && ingredient.id !==
+                updatedRecipe?.ingredients[updatedRecipe.ingredients.length - 1]
+                  ?.id && (
                 <TouchableOpacity
-                  style={styles.iconButton}
+                  style={[styles.actionButton, styles.removeButton]}
                   onPress={() => removeInput('ingredients', ingredient.id)}
                 >
-                  <Icon name="remove-circle" size={30} color="#8B4513" />
+                  <Icon name="remove" size={18} color="#FFF" />
                 </TouchableOpacity>
               )}
             </View>
@@ -324,7 +331,6 @@ const DetailRecipe = ({ route }) => {
               <TextInput
                 style={[
                   styles.input,
-                  styles.inputFlex,
                   styles.preparationInput,
                   { height: Math.max(50, inputHeights[step.id] || 50) }
                 ]}
@@ -342,18 +348,20 @@ const DetailRecipe = ({ route }) => {
                 updatedRecipe?.preparation[updatedRecipe.preparation.length - 1]
                   ?.id && (
                 <TouchableOpacity
-                  style={styles.iconButton}
+                  style={[styles.actionButton, styles.addButton]}
                   onPress={() => addInput('preparation')}
                 >
-                  <Icon name="add-circle" size={30} color="#8B4513" />
+                  <Icon name="add" size={18} color="#FFF" />
                 </TouchableOpacity>
               )}
-              {updatedRecipe?.preparation?.length > 1 && (
+              {updatedRecipe?.preparation?.length > 1 && step.id !==
+                updatedRecipe?.preparation[updatedRecipe.preparation.length - 1]
+                  ?.id && (
                 <TouchableOpacity
-                  style={styles.iconButton}
+                  style={[styles.actionButton, styles.removeButton]}
                   onPress={() => removeInput('preparation', step.id)}
                 >
-                  <Icon name="remove-circle" size={30} color="#8B4513" />
+                  <Icon name="remove" size={18} color="#FFF" />
                 </TouchableOpacity>
               )}
             </View>
@@ -418,6 +426,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     backgroundColor: '#FFF5E6',
     paddingTop: 20,
+    paddingHorizontal: 16, // Añadir padding horizontal al contenedor
   },
   imageContainer: {
     position: 'relative',
@@ -459,18 +468,12 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   title: {
-    color: '#663300',
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginVertical: 15,
+    color: '#663300',
     textAlign: 'center',
-    shadowColor: '#8B4513',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    width: '100%',
   },
   textTime: {
     color: '#663300',
@@ -483,58 +486,35 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   titleIngredientsInstructions: {
-    color: '#663300',
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: 'bold',
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    marginTop: 10,
-    borderBottomWidth: 2,
-    borderBottomColor: '#FFE4B5',
-    shadowColor: '#8B4513',
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.2,
-    shadowRadius: 1.84,
+    marginTop: 20,
+    marginBottom: 10,
+    color: '#663300',
+    width: '100%',
   },
   containerIngredientsInstructions: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
+    paddingHorizontal: 10,
+    marginBottom: 20,
     width: '100%',
   },
   listIngredientsInstructionsPar: {
-    color: '#663300',
     fontSize: 16,
-    paddingVertical: 12,
+    paddingVertical: 10,
     paddingHorizontal: 15,
-    backgroundColor: '#FFF5E6',
+    backgroundColor: '#FFFFFF',
     borderRadius: 10,
-    marginBottom: 10,
-    borderLeftWidth: 4,
-    borderLeftColor: '#8B4513',
-    shadowColor: '#8B4513',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 1,
-    elevation: 1,
+    marginBottom: 8,
+    width: '100%',
   },
   listIngredientsInstructionsOdd: {
-    color: '#663300',
     fontSize: 16,
-    paddingVertical: 12,
+    paddingVertical: 10,
     paddingHorizontal: 15,
-    backgroundColor: '#FFF5E6',
+    backgroundColor: '#FFE4B5',
     borderRadius: 10,
-    marginBottom: 10,
-    borderLeftWidth: 4,
-    borderLeftColor: '#8B4513',
-    shadowColor: '#8B4513',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 1,
-    elevation: 1,
+    marginBottom: 8,
+    width: '100%',
   },
   updateButton: {
     position: 'absolute',
@@ -562,7 +542,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     paddingHorizontal: 15,
     paddingVertical: 10,
-    width: '90%',
+    width: '85%', // Reducir el ancho para dejar espacio a los botones
     fontSize: 16,
     backgroundColor: '#FFFFFF',
     shadowColor: '#8B4513',
@@ -570,6 +550,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 2,
     elevation: 2,
+    alignSelf: 'flex-start', // Alinear al inicio
   },
   saveButton: {
     backgroundColor: '#8B4513',
@@ -590,24 +571,38 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 8,
     marginTop: 15,
-    width: '90%',
+    width: '100%',
     color: '#663300',
   },
   inputRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    width: '90%',
+    width: '100%',
     marginBottom: 15,
+    justifyContent: 'space-between', // Distribuir el espacio entre el input y el botón
   },
-  inputFlex: {
-    flex: 1,
-    marginRight: 5, // Reducido de 10 a 5
-  },
-  iconButton: {
-    padding: 5, // Reducido de 10 a 5
-    alignItems: 'center',
+  actionButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     justifyContent: 'center',
-    marginLeft: 5, // Reducido de 10 a 5
+    alignItems: 'center',
+    marginRight: 10, // Margen derecho para separar del borde
+    alignSelf: 'center', // Centrar verticalmente
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 1.41,
+    elevation: 2,
+  },
+  addButton: {
+    backgroundColor: '#8B4513',
+  },
+  removeButton: {
+    backgroundColor: '#c63636',
   },
   buttonText: {
     color: 'white',
@@ -617,7 +612,7 @@ const styles = StyleSheet.create({
   categoryText: {
     fontSize: 16,
     marginBottom: 10,
-    width: '90%',
+    width: '100%',
     color: '#663300',
     fontStyle: 'italic',
   },
