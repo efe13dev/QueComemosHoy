@@ -2,7 +2,7 @@
 
 ## Descripción
 
-Esta aplicación te permite gestionar tus recetas favoritas y crear menús semanales.
+Aplicación desarrollada con React-Native que te permite gestionar tus recetas favoritas y crear menús semanales.
 
 Las recetas que se añaden se insertan en una base de datos PostgreSql de Supabase y se sincronizan en tiempo real.
 
