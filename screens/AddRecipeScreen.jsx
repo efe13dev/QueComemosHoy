@@ -1,8 +1,9 @@
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import Constants from 'expo-constants';
-import { StyleSheet, Text, View } from 'react-native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import AddFormRecipe from '../components/AddFormRecipe';
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import Constants from "expo-constants";
+import { StyleSheet, Text, View } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+
+import AddFormRecipe from "../components/AddFormRecipe";
 
 const AddRecipeScreen = () => {
   return (
@@ -34,15 +35,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
 
-    backgroundColor: '#FFF5E6',
+    backgroundColor: "#FFF5E6",
   },
   iconContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     paddingTop: Constants.statusBarHeight,
     paddingBottom: 10,
   },
   icon: {
-    shadowColor: '#8B4513',
+    shadowColor: "#8B4513",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -52,9 +53,9 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   text_title: {
-    color: '#663300',
-    textAlign: 'center',
-    fontWeight: 'bold',
+    color: "#663300",
+    textAlign: "center",
+    fontWeight: "bold",
     fontSize: 24,
     marginTop: 10,
     marginBottom: 10,

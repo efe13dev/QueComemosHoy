@@ -1,7 +1,6 @@
-import { Ionicons } from '@expo/vector-icons';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import Constants from 'expo-constants';
-import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import Constants from "expo-constants";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   FlatList,
   RefreshControl,
@@ -11,15 +10,16 @@ import {
   TouchableOpacity,
   View,
   useWindowDimensions,
-} from 'react-native';
-import { RecipeCard } from '../components/RecipeCard';
-import { getRecipes } from '../data/api';
+} from "react-native";
+
+import { RecipeCard } from "../components/RecipeCard";
+import { getRecipes } from "../data/api";
 
 const MyRecipes = ({ navigation }) => {
   const [recipes, setRecipes] = useState([]);
   const [filteredRecipes, setFilteredRecipes] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
-  const [searchText, setSearchText] = useState('');
+  const [searchText, setSearchText] = useState("");
   const { width } = useWindowDimensions();
 
   const numColumns = 2; // Definimos esto como una constante
@@ -27,11 +27,12 @@ const MyRecipes = ({ navigation }) => {
   const getListRecipes = useCallback(async () => {
     const data = await getRecipes();
     const sortedData = data.sort((a, b) => a.name.localeCompare(b.name));
+
     setRecipes(sortedData);
   }, []);
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
+    const unsubscribe = navigation.addListener("focus", () => {
       getListRecipes();
     });
 
@@ -40,8 +41,9 @@ const MyRecipes = ({ navigation }) => {
 
   useEffect(() => {
     const filtered = recipes.filter((recipe) =>
-      recipe.name.toLowerCase().startsWith(searchText.toLowerCase())
+      recipe.name.toLowerCase().startsWith(searchText.toLowerCase()),
     );
+
     setFilteredRecipes(filtered);
   }, [searchText, recipes]);
 
@@ -61,7 +63,7 @@ const MyRecipes = ({ navigation }) => {
   const flatListKey = useMemo(() => `flatList-${width}`, [width]);
 
   const clearSearchText = () => {
-    setSearchText('');
+    setSearchText("");
   };
 
   return (
@@ -82,7 +84,7 @@ const MyRecipes = ({ navigation }) => {
           value={searchText}
           onChangeText={setSearchText}
         />
-        {searchText !== '' && (
+        {searchText !== "" && (
           <TouchableOpacity
             style={styles.clearButton}
             onPress={clearSearchText}
@@ -103,8 +105,8 @@ const MyRecipes = ({ navigation }) => {
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
-            colors={['#A0522D']}
-            tintColor={'#A0522D'}
+            colors={["#A0522D"]}
+            tintColor="#A0522D"
             onRefresh={onRefresh}
           />
         }
@@ -116,20 +118,20 @@ const MyRecipes = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFF5E6',
+    backgroundColor: "#FFF5E6",
   },
   iconContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     paddingTop: Constants.statusBarHeight,
     paddingBottom: 10,
   },
   text_title: {
-    color: '#663300',
-    textAlign: 'center',
-    fontWeight: 'bold',
+    color: "#663300",
+    textAlign: "center",
+    fontWeight: "bold",
     fontSize: 24,
     marginBottom: 15,
-    shadowColor: '#8B4513',
+    shadowColor: "#8B4513",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -144,33 +146,33 @@ const styles = StyleSheet.create({
   recipeCardContainer: {
     flex: 1,
     margin: 5,
-    width: '100%',
+    width: "100%",
   },
   searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginHorizontal: 15,
     marginBottom: 15,
-    position: 'relative',
+    position: "relative",
   },
   searchInput: {
     flex: 1,
     height: 40,
-    borderColor: '#8B4513',
+    borderColor: "#8B4513",
     borderWidth: 1,
     borderRadius: 5,
     paddingHorizontal: 10,
     paddingRight: 40,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
   },
   clearButton: {
-    position: 'absolute',
+    position: "absolute",
     right: 8,
-    top: '50%',
+    top: "50%",
     transform: [{ translateY: -12 }],
   },
   recipeIcon: {
-    shadowColor: '#8B4513',
+    shadowColor: "#8B4513",
     shadowOffset: {
       width: 0,
       height: 2,

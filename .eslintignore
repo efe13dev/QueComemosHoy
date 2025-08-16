@@ -1,0 +1,9 @@
+# Ignorar salidas de build y entornos nativos
+android/
+ios/
+.expo/
+web-build/
+dist/
+build/
+coverage/
+node_modules/

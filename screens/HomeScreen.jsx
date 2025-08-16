@@ -1,8 +1,9 @@
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import Constants from 'expo-constants';
-import React from 'react';
-import { StatusBar, StyleSheet, View } from 'react-native';
-import { GenerateMenu } from '../components/GenerateMenu';
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import Constants from "expo-constants";
+import React from "react";
+import { StatusBar, StyleSheet, View } from "react-native";
+
+import { GenerateMenu } from "../components/GenerateMenu";
 
 export default function HomeScreen() {
   return (
@@ -28,15 +29,15 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFF5E6',
+    backgroundColor: "#FFF5E6",
   },
   iconContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     paddingTop: Constants.statusBarHeight,
     paddingBottom: 10,
   },
   icon: {
-    shadowColor: '#8B4513',
+    shadowColor: "#8B4513",
     shadowOffset: {
       width: 0,
       height: 2,

@@ -1,15 +1,15 @@
-import { useEffect, useState } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import HomeScreen from './screens/HomeScreen';
-import MyRecipes from './screens/MyRecipesScreen';
-import DetailRecipe from './screens/DetailRecipeScreen';
-import AddRecipe from './screens/AddRecipeScreen';
-import SplashScreen from './screens/SplashScreen'; // Importa tu SplashScreen aquí
+import { Entypo, FontAwesome, Ionicons } from "@expo/vector-icons";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { useEffect, useState } from "react";
+import { Text, View } from "react-native";
 
-import { FontAwesome, Entypo, Ionicons } from '@expo/vector-icons';
-import { Text, View } from 'react-native';
+import AddRecipe from "./screens/AddRecipeScreen";
+import DetailRecipe from "./screens/DetailRecipeScreen";
+import HomeScreen from "./screens/HomeScreen";
+import MyRecipes from "./screens/MyRecipesScreen";
+import SplashScreen from "./screens/SplashScreen"; // Importa tu SplashScreen aquí
 
 const Tab = createBottomTabNavigator();
 const MyStack = createNativeStackNavigator();
@@ -19,19 +19,19 @@ function HomeStack() {
     <MyStack.Navigator
       screenOptions={{
         headerStyle: {
-          backgroundColor: '#FFF5E6',
+          backgroundColor: "#FFF5E6",
         },
-        headerTintColor: '#663300',
+        headerTintColor: "#663300",
         headerTitleStyle: {
-          fontWeight: 'bold',
+          fontWeight: "bold",
         },
       }}
     >
       <MyStack.Screen
-        name='HomeScreenStack'
+        name="HomeScreenStack"
         component={HomeScreen}
         options={{
-          headerShown: false
+          headerShown: false,
         }}
       />
       {/* <MyStack.Screen
@@ -42,10 +42,10 @@ function HomeStack() {
         }}
       /> */}
       <MyStack.Screen
-        name='AddRecipe'
+        name="AddRecipe"
         component={AddRecipe}
         options={{
-          headerTitle: 'Actualizar Receta'
+          headerTitle: "Actualizar Receta",
         }}
       />
     </MyStack.Navigator>
@@ -57,33 +57,33 @@ function RecipesStack() {
     <MyStack.Navigator
       screenOptions={{
         headerStyle: {
-          backgroundColor: '#FFF5E6',
+          backgroundColor: "#FFF5E6",
         },
-        headerTintColor: '#663300',
+        headerTintColor: "#663300",
         headerTitleStyle: {
-          fontWeight: 'bold',
+          fontWeight: "bold",
         },
       }}
     >
       <MyStack.Screen
-        name='MyRecipes'
+        name="MyRecipes"
         component={MyRecipes}
         options={{
-          headerShown: false
+          headerShown: false,
         }}
       />
       <MyStack.Screen
-        name='DetailRecipe'
+        name="DetailRecipe"
         component={DetailRecipe}
         options={{
-          headerTitle: 'Volver'
+          headerTitle: "Volver",
         }}
       />
       <MyStack.Screen
-        name='AddRecipe'
+        name="AddRecipe"
         component={AddRecipe}
         options={{
-          headerTitle: 'Actualizar Receta'
+          headerTitle: "Actualizar Receta",
         }}
       />
     </MyStack.Navigator>
@@ -95,8 +95,8 @@ function MyTabs() {
     <Tab.Navigator
       screenOptions={{
         tabBarStyle: {
-          backgroundColor: '#FFF5E6',
-          borderTopColor: '#FFE4B5',
+          backgroundColor: "#FFF5E6",
+          borderTopColor: "#FFE4B5",
           height: 60,
           paddingBottom: 5,
           paddingTop: 5,
@@ -106,109 +106,133 @@ function MyTabs() {
         },
         tabBarLabelStyle: {
           fontSize: 12,
-          fontWeight: '500',
+          fontWeight: "500",
         },
-        tabBarActiveTintColor: '#A0522D', // Color más suave, marrón siena
-        tabBarInactiveTintColor: '#663300',
+        tabBarActiveTintColor: "#A0522D", // Color más suave, marrón siena
+        tabBarInactiveTintColor: "#663300",
       }}
     >
       <Tab.Screen
-        name='Home'
+        name="Home"
         component={HomeStack}
         options={{
           tabBarLabel: ({ focused }) => (
-            <Text style={{ 
-              color: focused ? '#A0522D' : '#663300',
-              fontSize: focused ? 13 : 12,
-              fontWeight: focused ? 'bold' : '500',
-              marginTop: -5
-            }}>
+            <Text
+              style={{
+                color: focused ? "#A0522D" : "#663300",
+                fontSize: focused ? 13 : 12,
+                fontWeight: focused ? "bold" : "500",
+                marginTop: -5,
+              }}
+            >
               Inicio
             </Text>
           ),
           tabBarIcon: ({ color, size, focused }) => (
-            <View style={focused ? {
-              shadowColor: '#A0522D',
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: 0.5, // Reducida la opacidad de la sombra
-              shadowRadius: 2,
-              elevation: 3, // Reducida la elevación
-            } : {}}>
+            <View
+              style={
+                focused
+                  ? {
+                      shadowColor: "#A0522D",
+                      shadowOffset: { width: 0, height: 2 },
+                      shadowOpacity: 0.5, // Reducida la opacidad de la sombra
+                      shadowRadius: 2,
+                      elevation: 3, // Reducida la elevación
+                    }
+                  : {}
+              }
+            >
               <FontAwesome
-                name='home'
+                name="home"
                 size={focused ? 30 : 24} // Aún más grande cuando está activo
                 color={color}
                 style={focused ? { marginBottom: -3 } : {}}
               />
             </View>
           ),
-          headerShown: false
+          headerShown: false,
         }}
       />
       <Tab.Screen
-        name='MyRecipesScreen'
+        name="MyRecipesScreen"
         component={RecipesStack}
         options={{
           tabBarLabel: ({ focused }) => (
-            <Text style={{ 
-              color: focused ? '#A0522D' : '#663300',
-              fontSize: focused ? 13 : 12,
-              fontWeight: focused ? 'bold' : '500',
-              marginTop: -5
-            }}>
+            <Text
+              style={{
+                color: focused ? "#A0522D" : "#663300",
+                fontSize: focused ? 13 : 12,
+                fontWeight: focused ? "bold" : "500",
+                marginTop: -5,
+              }}
+            >
               Mis recetas
             </Text>
           ),
           tabBarIcon: ({ color, size, focused }) => (
-            <View style={focused ? {
-              shadowColor: '#A0522D',
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: 0.5, // Reducida la opacidad de la sombra
-              shadowRadius: 2,
-              elevation: 3, // Reducida la elevación
-            } : {}}>
+            <View
+              style={
+                focused
+                  ? {
+                      shadowColor: "#A0522D",
+                      shadowOffset: { width: 0, height: 2 },
+                      shadowOpacity: 0.5, // Reducida la opacidad de la sombra
+                      shadowRadius: 2,
+                      elevation: 3, // Reducida la elevación
+                    }
+                  : {}
+              }
+            >
               <Entypo
-                name='bowl'
+                name="bowl"
                 size={focused ? 30 : 24} // Aún más grande cuando está activo
                 color={color}
                 style={focused ? { marginBottom: -3 } : {}}
               />
             </View>
           ),
-          headerShown: false
+          headerShown: false,
         }}
       />
       <Tab.Screen
-        name='AddRecipeScreen'
+        name="AddRecipeScreen"
         component={AddRecipe}
         options={{
           tabBarLabel: ({ focused }) => (
-            <Text style={{ 
-              color: focused ? '#A0522D' : '#663300',
-              fontSize: focused ? 13 : 12,
-              fontWeight: focused ? 'bold' : '500',
-              marginTop: -5
-            }}>
+            <Text
+              style={{
+                color: focused ? "#A0522D" : "#663300",
+                fontSize: focused ? 13 : 12,
+                fontWeight: focused ? "bold" : "500",
+                marginTop: -5,
+              }}
+            >
               Añadir receta
             </Text>
           ),
           tabBarIcon: ({ color, size, focused }) => (
-            <View style={focused ? {
-              shadowColor: '#A0522D',
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: 0.5, // Reducida la opacidad de la sombra
-              shadowRadius: 2,
-              elevation: 3, // Reducida la elevación
-            } : {}}>
+            <View
+              style={
+                focused
+                  ? {
+                      shadowColor: "#A0522D",
+                      shadowOffset: { width: 0, height: 2 },
+                      shadowOpacity: 0.5, // Reducida la opacidad de la sombra
+                      shadowRadius: 2,
+                      elevation: 3, // Reducida la elevación
+                    }
+                  : {}
+              }
+            >
               <Ionicons
-                name='add-circle'
+                name="add-circle"
                 size={focused ? 30 : 24} // Aún más grande cuando está activo
                 color={color}
                 style={focused ? { marginBottom: -3 } : {}}
               />
             </View>
           ),
-          headerShown: false
+          headerShown: false,
         }}
       />
     </Tab.Navigator>
