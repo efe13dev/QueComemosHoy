@@ -9,6 +9,9 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import * as Animatable from "react-native-animatable";
+
+import { theme, outline, hardShadow } from "../utils/theme";
 
 const { width } = Dimensions.get("window");
 
@@ -29,11 +32,16 @@ const CustomModal = ({
       onRequestClose={onClose}
     >
       <View style={styles.centeredView}>
-        <View style={styles.modalView}>
+        <Animatable.View
+          animation="zoomIn"
+          duration={280}
+          useNativeDriver
+          style={styles.modalView}
+        >
           <Ionicons
             name={icon || "checkmark-circle"}
             size={60}
-            color={iconColor || "#8B4513"}
+            color={iconColor || theme.colors.primary}
             style={styles.icon}
           />
           <Text style={styles.modalTitle}>{title}</Text>
@@ -55,7 +63,10 @@ const CustomModal = ({
                 >
                   {button.loading ? (
                     <View style={styles.loadingContainer}>
-                      <ActivityIndicator size="small" color="#663300" />
+                      <ActivityIndicator
+                        size="small"
+                        color={theme.colors.textDark}
+                      />
                       <Text
                         style={[
                           styles.buttonText,
@@ -87,7 +98,7 @@ const CustomModal = ({
               <Text style={styles.buttonText}>Aceptar</Text>
             </TouchableOpacity>
           )}
-        </View>
+        </Animatable.View>
       </View>
     </Modal>
   );
@@ -102,20 +113,12 @@ const styles = StyleSheet.create({
   },
   modalView: {
     width: width * 0.8,
-    backgroundColor: "#FFF5E6",
-    borderRadius: 20,
-    padding: 25,
+    backgroundColor: theme.colors.surfaceAlt,
+    borderRadius: 0,
+    padding: theme.spacing.lg,
     alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-    borderWidth: 1,
-    borderColor: "#FFE4B5",
+    ...outline({ width: 3 }),
+    ...hardShadow({ x: 4, y: 4, elevation: 8 }),
   },
   icon: {
     marginBottom: 15,
@@ -124,31 +127,29 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: "bold",
     textAlign: "center",
-    color: "#663300",
-    marginBottom: 10,
+    color: theme.colors.textDark,
+    marginBottom: theme.spacing.sm,
   },
   modalText: {
     fontSize: 16,
-    marginBottom: 20,
+    marginBottom: theme.spacing.md,
     textAlign: "center",
-    color: "#663300",
+    color: theme.colors.textDark,
   },
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "center",
   },
   button: {
-    backgroundColor: "#FFE4B5",
-    borderRadius: 15,
-    padding: 10,
-    elevation: 2,
+    backgroundColor: theme.colors.surfaceAlt,
+    borderRadius: 0,
+    padding: theme.spacing.sm,
     minWidth: 120,
-    borderWidth: 1,
-    borderColor: "#8B4513",
+    ...outline({ width: 3 }),
+    ...hardShadow({ x: 3, y: 3, elevation: 6 }),
   },
   cancelButton: {
-    backgroundColor: "#FFFFFF",
-    borderColor: "#c63636",
+    backgroundColor: theme.colors.surface,
   },
   loadingButton: {
     opacity: 0.7,
@@ -159,14 +160,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   buttonText: {
-    color: "#663300",
+    color: theme.colors.textDark,
     fontWeight: "bold",
     textAlign: "center",
     fontSize: 16,
     marginLeft: 5,
   },
   cancelButtonText: {
-    color: "#c63636",
+    color: theme.colors.danger,
   },
 });
 

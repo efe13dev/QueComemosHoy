@@ -1,8 +1,10 @@
+import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useState } from "react";
-import { Dimensions, Platform, StyleSheet, View } from "react-native";
+import { Dimensions, StyleSheet } from "react-native";
 import * as Animatable from "react-native-animatable";
 
 import splashImage from "../assets/splash_image.png";
+import { theme } from "../utils/theme";
 
 const { width, height } = Dimensions.get("window");
 
@@ -55,7 +57,10 @@ const SplashScreen = () => {
   }, []);
 
   return (
-    <View style={styles.container}>
+    <LinearGradient
+      colors={[theme.colors.background, theme.colors.surfaceAlt]}
+      style={styles.container}
+    >
       <Animatable.Image
         source={splashImage}
         style={styles.image}
@@ -63,7 +68,13 @@ const SplashScreen = () => {
         useNativeDriver
         duration={1200}
       />
-      <View style={styles.textContainer}>
+      <Animatable.View
+        style={styles.textContainer}
+        animation="fadeInUp"
+        delay={200}
+        duration={500}
+        useNativeDriver
+      >
         {letters.map((letterObj) => (
           <AnimatedLetter
             key={letterObj.id}
@@ -72,8 +83,8 @@ const SplashScreen = () => {
             totalLetters={letters.length}
           />
         ))}
-      </View>
-    </View>
+      </Animatable.View>
+    </LinearGradient>
   );
 };
 
@@ -82,7 +93,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-start",
     alignItems: "center",
-    backgroundColor: "#FFF5E6",
+    backgroundColor: "transparent",
     paddingTop: height * 0.15,
   },
   image: {
@@ -101,12 +112,11 @@ const styles = StyleSheet.create({
   },
   letter: {
     fontSize: 34,
-    fontWeight: "bold",
-    color: "#8B4513",
-    fontFamily: Platform.OS === "ios" ? "Futura" : "sans-serif-medium",
-    textShadowColor: "rgba(0, 0, 0, 0.2)",
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 3,
+    color: theme.colors.primary,
+    fontFamily: theme.fonts.extrabold,
+    textShadowColor: theme.colors.primary,
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 0,
   },
 });
 

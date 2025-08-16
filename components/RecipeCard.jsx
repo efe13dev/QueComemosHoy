@@ -1,7 +1,10 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
+
+import { theme, hardShadow, outline } from "../utils/theme";
+import RetroButton from "./ui/RetroButton";
 
 export function RecipeCard({ recipe }) {
   const navigation = useNavigation();
@@ -20,6 +23,14 @@ export function RecipeCard({ recipe }) {
         <View style={styles.noImagePlaceholder} />
       )}
 
+      {recipe?.category ? (
+        <View style={styles.badge}>
+          <Text style={styles.badgeText} numberOfLines={1}>
+            {recipe.category}
+          </Text>
+        </View>
+      ) : null}
+
       <View style={styles.contentWrapper}>
         <View style={styles.titleContainer}>
           <Text style={styles.text_name} numberOfLines={2} ellipsizeMode="tail">
@@ -33,16 +44,18 @@ export function RecipeCard({ recipe }) {
           <MaterialCommunityIcons
             name="clock-outline"
             size={18}
-            color="#8B4513"
+            color={theme.colors.primary}
           />
           <Text style={styles.text_time}>{recipe.time} min</Text>
         </View>
       </View>
 
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button} onPress={changeScreen}>
-          <Text style={styles.buttonText}>Ver receta</Text>
-        </TouchableOpacity>
+        <RetroButton
+          title="Ver receta"
+          onPress={changeScreen}
+          style={styles.buttonFull}
+        />
       </View>
     </View>
   );
@@ -50,26 +63,35 @@ export function RecipeCard({ recipe }) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: theme.colors.surface,
     width: "100%",
     height: 300,
-    borderColor: "#FFE4B5",
-    borderWidth: 1,
-    borderRadius: 15,
+    borderRadius: 0,
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
     marginVertical: 10,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 4,
+    ...outline({ width: 3 }),
+    ...hardShadow({ x: 4, y: 4, elevation: 8 }),
     overflow: "hidden",
     position: "relative",
+  },
+  badge: {
+    position: "absolute",
+    top: 8,
+    left: 8,
+    backgroundColor: theme.colors.secondary,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    borderRadius: 0,
+    ...outline({ width: 3 }),
+    ...hardShadow({ x: 3, y: 3, elevation: 6 }),
+    zIndex: 2,
+  },
+  badgeText: {
+    color: theme.colors.ink,
+    fontFamily: theme.fonts.medium,
+    fontSize: 12,
   },
   contentWrapper: {
     width: "100%",
@@ -93,22 +115,25 @@ const styles = StyleSheet.create({
     gap: 5,
   },
   text_name: {
-    color: "#663300",
+    color: theme.colors.textDark,
     fontSize: 18,
-    fontWeight: "600",
+    fontFamily: theme.fonts.bold,
     textAlign: "center",
     paddingHorizontal: 10,
     marginBottom: 8,
+    textShadowColor: theme.colors.primary,
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 0,
   },
   image: {
     width: "100%",
     height: "50%",
-    borderTopLeftRadius: 15,
-    borderTopRightRadius: 15,
+    borderTopLeftRadius: 0,
+    borderTopRightRadius: 0,
   },
   text_time: {
-    color: "#8B4513",
-    fontWeight: "500",
+    color: theme.colors.ink,
+    fontFamily: theme.fonts.medium,
   },
   buttonContainer: {
     width: "100%",
@@ -117,32 +142,15 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 0,
   },
-  button: {
-    backgroundColor: "#8B4513",
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 15,
+  buttonFull: {
     width: "90%",
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  buttonText: {
-    color: "#FFFFFF",
-    fontWeight: "600",
   },
   noImagePlaceholder: {
     width: "100%",
     height: "50%",
-    backgroundColor: "#FFE4B5",
-    borderTopLeftRadius: 15,
-    borderTopRightRadius: 15,
+    backgroundColor: theme.colors.surfaceAlt,
+    borderTopLeftRadius: 0,
+    borderTopRightRadius: 0,
   },
   flexSpacer: {
     flex: 1,

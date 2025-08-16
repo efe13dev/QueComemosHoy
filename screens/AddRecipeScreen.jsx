@@ -4,6 +4,7 @@ import { StyleSheet, Text, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 import AddFormRecipe from "../components/AddFormRecipe";
+import { theme, hardShadow } from "../utils/theme";
 
 const AddRecipeScreen = () => {
   return (
@@ -12,7 +13,7 @@ const AddRecipeScreen = () => {
         <MaterialCommunityIcons
           name="notebook-plus"
           size={40}
-          color="#8B4513"
+          color={theme.colors.primary}
           style={styles.icon}
         />
         <Text style={styles.text_title}>Añade una receta</Text>
@@ -35,7 +36,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
 
-    backgroundColor: "#FFF5E6",
+    backgroundColor: theme.colors.background,
   },
   iconContainer: {
     alignItems: "center",
@@ -43,22 +44,19 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
   icon: {
-    shadowColor: "#8B4513",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    ...hardShadow({ color: theme.colors.primary, x: 2, y: 2, elevation: 3 }),
     marginBottom: 5,
   },
   text_title: {
-    color: "#663300",
+    color: theme.colors.textDark,
     textAlign: "center",
-    fontWeight: "bold",
+    fontFamily: theme.fonts.bold,
     fontSize: 24,
     marginTop: 10,
     marginBottom: 10,
+    textShadowColor: theme.colors.primary,
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 0,
   },
   scroll_container: {
     paddingTop: 20,

@@ -7,12 +7,14 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import * as Animatable from "react-native-animatable";
 
 import {
   actualizarRecetaDelDia,
   getRecipes,
   obtenerMenuSemanalSinInicializar,
 } from "../data/api";
+import { theme, outline, hardShadow } from "../utils/theme";
 
 import CustomModal from "./CustomModal";
 import WeekDayPicker from "./WeekDayPicker";
@@ -27,6 +29,7 @@ export function GenerateMenu() {
   const [errorModalVisible, setErrorModalVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [isResetting, setIsResetting] = useState(false);
+  const [resetPressed, setResetPressed] = useState(false);
 
   const handleError = useCallback((error, message) => {
     // eslint-disable-next-line no-console
@@ -191,14 +194,33 @@ export function GenerateMenu() {
         <RefreshControl
           refreshing={refreshing}
           onRefresh={onRefresh}
-          colors={["#A0522D"]}
-          tintColor="#A0522D"
+          colors={[theme.colors.primary]}
+          tintColor={theme.colors.primary}
         />
       }
     >
       <View style={styles.container}>
-        <Text style={styles.title}>Menú Semanal</Text>
-        <View style={styles.menuContainer}>
+        <View style={styles.titleWrap}>
+          <Text style={styles.titleShadow}>Menú Semanal</Text>
+          <Text style={styles.titleShadow2}>Menú Semanal</Text>
+          <Text style={styles.titleShadow3}>Menú Semanal</Text>
+          <Text style={styles.titleShadow4}>Menú Semanal</Text>
+          <Animatable.Text
+            animation="fadeInDown"
+            duration={500}
+            useNativeDriver
+            style={styles.title}
+          >
+            Menú Semanal
+          </Animatable.Text>
+        </View>
+        <Animatable.View
+          animation="fadeInUp"
+          delay={80}
+          duration={500}
+          useNativeDriver
+          style={styles.menuContainer}
+        >
           {daysOfWeek.map((day) => (
             <WeekDayPicker
               key={day}
@@ -208,19 +230,31 @@ export function GenerateMenu() {
               selectedRecipe={weekMenu[day]}
             />
           ))}
+        </Animatable.View>
+        <View style={styles.resetWrap}>
+          <View
+            style={[
+              styles.resetShadow,
+              resetPressed && styles.resetShadowPressed,
+            ]}
+          />
+          <TouchableOpacity
+            style={[
+              styles.resetButton,
+              resetPressed && styles.resetButtonPressed,
+              isResetting && styles.resetButtonDisabled,
+            ]}
+            onPress={confirmResetMenu}
+            onPressIn={() => setResetPressed(true)}
+            onPressOut={() => setResetPressed(false)}
+            disabled={isResetting}
+            activeOpacity={0.9}
+          >
+            <Text style={styles.resetButtonText}>
+              {isResetting ? "Eliminando..." : "Eliminar Menú"}
+            </Text>
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity
-          style={[
-            styles.resetButton,
-            isResetting && styles.resetButtonDisabled,
-          ]}
-          onPress={confirmResetMenu}
-          disabled={isResetting}
-        >
-          <Text style={styles.resetButtonText}>
-            {isResetting ? "Eliminando..." : "Eliminar Menú"}
-          </Text>
-        </TouchableOpacity>
       </View>
 
       {/* Modal de confirmación para resetear el menú */}
@@ -256,7 +290,7 @@ export function GenerateMenu() {
         title="Menú Eliminado"
         message="El menú semanal ha sido reiniciado exitosamente."
         icon="checkmark-circle"
-        iconColor="#8B4513"
+        iconColor={theme.colors.primary}
       />
 
       {/* Modal de error */}
@@ -266,7 +300,7 @@ export function GenerateMenu() {
         title="Error"
         message={errorMessage}
         icon="alert-circle"
-        iconColor="#c63636"
+        iconColor={theme.colors.danger}
       />
     </ScrollView>
   );
@@ -275,61 +309,126 @@ export function GenerateMenu() {
 const styles = StyleSheet.create({
   scrollViewContent: {
     flexGrow: 1,
-    paddingVertical: 15,
-    paddingHorizontal: 15,
+    paddingVertical: theme.spacing.lg,
+    paddingHorizontal: theme.spacing.lg,
   },
   container: {
     flex: 1,
   },
+  titleWrap: {
+    position: "relative",
+    alignItems: "center",
+  },
   title: {
     fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 15,
+    fontFamily: theme.fonts.bold,
+    marginBottom: theme.spacing.md,
     textAlign: "center",
-    color: "#663300",
-    textShadowColor: "rgba(102, 51, 0, 0.1)",
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 1,
+    color: theme.colors.textDark,
+    textShadowColor: theme.colors.primary,
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 0,
+    zIndex: 1,
+  },
+  titleShadow: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    fontSize: 24,
+    fontFamily: theme.fonts.bold,
+    color: theme.colors.primary,
+    textAlign: "center",
+    transform: [{ translateX: 2 }, { translateY: 2 }],
+    zIndex: 0,
+  },
+  titleShadow2: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    fontSize: 24,
+    fontFamily: theme.fonts.bold,
+    color: theme.colors.primary,
+    textAlign: "center",
+    transform: [{ translateX: -2 }, { translateY: 0 }],
+    zIndex: 0,
+  },
+  titleShadow3: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    fontSize: 24,
+    fontFamily: theme.fonts.bold,
+    color: theme.colors.primary,
+    textAlign: "center",
+    transform: [{ translateX: 0 }, { translateY: -2 }],
+    zIndex: 0,
+  },
+  titleShadow4: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    fontSize: 24,
+    fontFamily: theme.fonts.bold,
+    color: theme.colors.primary,
+    textAlign: "center",
+    transform: [{ translateX: -2 }, { translateY: -2 }],
+    zIndex: 0,
   },
   menuContainer: {
     width: "100%",
-    backgroundColor: "#FFFFFF",
-    borderRadius: 15,
-    padding: 12,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-    borderWidth: 1,
-    borderColor: "#FFE4B5",
+    backgroundColor: theme.colors.surface,
+    borderRadius: 0,
+    padding: theme.spacing.md,
+    ...outline({ width: 3 }),
+    ...hardShadow({ x: 4, y: 4, elevation: 8 }),
+  },
+  resetWrap: {
+    position: "relative",
+    width: "100%",
+    marginTop: theme.spacing.xl,
+  },
+  resetShadow: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    backgroundColor: theme.colors.border, // sombra negra
+    transform: [{ translateX: 6 }, { translateY: 6 }], // abajo-derecha
+    zIndex: 0,
+  },
+  resetShadowPressed: {
+    transform: [{ translateX: 3 }, { translateY: 3 }],
   },
   resetButton: {
-    backgroundColor: "#FFE4B5",
-    borderRadius: 15,
-    padding: 12,
-    marginTop: 20,
+    backgroundColor: theme.colors.danger, // rojo neobrutalista para acción destructiva
+    borderRadius: 0,
+    padding: theme.spacing.md,
     alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#8B4513",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 1,
-    elevation: 2,
+    ...outline({ width: 3 }),
+    zIndex: 1,
+  },
+  resetButtonPressed: {
+    transform: [{ translateX: 2 }, { translateY: 2 }],
   },
   resetButtonDisabled: {
-    backgroundColor: "#F5DEB3",
-    borderColor: "#D2B48C",
+    backgroundColor: theme.colors.border,
+    borderColor: theme.colors.borderDark,
     opacity: 0.7,
   },
   resetButtonText: {
-    color: "#663300",
+    color: "#FFFFFF",
     fontSize: 16,
-    fontWeight: "bold",
     textAlign: "center",
+    fontFamily: theme.fonts.bold,
+    zIndex: 1,
   },
 });

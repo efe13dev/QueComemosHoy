@@ -6,14 +6,15 @@ import {
   RefreshControl,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
   useWindowDimensions,
 } from "react-native";
 
 import { RecipeCard } from "../components/RecipeCard";
+import RetroInput from "../components/ui/RetroInput";
 import { getRecipes } from "../data/api";
+import { theme, hardShadow } from "../utils/theme";
 
 const MyRecipes = ({ navigation }) => {
   const [recipes, setRecipes] = useState([]);
@@ -72,17 +73,18 @@ const MyRecipes = ({ navigation }) => {
         <MaterialCommunityIcons
           name="silverware-fork-knife"
           size={50}
-          color="#8B4513"
+          color={theme.colors.primary}
           style={styles.recipeIcon}
         />
       </View>
       <Text style={styles.text_title}>Mis recetas</Text>
       <View style={styles.searchContainer}>
-        <TextInput
-          style={styles.searchInput}
+        <RetroInput
           placeholder="Buscar receta..."
           value={searchText}
           onChangeText={setSearchText}
+          containerStyle={styles.searchInputContainer}
+          style={styles.searchInputText}
         />
         {searchText !== "" && (
           <TouchableOpacity
@@ -90,7 +92,7 @@ const MyRecipes = ({ navigation }) => {
             onPress={clearSearchText}
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           >
-            <Ionicons name="close-circle" size={24} color="#8B4513" />
+            <Ionicons name="close-circle" size={24} color={theme.colors.ink} />
           </TouchableOpacity>
         )}
       </View>
@@ -105,8 +107,8 @@ const MyRecipes = ({ navigation }) => {
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
-            colors={["#A0522D"]}
-            tintColor="#A0522D"
+            colors={[theme.colors.primary]}
+            tintColor={theme.colors.primary}
             onRefresh={onRefresh}
           />
         }
@@ -118,7 +120,7 @@ const MyRecipes = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFF5E6",
+    backgroundColor: theme.colors.background,
   },
   iconContainer: {
     alignItems: "center",
@@ -126,18 +128,14 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
   text_title: {
-    color: "#663300",
+    color: theme.colors.textDark,
     textAlign: "center",
-    fontWeight: "bold",
+    fontFamily: theme.fonts.bold,
     fontSize: 24,
     marginBottom: 15,
-    shadowColor: "#8B4513",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    textShadowColor: theme.colors.primary,
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 0,
   },
   listContent: {
     paddingHorizontal: 15,
@@ -155,15 +153,11 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     position: "relative",
   },
-  searchInput: {
+  searchInputContainer: {
     flex: 1,
-    height: 40,
-    borderColor: "#8B4513",
-    borderWidth: 1,
-    borderRadius: 5,
-    paddingHorizontal: 10,
+  },
+  searchInputText: {
     paddingRight: 40,
-    backgroundColor: "#FFFFFF",
   },
   clearButton: {
     position: "absolute",
@@ -172,13 +166,7 @@ const styles = StyleSheet.create({
     transform: [{ translateY: -12 }],
   },
   recipeIcon: {
-    shadowColor: "#8B4513",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    ...hardShadow({ x: 3, y: 3, elevation: 6 }),
   },
 });
 

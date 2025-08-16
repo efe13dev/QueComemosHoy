@@ -9,7 +9,8 @@ import AddRecipe from "./screens/AddRecipeScreen";
 import DetailRecipe from "./screens/DetailRecipeScreen";
 import HomeScreen from "./screens/HomeScreen";
 import MyRecipes from "./screens/MyRecipesScreen";
-import SplashScreen from "./screens/SplashScreen"; // Importa tu SplashScreen aquí
+import SplashScreen from "./screens/SplashScreen";
+import { hardShadow, outline, theme } from "./utils/theme";
 
 const Tab = createBottomTabNavigator();
 const MyStack = createNativeStackNavigator();
@@ -19,11 +20,16 @@ function HomeStack() {
     <MyStack.Navigator
       screenOptions={{
         headerStyle: {
-          backgroundColor: "#FFF5E6",
+          backgroundColor: theme.colors.surfaceAlt,
+          ...outline({ width: 3 }),
+          ...hardShadow({ x: 2, y: 2, elevation: 4 }),
         },
-        headerTintColor: "#663300",
+        headerTintColor: theme.colors.textDark,
         headerTitleStyle: {
-          fontWeight: "bold",
+          fontFamily: theme.fonts.bold,
+          textShadowColor: theme.colors.primary,
+          textShadowOffset: { width: 2, height: 2 },
+          textShadowRadius: 0,
         },
       }}
     >
@@ -57,11 +63,16 @@ function RecipesStack() {
     <MyStack.Navigator
       screenOptions={{
         headerStyle: {
-          backgroundColor: "#FFF5E6",
+          backgroundColor: theme.colors.surfaceAlt,
+          ...outline({ width: 3 }),
+          ...hardShadow({ x: 2, y: 2, elevation: 4 }),
         },
-        headerTintColor: "#663300",
+        headerTintColor: theme.colors.textDark,
         headerTitleStyle: {
-          fontWeight: "bold",
+          fontFamily: theme.fonts.bold,
+          textShadowColor: theme.colors.primary,
+          textShadowOffset: { width: 2, height: 2 },
+          textShadowRadius: 0,
         },
       }}
     >
@@ -95,21 +106,23 @@ function MyTabs() {
     <Tab.Navigator
       screenOptions={{
         tabBarStyle: {
-          backgroundColor: "#FFF5E6",
-          borderTopColor: "#FFE4B5",
+          backgroundColor: theme.colors.surfaceAlt,
+          borderTopColor: theme.colors.border,
           height: 60,
           paddingBottom: 5,
           paddingTop: 5,
-          elevation: 8, // Sombra para Android
-          shadowOpacity: 0.1, // Sombra para iOS
-          shadowRadius: 4,
+          ...outline({ width: 3 }),
+          ...hardShadow({ x: 2, y: 2, elevation: 6 }),
         },
         tabBarLabelStyle: {
           fontSize: 12,
-          fontWeight: "500",
+          fontFamily: theme.fonts.medium,
+          textShadowColor: theme.colors.primary,
+          textShadowOffset: { width: 1, height: 1 },
+          textShadowRadius: 0,
         },
-        tabBarActiveTintColor: "#A0522D", // Color más suave, marrón siena
-        tabBarInactiveTintColor: "#663300",
+        tabBarActiveTintColor: theme.colors.accent,
+        tabBarInactiveTintColor: theme.colors.textDark,
       }}
     >
       <Tab.Screen
@@ -119,9 +132,12 @@ function MyTabs() {
           tabBarLabel: ({ focused }) => (
             <Text
               style={{
-                color: focused ? "#A0522D" : "#663300",
+                color: focused ? theme.colors.accent : theme.colors.textDark,
                 fontSize: focused ? 13 : 12,
-                fontWeight: focused ? "bold" : "500",
+                fontFamily: focused ? theme.fonts.bold : theme.fonts.medium,
+                textShadowColor: theme.colors.primary,
+                textShadowOffset: { width: 1, height: 1 },
+                textShadowRadius: 0,
                 marginTop: -5,
               }}
             >
@@ -130,21 +146,11 @@ function MyTabs() {
           ),
           tabBarIcon: ({ color, size, focused }) => (
             <View
-              style={
-                focused
-                  ? {
-                      shadowColor: "#A0522D",
-                      shadowOffset: { width: 0, height: 2 },
-                      shadowOpacity: 0.5, // Reducida la opacidad de la sombra
-                      shadowRadius: 2,
-                      elevation: 3, // Reducida la elevación
-                    }
-                  : {}
-              }
+              style={focused ? hardShadow({ x: 2, y: 2, elevation: 3 }) : null}
             >
               <FontAwesome
                 name="home"
-                size={focused ? 30 : 24} // Aún más grande cuando está activo
+                size={focused ? 30 : 24}
                 color={color}
                 style={focused ? { marginBottom: -3 } : {}}
               />
@@ -160,9 +166,12 @@ function MyTabs() {
           tabBarLabel: ({ focused }) => (
             <Text
               style={{
-                color: focused ? "#A0522D" : "#663300",
+                color: focused ? theme.colors.accent : theme.colors.textDark,
                 fontSize: focused ? 13 : 12,
-                fontWeight: focused ? "bold" : "500",
+                fontFamily: focused ? theme.fonts.bold : theme.fonts.medium,
+                textShadowColor: theme.colors.primary,
+                textShadowOffset: { width: 1, height: 1 },
+                textShadowRadius: 0,
                 marginTop: -5,
               }}
             >
@@ -171,21 +180,11 @@ function MyTabs() {
           ),
           tabBarIcon: ({ color, size, focused }) => (
             <View
-              style={
-                focused
-                  ? {
-                      shadowColor: "#A0522D",
-                      shadowOffset: { width: 0, height: 2 },
-                      shadowOpacity: 0.5, // Reducida la opacidad de la sombra
-                      shadowRadius: 2,
-                      elevation: 3, // Reducida la elevación
-                    }
-                  : {}
-              }
+              style={focused ? hardShadow({ x: 2, y: 2, elevation: 3 }) : null}
             >
               <Entypo
                 name="bowl"
-                size={focused ? 30 : 24} // Aún más grande cuando está activo
+                size={focused ? 30 : 24}
                 color={color}
                 style={focused ? { marginBottom: -3 } : {}}
               />
@@ -201,9 +200,12 @@ function MyTabs() {
           tabBarLabel: ({ focused }) => (
             <Text
               style={{
-                color: focused ? "#A0522D" : "#663300",
+                color: focused ? theme.colors.accent : theme.colors.textDark,
                 fontSize: focused ? 13 : 12,
-                fontWeight: focused ? "bold" : "500",
+                fontFamily: focused ? theme.fonts.bold : theme.fonts.medium,
+                textShadowColor: theme.colors.primary,
+                textShadowOffset: { width: 1, height: 1 },
+                textShadowRadius: 0,
                 marginTop: -5,
               }}
             >
@@ -212,21 +214,11 @@ function MyTabs() {
           ),
           tabBarIcon: ({ color, size, focused }) => (
             <View
-              style={
-                focused
-                  ? {
-                      shadowColor: "#A0522D",
-                      shadowOffset: { width: 0, height: 2 },
-                      shadowOpacity: 0.5, // Reducida la opacidad de la sombra
-                      shadowRadius: 2,
-                      elevation: 3, // Reducida la elevación
-                    }
-                  : {}
-              }
+              style={focused ? hardShadow({ x: 2, y: 2, elevation: 3 }) : null}
             >
               <Ionicons
                 name="add-circle"
-                size={focused ? 30 : 24} // Aún más grande cuando está activo
+                size={focused ? 30 : 24}
                 color={color}
                 style={focused ? { marginBottom: -3 } : {}}
               />

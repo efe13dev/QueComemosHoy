@@ -2,8 +2,10 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Constants from "expo-constants";
 import React from "react";
 import { StatusBar, StyleSheet, View } from "react-native";
+import * as Animatable from "react-native-animatable";
 
 import { GenerateMenu } from "../components/GenerateMenu";
+import { theme, hardShadow } from "../utils/theme";
 
 export default function HomeScreen() {
   return (
@@ -13,14 +15,27 @@ export default function HomeScreen() {
         backgroundColor="transparent"
         translucent
       />
-      <View style={styles.iconContainer}>
-        <MaterialCommunityIcons
-          name="chef-hat"
-          size={50}
-          color="#8B4513"
-          style={styles.icon}
-        />
-      </View>
+      <Animatable.View
+        animation="fadeInDown"
+        duration={500}
+        useNativeDriver
+        style={styles.iconContainer}
+      >
+        <View style={styles.iconWrap}>
+          <MaterialCommunityIcons
+            name="chef-hat"
+            size={50}
+            color={theme.colors.border}
+            style={styles.iconShadow}
+          />
+          <MaterialCommunityIcons
+            name="chef-hat"
+            size={50}
+            color={theme.colors.primary}
+            style={styles.icon}
+          />
+        </View>
+      </Animatable.View>
       <GenerateMenu />
     </View>
   );
@@ -29,20 +44,29 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFF5E6",
+    backgroundColor: theme.colors.background,
   },
   iconContainer: {
     alignItems: "center",
     paddingTop: Constants.statusBarHeight,
-    paddingBottom: 10,
+    paddingBottom: theme.spacing.sm,
+    ...hardShadow({ x: 2, y: 2, elevation: 4 }),
+  },
+  iconWrap: {
+    position: "relative",
+    width: 50,
+    height: 50,
   },
   icon: {
-    shadowColor: "#8B4513",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    position: "absolute",
+    left: 0,
+    top: 0,
+    zIndex: 1,
+  },
+  iconShadow: {
+    position: "absolute",
+    left: 2,
+    top: 2,
+    zIndex: 0,
   },
 });
