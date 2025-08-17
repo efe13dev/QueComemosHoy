@@ -15,8 +15,11 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 
+import GreenDiamond from "../components/svg/GreenDiamond";
+import PinkTarget from "../components/svg/PinkTarget";
+import WaveMark from "../components/svg/WaveMark";
 import { deleteRecipe, getRecipe, updateRecipe } from "../data/api";
-import { theme, outline, hardShadow } from "../utils/theme";
+import { hardShadow, outline, theme } from "../utils/theme";
 
 const DetailRecipe = ({ route }) => {
   const { id } = route.params;
@@ -260,10 +263,26 @@ const DetailRecipe = ({ route }) => {
         <View style={styles.imageContainer}>
           <Image source={{ uri: recipe.image }} style={styles.image} />
           <TouchableOpacity style={styles.updateButton} onPress={handleUpdate}>
-            <MaterialCommunityIcons name="pencil" size={24} color="#FFFFFF" />
+            <View style={styles.iconStack}>
+              <MaterialCommunityIcons
+                name="pencil"
+                size={24}
+                color={theme.colors.border}
+                style={styles.iconShadow}
+              />
+              <MaterialCommunityIcons name="pencil" size={24} color="#FFFFFF" />
+            </View>
           </TouchableOpacity>
           <TouchableOpacity style={styles.button} onPress={showAlert}>
-            <MaterialCommunityIcons name="delete" size={24} color="#FFFFFF" />
+            <View style={styles.iconStack}>
+              <MaterialCommunityIcons
+                name="delete"
+                size={24}
+                color={theme.colors.border}
+                style={styles.iconShadow}
+              />
+              <MaterialCommunityIcons name="delete" size={24} color="#FFFFFF" />
+            </View>
           </TouchableOpacity>
         </View>
       )}
@@ -404,10 +423,36 @@ const DetailRecipe = ({ route }) => {
         recipe && (
           <>
             <Text style={styles.title}>{recipe.name}</Text>
-            <Text style={styles.textTime}>
-              Tiempo de preparación:{" "}
-              <Text style={styles.spanTime}>{recipe.time} min</Text>
-            </Text>
+            <View style={styles.metaRow}>
+              <View style={[styles.metaCard, styles.metaPrimary]}>
+                <Ionicons
+                  name="time-outline"
+                  size={18}
+                  color={theme.colors.ink}
+                />
+                <Text style={styles.metaText}>{recipe.time} min</Text>
+              </View>
+              <View style={[styles.metaCard, styles.metaSuccess]}>
+                <MaterialCommunityIcons
+                  name="account-group-outline"
+                  size={18}
+                  color={theme.colors.ink}
+                />
+                <Text style={styles.metaText}>{recipe.people} pers.</Text>
+              </View>
+              {!!recipe.category && (
+                <View style={[styles.metaCard, styles.metaAccent]}>
+                  <MaterialCommunityIcons
+                    name="tag-outline"
+                    size={18}
+                    color={theme.colors.ink}
+                  />
+                  <Text style={styles.metaText} numberOfLines={1}>
+                    {recipe.category}
+                  </Text>
+                </View>
+              )}
+            </View>
           </>
         )
       )}
@@ -415,32 +460,52 @@ const DetailRecipe = ({ route }) => {
         <>
           <Text style={styles.titleIngredientsInstructions}>Ingredientes:</Text>
           <View style={styles.containerIngredientsInstructions}>
-            {recipe.ingredients?.map((ingredient) => (
-              <Text
-                key={ingredient.id}
-                style={
-                  recipe.ingredients.indexOf(ingredient) % 2 === 0
-                    ? styles.listIngredientsInstructionsPar
-                    : styles.listIngredientsInstructionsOdd
-                }
-              >
-                · {ingredient.text}
-              </Text>
+            {recipe.ingredients?.map((ingredient, idx) => (
+              <View key={ingredient.id} style={styles.listItemWrapper}>
+                {idx % 3 === 0 && (
+                  <WaveMark style={styles.itemBg} opacity={1} />
+                )}
+                {idx % 3 === 1 && (
+                  <PinkTarget style={styles.itemBg} opacity={1} />
+                )}
+                {idx % 3 === 2 && (
+                  <GreenDiamond style={styles.itemBg} opacity={1} />
+                )}
+                <View
+                  style={
+                    idx % 2 === 0
+                      ? styles.listIngredientsInstructionsPar
+                      : styles.listIngredientsInstructionsOdd
+                  }
+                >
+                  <Text style={styles.listItemText}>· {ingredient.text}</Text>
+                </View>
+              </View>
             ))}
           </View>
           <Text style={styles.titleIngredientsInstructions}>Preparación:</Text>
           <View style={styles.containerIngredientsInstructions}>
-            {recipe.preparation?.map((step) => (
-              <Text
-                key={step.id}
-                style={
-                  recipe.preparation.indexOf(step) % 2 === 0
-                    ? styles.listIngredientsInstructionsPar
-                    : styles.listIngredientsInstructionsOdd
-                }
-              >
-                · {step.text}
-              </Text>
+            {recipe.preparation?.map((step, idx) => (
+              <View key={step.id} style={styles.listItemWrapper}>
+                {idx % 3 === 0 && (
+                  <WaveMark style={styles.itemBg} opacity={1} />
+                )}
+                {idx % 3 === 1 && (
+                  <PinkTarget style={styles.itemBg} opacity={1} />
+                )}
+                {idx % 3 === 2 && (
+                  <GreenDiamond style={styles.itemBg} opacity={1} />
+                )}
+                <View
+                  style={
+                    idx % 2 === 0
+                      ? styles.listIngredientsInstructionsPar
+                      : styles.listIngredientsInstructionsOdd
+                  }
+                >
+                  <Text style={styles.listItemText}>· {step.text}</Text>
+                </View>
+              </View>
             ))}
           </View>
         </>
@@ -496,8 +561,8 @@ const styles = StyleSheet.create({
     color: theme.colors.textDark,
     textAlign: "center",
     width: "100%",
-    textShadowColor: theme.colors.primary,
-    textShadowOffset: { width: 2, height: 2 },
+    textShadowColor: theme.colors.border,
+    textShadowOffset: { width: 3, height: 3 },
     textShadowRadius: 0,
   },
   textTime: {
@@ -517,13 +582,17 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     color: theme.colors.textDark,
     width: "100%",
-    textShadowColor: theme.colors.primary,
-    textShadowOffset: { width: 2, height: 2 },
+    textShadowColor: theme.colors.border,
+    textShadowOffset: { width: 3, height: 3 },
     textShadowRadius: 0,
   },
   containerIngredientsInstructions: {
     paddingHorizontal: 10,
     marginBottom: 20,
+    width: "100%",
+  },
+  listItemWrapper: {
+    position: "relative",
     width: "100%",
   },
   listIngredientsInstructionsPar: {
@@ -534,7 +603,17 @@ const styles = StyleSheet.create({
     borderRadius: 0,
     marginBottom: 8,
     width: "100%",
-    ...outline({ width: 3 }),
+    position: "relative",
+    overflow: "hidden",
+    zIndex: 1,
+    borderTopWidth: 3,
+    borderRightWidth: 3,
+    borderBottomWidth: 3,
+    borderLeftWidth: 8,
+    borderTopColor: theme.colors.border,
+    borderRightColor: theme.colors.border,
+    borderBottomColor: theme.colors.border,
+    borderLeftColor: theme.colors.border,
   },
   listIngredientsInstructionsOdd: {
     fontSize: 16,
@@ -544,7 +623,76 @@ const styles = StyleSheet.create({
     borderRadius: 0,
     marginBottom: 8,
     width: "100%",
+    position: "relative",
+    overflow: "hidden",
+    zIndex: 1,
+    borderTopWidth: 3,
+    borderRightWidth: 3,
+    borderBottomWidth: 3,
+    borderLeftWidth: 8,
+    borderTopColor: theme.colors.border,
+    borderRightColor: theme.colors.border,
+    borderBottomColor: theme.colors.border,
+    borderLeftColor: theme.colors.border,
+  },
+  metaRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    flexWrap: "wrap",
+    marginBottom: 20,
+  },
+  metaCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: theme.colors.surface,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 0,
+    marginHorizontal: 6,
+    marginVertical: 6,
     ...outline({ width: 3 }),
+    ...hardShadow({ x: 3, y: 3, elevation: 6 }),
+  },
+  listItemText: {
+    color: theme.colors.ink,
+    fontFamily: theme.fonts.regular,
+    fontSize: 16,
+  },
+  itemBg: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 0,
+  },
+  metaText: {
+    marginLeft: 8,
+    color: theme.colors.ink,
+    fontFamily: theme.fonts.bold,
+  },
+  metaPrimary: {
+    borderLeftWidth: 8,
+    borderLeftColor: theme.colors.primary,
+  },
+  metaSuccess: {
+    borderLeftWidth: 8,
+    borderLeftColor: theme.colors.success,
+  },
+  metaAccent: {
+    borderLeftWidth: 8,
+    borderLeftColor: theme.colors.accent,
+  },
+  iconStack: {
+    position: "relative",
+    width: 24,
+    height: 24,
+  },
+  iconShadow: {
+    position: "absolute",
+    left: 3,
+    top: 3,
   },
   updateButton: {
     position: "absolute",
