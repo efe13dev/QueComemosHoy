@@ -3,10 +3,16 @@ import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
 
-import { theme, hardShadow, outline } from "../utils/theme";
+import { hardShadow, outline, theme } from "../utils/theme";
+
 import RetroButton from "./ui/RetroButton";
 
-export function RecipeCard({ recipe, buttonShadowOffset, buttonShadowColor }) {
+export function RecipeCard({
+  recipe,
+  buttonShadowOffset,
+  buttonShadowColor,
+  buttonShadowPadding,
+}) {
   const navigation = useNavigation();
 
   const changeScreen = () => {
@@ -57,6 +63,7 @@ export function RecipeCard({ recipe, buttonShadowOffset, buttonShadowColor }) {
           style={styles.buttonFull}
           shadowOffset={buttonShadowOffset}
           shadowColor={buttonShadowColor}
+          shadowPadding={buttonShadowPadding}
         />
       </View>
     </View>

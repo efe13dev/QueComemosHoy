@@ -13,6 +13,8 @@ export default function RetroButton({
   variant = "primary",
   shadowOffset,
   shadowColor,
+  shadowPadding = "both", // "both" | "right"
+  shadowMode = "block", // "block" | "rightBar"
 }) {
   const variantBg =
     {
@@ -31,6 +33,8 @@ export default function RetroButton({
   // Usamos el width del estilo externo en el wrapper y no en la superficie
   const flatStyle = StyleSheet.flatten(style) || {};
   const { width: buttonWidth, ...restSurfaceStyle } = flatStyle;
+  const reserveRightOnly = shadowPadding === "right";
+  const isRightBar = shadowMode === "rightBar";
 
   return (
     <Pressable
@@ -46,9 +50,17 @@ export default function RetroButton({
           style={[
             styles.layerWrap,
             {
-              paddingLeft: pressed ? offsetPressedX : offsetDefaultX,
+              paddingLeft: reserveRightOnly
+                ? 0
+                : pressed
+                  ? offsetPressedX
+                  : offsetDefaultX,
               paddingRight: pressed ? offsetPressedX : offsetDefaultX,
-              paddingBottom: pressed ? offsetPressedY : offsetDefaultY,
+              paddingBottom: reserveRightOnly
+                ? 0
+                : pressed
+                  ? offsetPressedY
+                  : offsetDefaultY,
             },
           ]}
         >
@@ -58,19 +70,29 @@ export default function RetroButton({
             style={[
               styles.shadowBlock,
               { backgroundColor: shadowBg },
-              pressed
-                ? {
-                    transform: [
-                      { translateX: offsetPressedX },
-                      { translateY: offsetPressedY },
-                    ],
-                  }
-                : {
-                    transform: [
-                      { translateX: offsetDefaultX },
-                      { translateY: offsetDefaultY },
-                    ],
-                  },
+              isRightBar
+                ? [
+                    styles.rightBar,
+                    {
+                      width: Math.max(
+                        2,
+                        (pressed ? offsetPressedX : offsetDefaultX) + 2,
+                      ),
+                    },
+                  ]
+                : pressed
+                  ? {
+                      transform: [
+                        { translateX: offsetPressedX },
+                        { translateY: offsetPressedY },
+                      ],
+                    }
+                  : {
+                      transform: [
+                        { translateX: offsetDefaultX },
+                        { translateY: offsetDefaultY },
+                      ],
+                    },
             ]}
           />
           {/* Superficie del botón */}

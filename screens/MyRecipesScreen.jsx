@@ -60,10 +60,11 @@ const MyRecipes = ({ navigation }) => {
       <RecipeCard
         recipe={item}
         buttonShadowOffset={{
-          default: { x: 2, y: 2 },
-          pressed: { x: 0.5, y: 0.5 },
+          default: { x: 3, y: 3 },
+          pressed: { x: 1, y: 1 },
         }}
         buttonShadowColor="#000000"
+        buttonShadowPadding="right"
       />
     </View>
   );

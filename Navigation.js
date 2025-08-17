@@ -129,13 +129,13 @@ function MyTabs() {
         name="Home"
         component={HomeStack}
         options={{
-          tabBarLabel: ({ focused }) => (
+          tabBarLabel: ({ focused, color }) => (
             <Text
               style={{
-                color: focused ? theme.colors.accent : theme.colors.textDark,
+                color,
                 fontSize: focused ? 13 : 12,
                 fontFamily: focused ? theme.fonts.bold : theme.fonts.medium,
-                textShadowColor: theme.colors.primary,
+                textShadowColor: "#FF7A00",
                 textShadowOffset: { width: 1, height: 1 },
                 textShadowRadius: 0,
                 marginTop: -5,
@@ -156,6 +156,7 @@ function MyTabs() {
               />
             </View>
           ),
+          tabBarActiveTintColor: "#FF7A00",
           headerShown: false,
         }}
       />
@@ -163,10 +164,10 @@ function MyTabs() {
         name="MyRecipesScreen"
         component={RecipesStack}
         options={{
-          tabBarLabel: ({ focused }) => (
+          tabBarLabel: ({ focused, color }) => (
             <Text
               style={{
-                color: focused ? theme.colors.accent : theme.colors.textDark,
+                color,
                 fontSize: focused ? 13 : 12,
                 fontFamily: focused ? theme.fonts.bold : theme.fonts.medium,
                 textShadowColor: theme.colors.primary,
@@ -190,6 +191,7 @@ function MyTabs() {
               />
             </View>
           ),
+          tabBarActiveTintColor: theme.colors.secondary,
           headerShown: false,
         }}
       />
@@ -197,10 +199,10 @@ function MyTabs() {
         name="AddRecipeScreen"
         component={AddRecipe}
         options={{
-          tabBarLabel: ({ focused }) => (
+          tabBarLabel: ({ focused, color }) => (
             <Text
               style={{
-                color: focused ? theme.colors.accent : theme.colors.textDark,
+                color,
                 fontSize: focused ? 13 : 12,
                 fontFamily: focused ? theme.fonts.bold : theme.fonts.medium,
                 textShadowColor: theme.colors.primary,
@@ -224,6 +226,7 @@ function MyTabs() {
               />
             </View>
           ),
+          tabBarActiveTintColor: theme.colors.success,
           headerShown: false,
         }}
       />
