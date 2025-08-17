@@ -36,13 +36,17 @@ export default function RetroButton({
     <Pressable
       onPress={onPress}
       disabled={disabled}
-      style={[styles.wrapper, buttonWidth != null && { width: buttonWidth }]}
+      style={[
+        styles.wrapper,
+        buttonWidth != null && { width: buttonWidth, alignSelf: "center" },
+      ]}
     >
       {({ pressed }) => (
         <View
           style={[
             styles.layerWrap,
             {
+              paddingLeft: pressed ? offsetPressedX : offsetDefaultX,
               paddingRight: pressed ? offsetPressedX : offsetDefaultX,
               paddingBottom: pressed ? offsetPressedY : offsetDefaultY,
             },
