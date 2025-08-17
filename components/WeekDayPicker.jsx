@@ -1,9 +1,10 @@
-import React, { useCallback } from "react";
-import { StyleSheet, Text, View, Platform } from "react-native";
+import React, { useCallback, useState } from "react";
+import { StyleSheet, Text, View } from "react-native";
 import * as Animatable from "react-native-animatable";
-import RNPickerSelect from "react-native-picker-select";
 
-import { theme, outline, hardShadow } from "../utils/theme";
+import { hardShadow, outline, theme } from "../utils/theme";
+
+import NeoDropdown from "./ui/NeoDropdown";
 
 const WeekDayPicker = ({ day, handleChange, recipesName, selectedRecipe }) => {
   const capitalizedDay = day.charAt(0).toUpperCase() + day.slice(1);
@@ -20,6 +21,8 @@ const WeekDayPicker = ({ day, handleChange, recipesName, selectedRecipe }) => {
   };
 
   const dayBackgroundColor = dayPalette[day] || theme.colors.surfaceAlt;
+
+  const [pickerPressed, setPickerPressed] = useState(false);
 
   const handleValueChange = useCallback(
     (value) => handleChange(day, value),
@@ -43,37 +46,26 @@ const WeekDayPicker = ({ day, handleChange, recipesName, selectedRecipe }) => {
         </View>
         <View style={styles.pickerContainer}>
           <View style={styles.pickerWrap}>
-            <View style={styles.pickerShadow} />
-            <View style={styles.pickerBox}>
-              <RNPickerSelect
+            <View
+              style={[
+                styles.pickerShadow,
+                pickerPressed && styles.pickerShadowPressed,
+              ]}
+            />
+            <View
+              style={[
+                styles.pickerBox,
+                pickerPressed && styles.pickerBoxPressed,
+              ]}
+            >
+              <NeoDropdown
                 value={selectedRecipe}
-                style={{
-                  ...pickerSelectStyles,
-                  viewContainer: {
-                    width: "100%",
-                    height: "100%",
-                  },
-                  inputIOS: {
-                    ...pickerSelectStyles.inputIOS,
-                    width: "100%",
-                  },
-                  inputAndroid: {
-                    ...pickerSelectStyles.inputAndroid,
-                    width: "100%",
-                  },
-                }}
-                placeholder={{ label: "Selecciona una receta...", value: null }}
-                onValueChange={handleValueChange}
                 items={recipesName}
-                useNativeAndroidPickerStyle={false}
-                fixAndroidTouchableBug
-                pickerProps={
-                  Platform.OS === "android" ? { mode: "dropdown" } : {}
-                }
-                textInputProps={{
-                  numberOfLines: 1,
-                  ellipsizeMode: "tail",
-                }}
+                placeholder="Selecciona una receta..."
+                onValueChange={handleValueChange}
+                accentColor={dayBackgroundColor}
+                onPressIn={() => setPickerPressed(true)}
+                onPressOut={() => setPickerPressed(false)}
               />
             </View>
           </View>
@@ -151,52 +143,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     zIndex: 1,
   },
-  pickerOverlay: {
-    position: "absolute",
-    left: 0,
-    top: 0,
-    right: 0,
-    bottom: 0,
-    zIndex: 2,
-    backgroundColor: "transparent",
+  pickerBoxPressed: {
+    transform: [{ translateX: 2 }, { translateY: 2 }],
   },
-});
-
-const pickerSelectStyles = StyleSheet.create({
-  inputIOS: {
-    fontSize: 15,
-    paddingVertical: 6,
-    paddingHorizontal: 10,
-    borderRadius: 0,
-    color: theme.colors.ink,
-    backgroundColor: "transparent",
-    paddingRight: 30,
-    textAlign: "left",
-    height: "100%",
-    fontFamily: theme.fonts.medium,
-  },
-  inputAndroid: {
-    fontSize: 15,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 0,
-    color: theme.colors.ink,
-    backgroundColor: "transparent",
-    paddingRight: 30,
-    textAlign: "left",
-    height: "100%",
-    fontFamily: theme.fonts.medium,
-  },
-  iconContainer: {
-    top: 8,
-    right: 12,
-  },
-  placeholder: {
-    color: theme.colors.textMuted,
-    fontSize: 14,
-    fontStyle: "italic",
-    textAlign: "left",
-    fontFamily: theme.fonts.medium,
+  pickerShadowPressed: {
+    left: 3,
+    top: 3,
   },
 });
 

@@ -6,7 +6,7 @@ import { Image, StyleSheet, Text, View } from "react-native";
 import { theme, hardShadow, outline } from "../utils/theme";
 import RetroButton from "./ui/RetroButton";
 
-export function RecipeCard({ recipe }) {
+export function RecipeCard({ recipe, buttonShadowOffset, buttonShadowColor }) {
   const navigation = useNavigation();
 
   const changeScreen = () => {
@@ -55,6 +55,8 @@ export function RecipeCard({ recipe }) {
           title="Ver receta"
           onPress={changeScreen}
           style={styles.buttonFull}
+          shadowOffset={buttonShadowOffset}
+          shadowColor={buttonShadowColor}
         />
       </View>
     </View>
@@ -144,6 +146,7 @@ const styles = StyleSheet.create({
   },
   buttonFull: {
     width: "90%",
+    paddingVertical: 8,
   },
   noImagePlaceholder: {
     width: "100%",
