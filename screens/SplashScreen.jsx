@@ -1,6 +1,6 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useState } from "react";
-import { Dimensions, StyleSheet } from "react-native";
+import { Dimensions, Platform, StyleSheet, Text, View } from "react-native";
 import * as Animatable from "react-native-animatable";
 
 import splashImage from "../assets/splash_image.png";
@@ -22,11 +22,11 @@ Animatable.initializeRegistryWithDefinitions({
   },
 });
 
-// Componente para cada letra animada
+// Componente para cada letra animada (con sombra duplicada para Android/iOS)
 const AnimatedLetter = ({ letter, index, totalLetters }) => {
   return (
-    <Animatable.Text
-      style={styles.letter}
+    <Animatable.View
+      style={styles.letterWrapper}
       animation={{
         from: { opacity: 0 },
         to: { opacity: 1 },
@@ -35,13 +35,27 @@ const AnimatedLetter = ({ letter, index, totalLetters }) => {
       delay={index * 40}
       useNativeDriver
     >
-      {letter}
-    </Animatable.Text>
+      <Text
+        allowFontScaling={false}
+        style={[styles.letter, styles.letterShadow]}
+      >
+        {letter}
+      </Text>
+      <Text allowFontScaling={false} style={styles.letter}>
+        {letter}
+      </Text>
+    </Animatable.View>
   );
 };
 
 const SplashScreen = () => {
   const [letters, setLetters] = useState([]);
+  const [containerW, setContainerW] = useState(0);
+  const [contentW, setContentW] = useState(0);
+  const scale =
+    containerW > 0 && contentW > 0
+      ? Math.min(1, (containerW - 8) / contentW)
+      : 1;
 
   useEffect(() => {
     // Texto a animar letra por letra
@@ -74,15 +88,25 @@ const SplashScreen = () => {
         delay={200}
         duration={500}
         useNativeDriver
+        onLayout={(e) => {
+          if (containerW === 0) setContainerW(e.nativeEvent.layout.width);
+        }}
       >
-        {letters.map((letterObj) => (
-          <AnimatedLetter
-            key={letterObj.id}
-            letter={letterObj.value}
-            index={letters.indexOf(letterObj)}
-            totalLetters={letters.length}
-          />
-        ))}
+        <View
+          onLayout={(e) => {
+            if (contentW === 0) setContentW(e.nativeEvent.layout.width);
+          }}
+          style={[styles.contentRow, { transform: [{ scale }] }]}
+        >
+          {letters.map((letterObj, idx) => (
+            <AnimatedLetter
+              key={letterObj.id}
+              letter={letterObj.value}
+              index={idx}
+              totalLetters={letters.length}
+            />
+          ))}
+        </View>
       </Animatable.View>
     </LinearGradient>
   );
@@ -104,19 +128,41 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     flexDirection: "row",
-    flexWrap: "wrap",
+    flexWrap: "nowrap",
     justifyContent: "center",
     alignItems: "center",
     width: width * 0.95,
     paddingHorizontal: 5,
+    overflow: "visible",
+  },
+  contentRow: {
+    flexDirection: "row",
+    flexWrap: "nowrap",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  letterWrapper: {
+    position: "relative",
+    overflow: "visible",
+    marginRight: 3,
+    marginBottom: 3,
   },
   letter: {
     fontSize: 34,
     color: theme.colors.primary,
     fontFamily: theme.fonts.extrabold,
-    textShadowColor: theme.colors.primary,
-    textShadowOffset: { width: 2, height: 2 },
-    textShadowRadius: 0,
+    includeFontPadding: false,
+    lineHeight: 38,
+    backgroundColor: "transparent",
+    zIndex: 1,
+  },
+  letterShadow: {
+    color: "#000000",
+    position: "absolute",
+    left: Platform.select({ ios: 2, android: 3 }),
+    top: Platform.select({ ios: 2, android: 3 }),
+    backgroundColor: "transparent",
+    zIndex: 0,
   },
 });
 
