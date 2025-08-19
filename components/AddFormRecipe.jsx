@@ -9,12 +9,12 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import RNPickerSelect from "react-native-picker-select";
 import Icon from "react-native-vector-icons/MaterialIcons";
 
 import { saveRecipe } from "../data/api";
 import { theme, outline, hardShadow } from "../utils/theme";
 
+import NeoDropdown from "./ui/NeoDropdown";
 import RetroButton from "./ui/RetroButton";
 import RetroInput from "./ui/RetroInput";
 import RetroPanel from "./ui/RetroPanel";
@@ -30,6 +30,7 @@ const AddFormRecipe = () => {
     preparation: [{ id: `${"prep-"}${Date.now()}`, text: "" }],
   });
   const [successModalVisible, setSuccessModalVisible] = useState(false);
+  const [categoryPressed, setCategoryPressed] = useState(false);
 
   const handleChange = (name, value, index) => {
     if (name === "ingredients" || name === "preparation") {
@@ -136,25 +137,31 @@ const AddFormRecipe = () => {
         onChangeText={(value) => handleChange("name", value)}
       />
 
-      <View style={styles.selectWrapper}>
-        <RNPickerSelect
-          value={recipe.category}
-          style={{
-            inputIOS: styles.selectInput,
-            inputAndroid: styles.selectInput,
-            placeholder: { color: theme.colors.textMuted },
-          }}
-          placeholder={{ label: "Categoria...", value: null }}
-          onValueChange={(value) => handleChange("category", value)}
-          items={[
-            { label: "Pasta & Arroces", value: "Pasta & Arroces" },
-            { label: "Pescados", value: "Pescados" },
-            { label: "Pollo", value: "Pollo" },
-            { label: "Otras carnes", value: "Otras carnes" },
-            { label: "Verduras", value: "Verduras" },
-            { label: "Guisos", value: "Guisos" },
-          ]}
-        />
+      <View
+        style={[
+          styles.selectWrapper,
+          categoryPressed && styles.selectWrapperPressed,
+        ]}
+      >
+        <View style={styles.dropdownContainer}>
+          <NeoDropdown
+            value={recipe.category}
+            items={[
+              { label: "Pasta & Arroces", value: "Pasta & Arroces" },
+              { label: "Pescados", value: "Pescados" },
+              { label: "Pollo", value: "Pollo" },
+              { label: "Otras carnes", value: "Otras carnes" },
+              { label: "Verduras", value: "Verduras" },
+              { label: "Guisos", value: "Guisos" },
+            ]}
+            placeholder="Categoría..."
+            modalTitle="Selecciona categoría"
+            onValueChange={(value) => handleChange("category", value)}
+            accentColor={theme.colors.border}
+            onPressIn={() => setCategoryPressed(true)}
+            onPressOut={() => setCategoryPressed(false)}
+          />
+        </View>
       </View>
 
       <RetroInput
@@ -270,10 +277,17 @@ const styles = StyleSheet.create({
     ...outline({ width: 3 }),
     ...hardShadow({ x: 4, y: 4, elevation: 8 }),
   },
+  selectWrapperPressed: {
+    transform: [{ translateX: 2 }, { translateY: 2 }],
+  },
   selectInput: {
     height: 50,
     paddingHorizontal: 14,
     color: theme.colors.textDark,
+  },
+  dropdownContainer: {
+    height: 50,
+    justifyContent: "center",
   },
   input_row: {
     flexDirection: "row",

@@ -61,6 +61,7 @@ export default function NeoDropdown({
   accentColor,
   onPressIn,
   onPressOut,
+  modalTitle = "Selecciona receta",
 }) {
   const [open, setOpen] = useState(false);
 
@@ -105,7 +106,7 @@ export default function NeoDropdown({
           <View style={[styles.panel, { backgroundColor: panelBg }]}>
             <View style={[styles.headerBar, { backgroundColor: accent }]} />
             <Text style={[styles.title, { textShadowColor: accent }]}>
-              Selecciona receta
+              {modalTitle}
             </Text>
             <FlatList
               data={items}
