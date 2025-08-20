@@ -53,6 +53,25 @@ Animatable.initializeRegistryWithDefinitions({
     0.75: { translateX: -1, translateY: 0 },
     1: { translateX: 0, translateY: 0 },
   },
+  // Pulso duro y breve para elementos contundentes (badge)
+  neoPulse: {
+    0: { scale: 1, translateX: 0, translateY: 0 },
+    0.2: { scale: 1.05, translateX: -1, translateY: 1 },
+    0.4: { scale: 1, translateX: 0, translateY: 0 },
+    0.6: { scale: 1.04, translateX: 1, translateY: -1 },
+    0.8: { scale: 1, translateX: 0, translateY: 0 },
+    1: { scale: 1.02, translateX: 0, translateY: 0 },
+  },
+  // Glitch con skew y jitter para subtítulo
+  taglineGlitch: {
+    0: { translateX: 0, skewX: "0deg", opacity: 1 },
+    0.12: { translateX: -1.5, skewX: "-6deg", opacity: 0.95 },
+    0.24: { translateX: 2, skewX: "5deg", opacity: 1 },
+    0.36: { translateX: -0.8, skewX: "-3deg", opacity: 0.98 },
+    0.6: { translateX: 1, skewX: "2deg", opacity: 1 },
+    0.72: { translateX: -1, skewX: "-2deg", opacity: 0.97 },
+    1: { translateX: 0, skewX: "0deg", opacity: 1 },
+  },
 });
 
 // Componente para cada letra animada (con sombra duplicada para Android/iOS)
@@ -183,7 +202,7 @@ const SplashScreen = () => {
         </View>
         {/* Badge 3.0 */}
         <Animatable.View
-          animation="popInThicc"
+          animation="badgePunch"
           delay={letters.length * LETTER_DELAY + 200}
           duration={650}
           useNativeDriver
@@ -200,12 +219,17 @@ const SplashScreen = () => {
             >
               3.0
             </Text>
-            <Text
+            <Animatable.Text
               allowFontScaling={false}
+              animation="neoPulse"
+              iterationCount="infinite"
+              duration={1100}
+              direction="alternate"
+              useNativeDriver
               style={[styles.versionText, { fontFamily: marioFont }]}
             >
               3.0
-            </Text>
+            </Animatable.Text>
           </View>
         </Animatable.View>
 
@@ -228,12 +252,17 @@ const SplashScreen = () => {
             >
               neobrutalist version
             </Text>
-            <Text
+            <Animatable.Text
               allowFontScaling={false}
+              animation="taglineGlitch"
+              iterationCount="infinite"
+              duration={1200}
+              direction="alternate"
+              useNativeDriver={false}
               style={[styles.taglineText, { fontFamily: marioFont }]}
             >
               neobrutalist version
-            </Text>
+            </Animatable.Text>
           </View>
         </Animatable.View>
       </Animatable.View>
@@ -331,7 +360,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: 0,
     top: 0,
-    transform: [{ translateX: 1 }, { translateY: 1 }],
+    transform: [{ translateX: 0.5 }, { translateY: 0.5 }],
     zIndex: 0,
     opacity: 0.9,
   },
