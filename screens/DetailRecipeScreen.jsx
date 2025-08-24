@@ -1,7 +1,9 @@
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { useCallback, useEffect, useState } from "react";
+import * as Sharing from "expo-sharing";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
+  Alert,
   Image,
   Modal,
   Pressable,
@@ -14,6 +16,7 @@ import {
   View,
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
+import { captureRef } from "react-native-view-shot";
 
 import GreenDiamond from "../components/svg/GreenDiamond";
 import PinkTarget from "../components/svg/PinkTarget";
@@ -31,6 +34,8 @@ const DetailRecipe = ({ route }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [successModalVisible, setSuccessModalVisible] = useState(false);
   const [updateModalVisible, setUpdateModalVisible] = useState(false);
+  const [sharing, setSharing] = useState(false);
+  const scrollRef = useRef(null);
 
   // Generador de ID único
   const generateUniqueId = useCallback(
@@ -156,367 +161,456 @@ const DetailRecipe = ({ route }) => {
     }));
   };
 
+  const handleShare = useCallback(async () => {
+    try {
+      if (!(await Sharing.isAvailableAsync())) {
+        Alert.alert(
+          "Compartir no disponible",
+          "La función de compartir no está disponible en este dispositivo.",
+        );
+
+        return;
+      }
+
+      setSharing(true);
+      const uri = await captureRef(scrollRef.current, {
+        format: "png",
+        quality: 1,
+        result: "tmpfile",
+        snapshotContentContainer: true,
+        backgroundColor: "#FFFFFF",
+      });
+
+      await Sharing.shareAsync(uri, {
+        dialogTitle: `Compartir receta: ${recipe?.name ?? "Receta"}`,
+        mimeType: "image/png",
+      });
+    } catch (e) {
+      console.error("Error al compartir receta:", e);
+      Alert.alert(
+        "Error",
+        "No se pudo generar la imagen para compartir. Inténtalo de nuevo.",
+      );
+    } finally {
+      setSharing(false);
+    }
+  }, [recipe]);
+
   return (
-    <ScrollView
-      contentContainerStyle={styles.container}
-      showsVerticalScrollIndicator={false}
-    >
-      <StatusBar
-        barStyle="dark-content"
-        backgroundColor="transparent"
-        translucent
-      />
-      {/* Modal de confirmación personalizado */}
-      <Modal
-        animationType="fade"
-        transparent
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
+    <View style={styles.screenRoot}>
+      <ScrollView
+        ref={scrollRef}
+        contentContainerStyle={styles.container}
+        showsVerticalScrollIndicator={false}
+        style={{ flex: 1 }}
+        collapsable={false}
+        removeClippedSubviews={false}
       >
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <View style={styles.iconContainer}>
-              <Ionicons name="warning-outline" size={40} color="#FF6B6B" />
-            </View>
-            <Text style={styles.modalTitle}>Eliminar receta</Text>
-            <Text style={styles.modalText}>
-              ¿Estás seguro de que quieres eliminar esta receta?
-            </Text>
-            <View style={styles.modalButtons}>
-              <Pressable
-                style={[styles.modalButton, styles.buttonCancel]}
-                onPress={() => setModalVisible(false)}
-              >
-                <Text style={styles.buttonCancelText}>Cancelar</Text>
-              </Pressable>
-              <Pressable
-                style={[styles.modalButton, styles.buttonDelete]}
-                onPress={handleDelete}
-              >
-                <Text style={styles.buttonDeleteText}>Eliminar</Text>
-              </Pressable>
-            </View>
-          </View>
-        </View>
-      </Modal>
-
-      {/* Modal de confirmación de eliminación exitosa */}
-      <Modal
-        animationType="fade"
-        transparent
-        visible={successModalVisible}
-        onRequestClose={handleSuccessConfirm}
-      >
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <View style={styles.iconContainer}>
-              <Ionicons
-                name="checkmark-circle-outline"
-                size={40}
-                color="#28A745"
-              />
-            </View>
-            <Text style={styles.modalTitle}>Receta eliminada</Text>
-            <Text style={styles.modalText}>
-              La receta se eliminó correctamente
-            </Text>
-            <Pressable
-              style={[styles.modalButton, styles.buttonSuccess]}
-              onPress={handleSuccessConfirm}
-            >
-              <Text style={styles.buttonSuccessText}>Aceptar</Text>
-            </Pressable>
-          </View>
-        </View>
-      </Modal>
-
-      {/* Modal de confirmación de actualización exitosa */}
-      <Modal
-        animationType="fade"
-        transparent
-        visible={updateModalVisible}
-        onRequestClose={handleUpdateConfirm}
-      >
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <View style={styles.iconContainer}>
-              <Ionicons
-                name="checkmark-circle-outline"
-                size={40}
-                color="#28A745"
-              />
-            </View>
-            <Text style={styles.modalTitle}>Receta actualizada</Text>
-            <Text style={styles.modalText}>
-              La receta se actualizó correctamente
-            </Text>
-            <Pressable
-              style={[styles.modalButton, styles.buttonUpdate]}
-              onPress={handleUpdateConfirm}
-            >
-              <Text style={styles.buttonUpdateText}>Aceptar</Text>
-            </Pressable>
-          </View>
-        </View>
-      </Modal>
-      {recipe && (
-        <View style={styles.imageContainer}>
-          <Image source={{ uri: recipe.image }} style={styles.image} />
-          <TouchableOpacity style={styles.updateButton} onPress={handleUpdate}>
-            <View style={styles.iconStack}>
-              <MaterialCommunityIcons
-                name="pencil"
-                size={24}
-                color={theme.colors.border}
-                style={styles.iconShadow}
-              />
-              <MaterialCommunityIcons name="pencil" size={24} color="#FFFFFF" />
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={showAlert}>
-            <View style={styles.iconStack}>
-              <MaterialCommunityIcons
-                name="delete"
-                size={24}
-                color={theme.colors.border}
-                style={styles.iconShadow}
-              />
-              <MaterialCommunityIcons name="delete" size={24} color="#FFFFFF" />
-            </View>
-          </TouchableOpacity>
-        </View>
-      )}
-      {isEditing && updatedRecipe ? (
-        <>
-          <Text style={styles.label}>Nombre</Text>
-          <TextInput
-            style={styles.input}
-            value={updatedRecipe.name || ""}
-            onChangeText={(text) =>
-              setUpdatedRecipe({ ...updatedRecipe, name: text })
-            }
-          />
-          <Text style={styles.label}>Categoría</Text>
-          {recipe && <Text style={styles.categoryText}>{recipe.category}</Text>}
-          <Text style={styles.label}>Tiempo (min)</Text>
-          <TextInput
-            style={styles.input}
-            value={updatedRecipe.time ? updatedRecipe.time.toString() : "0"}
-            onChangeText={(text) =>
-              setUpdatedRecipe({ ...updatedRecipe, time: text })
-            }
-            keyboardType="numeric"
-          />
-          <Text style={styles.label}>Imagen (URL)</Text>
-          <TextInput
-            style={styles.input}
-            value={updatedRecipe.image || ""}
-            onChangeText={(text) =>
-              setUpdatedRecipe({ ...updatedRecipe, image: text })
-            }
-          />
-          <Text style={styles.label}>Personas</Text>
-          <TextInput
-            style={styles.input}
-            value={updatedRecipe.people ? updatedRecipe.people.toString() : "1"}
-            onChangeText={(text) =>
-              setUpdatedRecipe({ ...updatedRecipe, people: text })
-            }
-            keyboardType="numeric"
-          />
-          <Text style={styles.label}>Ingredientes</Text>
-          {updatedRecipe?.ingredients?.map((ingredient) => (
-            <View key={ingredient.id} style={styles.inputRow}>
-              <TextInput
-                style={[
-                  styles.input,
-                  { height: Math.max(50, inputHeights[ingredient.id] || 50) },
-                ]}
-                value={ingredient.text}
-                onChangeText={(text) =>
-                  handleIngredientChange(text, ingredient.id)
-                }
-                multiline
-                textAlignVertical="top"
-                onContentSizeChange={(e) =>
-                  handleContentSizeChange(
-                    ingredient.id,
-                    e.nativeEvent.contentSize.height + 20,
-                  )
-                }
-              />
-              {ingredient.id ===
-                updatedRecipe?.ingredients[updatedRecipe.ingredients.length - 1]
-                  ?.id && (
-                <TouchableOpacity
-                  style={[styles.actionButton, styles.addButton]}
-                  onPress={() => addInput("ingredients")}
+        <StatusBar
+          barStyle="dark-content"
+          backgroundColor="transparent"
+          translucent
+        />
+        {/* Modal de confirmación personalizado */}
+        <Modal
+          animationType="fade"
+          transparent
+          visible={modalVisible}
+          onRequestClose={() => setModalVisible(false)}
+        >
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <View style={styles.iconContainer}>
+                <Ionicons name="warning-outline" size={40} color="#FF6B6B" />
+              </View>
+              <Text style={styles.modalTitle}>Eliminar receta</Text>
+              <Text style={styles.modalText}>
+                ¿Estás seguro de que quieres eliminar esta receta?
+              </Text>
+              <View style={styles.modalButtons}>
+                <Pressable
+                  style={[styles.modalButton, styles.buttonCancel]}
+                  onPress={() => setModalVisible(false)}
                 >
-                  <Icon name="add" size={18} color="#FFF" />
-                </TouchableOpacity>
-              )}
-              {updatedRecipe?.ingredients?.length > 1 &&
-                ingredient.id !==
+                  <Text style={styles.buttonCancelText}>Cancelar</Text>
+                </Pressable>
+                <Pressable
+                  style={[styles.modalButton, styles.buttonDelete]}
+                  onPress={handleDelete}
+                >
+                  <Text style={styles.buttonDeleteText}>Eliminar</Text>
+                </Pressable>
+              </View>
+            </View>
+          </View>
+        </Modal>
+
+        {/* Modal de confirmación de eliminación exitosa */}
+        <Modal
+          animationType="fade"
+          transparent
+          visible={successModalVisible}
+          onRequestClose={handleSuccessConfirm}
+        >
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <View style={styles.iconContainer}>
+                <Ionicons
+                  name="checkmark-circle-outline"
+                  size={40}
+                  color="#28A745"
+                />
+              </View>
+              <Text style={styles.modalTitle}>Receta eliminada</Text>
+              <Text style={styles.modalText}>
+                La receta se eliminó correctamente
+              </Text>
+              <Pressable
+                style={[styles.modalButton, styles.buttonSuccess]}
+                onPress={handleSuccessConfirm}
+              >
+                <Text style={styles.buttonSuccessText}>Aceptar</Text>
+              </Pressable>
+            </View>
+          </View>
+        </Modal>
+
+        {/* Modal de confirmación de actualización exitosa */}
+        <Modal
+          animationType="fade"
+          transparent
+          visible={updateModalVisible}
+          onRequestClose={handleUpdateConfirm}
+        >
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <View style={styles.iconContainer}>
+                <Ionicons
+                  name="checkmark-circle-outline"
+                  size={40}
+                  color="#28A745"
+                />
+              </View>
+              <Text style={styles.modalTitle}>Receta actualizada</Text>
+              <Text style={styles.modalText}>
+                La receta se actualizó correctamente
+              </Text>
+              <Pressable
+                style={[styles.modalButton, styles.buttonUpdate]}
+                onPress={handleUpdateConfirm}
+              >
+                <Text style={styles.buttonUpdateText}>Aceptar</Text>
+              </Pressable>
+            </View>
+          </View>
+        </Modal>
+        {recipe && (
+          <View style={styles.imageContainer}>
+            <Image source={{ uri: recipe.image }} style={styles.image} />
+            <TouchableOpacity
+              style={styles.updateButton}
+              onPress={handleUpdate}
+            >
+              <View style={styles.iconStack}>
+                <MaterialCommunityIcons
+                  name="pencil"
+                  size={24}
+                  color={theme.colors.border}
+                  style={styles.iconShadow}
+                />
+                <MaterialCommunityIcons
+                  name="pencil"
+                  size={24}
+                  color="#FFFFFF"
+                />
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.button} onPress={showAlert}>
+              <View style={styles.iconStack}>
+                <MaterialCommunityIcons
+                  name="delete"
+                  size={24}
+                  color={theme.colors.border}
+                  style={styles.iconShadow}
+                />
+                <MaterialCommunityIcons
+                  name="delete"
+                  size={24}
+                  color="#FFFFFF"
+                />
+              </View>
+            </TouchableOpacity>
+            {!isEditing && (
+              <TouchableOpacity
+                style={[styles.shareButton, sharing && { opacity: 0.7 }]}
+                onPress={handleShare}
+                disabled={sharing}
+                activeOpacity={0.8}
+              >
+                <View style={styles.iconStack}>
+                  <MaterialCommunityIcons
+                    name="share-variant"
+                    size={24}
+                    color={theme.colors.border}
+                    style={styles.iconShadow}
+                  />
+                  <MaterialCommunityIcons
+                    name="share-variant"
+                    size={24}
+                    color="#FFFFFF"
+                  />
+                </View>
+              </TouchableOpacity>
+            )}
+          </View>
+        )}
+        {isEditing && updatedRecipe ? (
+          <>
+            <Text style={styles.label}>Nombre</Text>
+            <TextInput
+              style={styles.input}
+              value={updatedRecipe.name || ""}
+              onChangeText={(text) =>
+                setUpdatedRecipe({ ...updatedRecipe, name: text })
+              }
+            />
+            <Text style={styles.label}>Categoría</Text>
+            {recipe && (
+              <Text style={styles.categoryText}>{recipe.category}</Text>
+            )}
+            <Text style={styles.label}>Tiempo (min)</Text>
+            <TextInput
+              style={styles.input}
+              value={updatedRecipe.time ? updatedRecipe.time.toString() : "0"}
+              onChangeText={(text) =>
+                setUpdatedRecipe({ ...updatedRecipe, time: text })
+              }
+              keyboardType="numeric"
+            />
+            <Text style={styles.label}>Imagen (URL)</Text>
+            <TextInput
+              style={styles.input}
+              value={updatedRecipe.image || ""}
+              onChangeText={(text) =>
+                setUpdatedRecipe({ ...updatedRecipe, image: text })
+              }
+            />
+            <Text style={styles.label}>Personas</Text>
+            <TextInput
+              style={styles.input}
+              value={
+                updatedRecipe.people ? updatedRecipe.people.toString() : "1"
+              }
+              onChangeText={(text) =>
+                setUpdatedRecipe({ ...updatedRecipe, people: text })
+              }
+              keyboardType="numeric"
+            />
+            <Text style={styles.label}>Ingredientes</Text>
+            {updatedRecipe?.ingredients?.map((ingredient) => (
+              <View key={ingredient.id} style={styles.inputRow}>
+                <TextInput
+                  style={[
+                    styles.input,
+                    { height: Math.max(50, inputHeights[ingredient.id] || 50) },
+                  ]}
+                  value={ingredient.text}
+                  onChangeText={(text) =>
+                    handleIngredientChange(text, ingredient.id)
+                  }
+                  multiline
+                  textAlignVertical="top"
+                  onContentSizeChange={(e) =>
+                    handleContentSizeChange(
+                      ingredient.id,
+                      e.nativeEvent.contentSize.height + 20,
+                    )
+                  }
+                />
+                {ingredient.id ===
                   updatedRecipe?.ingredients[
                     updatedRecipe.ingredients.length - 1
                   ]?.id && (
                   <TouchableOpacity
-                    style={[styles.actionButton, styles.removeButton]}
-                    onPress={() => removeInput("ingredients", ingredient.id)}
+                    style={[styles.actionButton, styles.addButton]}
+                    onPress={() => addInput("ingredients")}
                   >
-                    <Icon name="remove" size={18} color="#FFF" />
+                    <Icon name="add" size={18} color="#FFF" />
                   </TouchableOpacity>
                 )}
-            </View>
-          ))}
-          <Text style={styles.label}>Preparación</Text>
-          {updatedRecipe?.preparation?.map((step) => (
-            <View key={step.id} style={styles.inputRow}>
-              <TextInput
-                style={[
-                  styles.input,
-                  styles.preparationInput,
-                  { height: Math.max(50, inputHeights[step.id] || 50) },
-                ]}
-                value={step.text}
-                onChangeText={(text) => handlePreparationChange(text, step.id)}
-                multiline
-                textAlignVertical="top"
-                onContentSizeChange={(e) =>
-                  handleContentSizeChange(
-                    step.id,
-                    e.nativeEvent.contentSize.height + 20,
-                  )
-                }
-                blurOnSubmit
-                onSubmitEditing={() => {}}
-              />
-              {step.id ===
-                updatedRecipe?.preparation[updatedRecipe.preparation.length - 1]
-                  ?.id && (
-                <TouchableOpacity
-                  style={[styles.actionButton, styles.addButton]}
-                  onPress={() => addInput("preparation")}
-                >
-                  <Icon name="add" size={18} color="#FFF" />
-                </TouchableOpacity>
-              )}
-              {updatedRecipe?.preparation?.length > 1 &&
-                step.id !==
+                {updatedRecipe?.ingredients?.length > 1 &&
+                  ingredient.id !==
+                    updatedRecipe?.ingredients[
+                      updatedRecipe.ingredients.length - 1
+                    ]?.id && (
+                    <TouchableOpacity
+                      style={[styles.actionButton, styles.removeButton]}
+                      onPress={() => removeInput("ingredients", ingredient.id)}
+                    >
+                      <Icon name="remove" size={18} color="#FFF" />
+                    </TouchableOpacity>
+                  )}
+              </View>
+            ))}
+            <Text style={styles.label}>Preparación</Text>
+            {updatedRecipe?.preparation?.map((step) => (
+              <View key={step.id} style={styles.inputRow}>
+                <TextInput
+                  style={[
+                    styles.input,
+                    styles.preparationInput,
+                    { height: Math.max(50, inputHeights[step.id] || 50) },
+                  ]}
+                  value={step.text}
+                  onChangeText={(text) =>
+                    handlePreparationChange(text, step.id)
+                  }
+                  multiline
+                  textAlignVertical="top"
+                  onContentSizeChange={(e) =>
+                    handleContentSizeChange(
+                      step.id,
+                      e.nativeEvent.contentSize.height + 20,
+                    )
+                  }
+                  blurOnSubmit
+                  onSubmitEditing={() => {}}
+                />
+                {step.id ===
                   updatedRecipe?.preparation[
                     updatedRecipe.preparation.length - 1
                   ]?.id && (
                   <TouchableOpacity
-                    style={[styles.actionButton, styles.removeButton]}
-                    onPress={() => removeInput("preparation", step.id)}
+                    style={[styles.actionButton, styles.addButton]}
+                    onPress={() => addInput("preparation")}
                   >
-                    <Icon name="remove" size={18} color="#FFF" />
+                    <Icon name="add" size={18} color="#FFF" />
                   </TouchableOpacity>
                 )}
-            </View>
-          ))}
-          <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-            <Text style={styles.buttonText}>Guardar</Text>
-          </TouchableOpacity>
-        </>
-      ) : (
-        recipe && (
-          <>
-            <Text style={styles.title}>{recipe.name}</Text>
-            <View style={styles.metaRow}>
-              <View style={[styles.metaCard, styles.metaPrimary]}>
-                <Ionicons
-                  name="time-outline"
-                  size={18}
-                  color={theme.colors.ink}
-                />
-                <Text style={styles.metaText}>{recipe.time} min</Text>
+                {updatedRecipe?.preparation?.length > 1 &&
+                  step.id !==
+                    updatedRecipe?.preparation[
+                      updatedRecipe.preparation.length - 1
+                    ]?.id && (
+                    <TouchableOpacity
+                      style={[styles.actionButton, styles.removeButton]}
+                      onPress={() => removeInput("preparation", step.id)}
+                    >
+                      <Icon name="remove" size={18} color="#FFF" />
+                    </TouchableOpacity>
+                  )}
               </View>
-              <View style={[styles.metaCard, styles.metaSuccess]}>
-                <MaterialCommunityIcons
-                  name="account-group-outline"
-                  size={18}
-                  color={theme.colors.ink}
-                />
-                <Text style={styles.metaText}>{recipe.people} pers.</Text>
-              </View>
-              {!!recipe.category && (
-                <View style={[styles.metaCard, styles.metaAccent]}>
-                  <MaterialCommunityIcons
-                    name="tag-outline"
+            ))}
+            <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+              <Text style={styles.buttonText}>Guardar</Text>
+            </TouchableOpacity>
+          </>
+        ) : (
+          recipe && (
+            <>
+              <Text style={styles.title}>{recipe.name}</Text>
+              <View style={styles.metaRow}>
+                <View style={[styles.metaCard, styles.metaPrimary]}>
+                  <Ionicons
+                    name="time-outline"
                     size={18}
                     color={theme.colors.ink}
                   />
-                  <Text style={styles.metaText} numberOfLines={1}>
-                    {recipe.category}
-                  </Text>
+                  <Text style={styles.metaText}>{recipe.time} min</Text>
                 </View>
-              )}
+                <View style={[styles.metaCard, styles.metaSuccess]}>
+                  <MaterialCommunityIcons
+                    name="account-group-outline"
+                    size={18}
+                    color={theme.colors.ink}
+                  />
+                  <Text style={styles.metaText}>{recipe.people} pers.</Text>
+                </View>
+                {!!recipe.category && (
+                  <View style={[styles.metaCard, styles.metaAccent]}>
+                    <MaterialCommunityIcons
+                      name="tag-outline"
+                      size={18}
+                      color={theme.colors.ink}
+                    />
+                    <Text style={styles.metaText} numberOfLines={1}>
+                      {recipe.category}
+                    </Text>
+                  </View>
+                )}
+              </View>
+            </>
+          )
+        )}
+        {recipe && (
+          <>
+            <Text style={styles.titleIngredientsInstructions}>
+              Ingredientes:
+            </Text>
+            <View style={styles.containerIngredientsInstructions}>
+              {recipe.ingredients?.map((ingredient, idx) => (
+                <View key={ingredient.id} style={styles.listItemWrapper}>
+                  {idx % 3 === 0 && (
+                    <WaveMark style={styles.itemBg} opacity={1} />
+                  )}
+                  {idx % 3 === 1 && (
+                    <PinkTarget style={styles.itemBg} opacity={1} />
+                  )}
+                  {idx % 3 === 2 && (
+                    <GreenDiamond style={styles.itemBg} opacity={1} />
+                  )}
+                  <View
+                    style={
+                      idx % 2 === 0
+                        ? styles.listIngredientsInstructionsPar
+                        : styles.listIngredientsInstructionsOdd
+                    }
+                  >
+                    <Text style={styles.listItemText}>· {ingredient.text}</Text>
+                  </View>
+                </View>
+              ))}
+            </View>
+            <Text style={styles.titleIngredientsInstructions}>
+              Preparación:
+            </Text>
+            <View style={styles.containerIngredientsInstructions}>
+              {recipe.preparation?.map((step, idx) => (
+                <View key={step.id} style={styles.listItemWrapper}>
+                  {idx % 3 === 0 && (
+                    <WaveMark style={styles.itemBg} opacity={1} />
+                  )}
+                  {idx % 3 === 1 && (
+                    <PinkTarget style={styles.itemBg} opacity={1} />
+                  )}
+                  {idx % 3 === 2 && (
+                    <GreenDiamond style={styles.itemBg} opacity={1} />
+                  )}
+                  <View
+                    style={
+                      idx % 2 === 0
+                        ? styles.listIngredientsInstructionsPar
+                        : styles.listIngredientsInstructionsOdd
+                    }
+                  >
+                    <Text style={styles.listItemText}>· {step.text}</Text>
+                  </View>
+                </View>
+              ))}
             </View>
           </>
-        )
-      )}
-      {recipe && (
-        <>
-          <Text style={styles.titleIngredientsInstructions}>Ingredientes:</Text>
-          <View style={styles.containerIngredientsInstructions}>
-            {recipe.ingredients?.map((ingredient, idx) => (
-              <View key={ingredient.id} style={styles.listItemWrapper}>
-                {idx % 3 === 0 && (
-                  <WaveMark style={styles.itemBg} opacity={1} />
-                )}
-                {idx % 3 === 1 && (
-                  <PinkTarget style={styles.itemBg} opacity={1} />
-                )}
-                {idx % 3 === 2 && (
-                  <GreenDiamond style={styles.itemBg} opacity={1} />
-                )}
-                <View
-                  style={
-                    idx % 2 === 0
-                      ? styles.listIngredientsInstructionsPar
-                      : styles.listIngredientsInstructionsOdd
-                  }
-                >
-                  <Text style={styles.listItemText}>· {ingredient.text}</Text>
-                </View>
-              </View>
-            ))}
-          </View>
-          <Text style={styles.titleIngredientsInstructions}>Preparación:</Text>
-          <View style={styles.containerIngredientsInstructions}>
-            {recipe.preparation?.map((step, idx) => (
-              <View key={step.id} style={styles.listItemWrapper}>
-                {idx % 3 === 0 && (
-                  <WaveMark style={styles.itemBg} opacity={1} />
-                )}
-                {idx % 3 === 1 && (
-                  <PinkTarget style={styles.itemBg} opacity={1} />
-                )}
-                {idx % 3 === 2 && (
-                  <GreenDiamond style={styles.itemBg} opacity={1} />
-                )}
-                <View
-                  style={
-                    idx % 2 === 0
-                      ? styles.listIngredientsInstructionsPar
-                      : styles.listIngredientsInstructionsOdd
-                  }
-                >
-                  <Text style={styles.listItemText}>· {step.text}</Text>
-                </View>
-              </View>
-            ))}
-          </View>
-        </>
-      )}
-    </ScrollView>
+        )}
+      </ScrollView>
+    </View>
   );
 };
 
 export default DetailRecipe;
 
 const styles = StyleSheet.create({
+  screenRoot: {
+    flex: 1,
+  },
   container: {
     flexGrow: 1,
     backgroundColor: theme.colors.background,
@@ -544,6 +638,21 @@ const styles = StyleSheet.create({
     top: 15,
     right: 15,
     backgroundColor: theme.colors.danger,
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    borderRadius: 0,
+    width: 44,
+    height: 44,
+    alignItems: "center",
+    justifyContent: "center",
+    ...outline({ width: 3 }),
+    ...hardShadow({ x: 3, y: 3, elevation: 6 }),
+  },
+  shareButton: {
+    position: "absolute",
+    bottom: 15,
+    right: 15,
+    backgroundColor: theme.colors.secondary,
     paddingVertical: 10,
     paddingHorizontal: 10,
     borderRadius: 0,
@@ -870,5 +979,18 @@ const styles = StyleSheet.create({
     color: theme.colors.ink,
     fontWeight: "bold",
     fontSize: 16,
+  },
+  fabShare: {
+    position: "absolute",
+    right: 16,
+    bottom: 24,
+    backgroundColor: theme.colors.accent,
+    width: 56,
+    height: 56,
+    borderRadius: 0,
+    alignItems: "center",
+    justifyContent: "center",
+    ...outline({ width: 3 }),
+    ...hardShadow({ x: 4, y: 4, elevation: 8 }),
   },
 });
