@@ -21,6 +21,8 @@ const AddRecipeScreen = () => {
       <KeyboardAwareScrollView
         contentContainerStyle={styles.scroll_container}
         keyboardShouldPersistTaps="handled"
+        enableOnAndroid
+        extraScrollHeight={0}
       >
         <View style={styles.form_container}>
           <AddFormRecipe />
@@ -62,10 +64,11 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     flexGrow: 1,
     paddingHorizontal: 15,
+    paddingBottom: 48,
   },
   form_container: {
     flexGrow: 1,
     marginTop: 10,
-    marginBottom: 20,
+    marginBottom: 0,
   },
 });

@@ -11,10 +11,13 @@ export default function RetroButton({
   style,
   textStyle,
   variant = "primary",
+  bgColor,
   shadowOffset,
   shadowColor,
   shadowPadding = "both", // "both" | "right"
   shadowMode = "block", // "block" | "rightBar"
+  outlineSides = "all", // "all" | "rightBottom"
+  disabledBgColor,
 }) {
   const variantBg =
     {
@@ -32,9 +35,31 @@ export default function RetroButton({
   const shadowBg = shadowColor || theme.colors.border;
   // Usamos el width del estilo externo en el wrapper y no en la superficie
   const flatStyle = StyleSheet.flatten(style) || {};
-  const { width: buttonWidth, ...restSurfaceStyle } = flatStyle;
+  const {
+    width: buttonWidth,
+    backgroundColor: externalBg,
+    ...restSurfaceStyle
+  } = flatStyle;
   const reserveRightOnly = shadowPadding === "right";
   const isRightBar = shadowMode === "rightBar";
+
+  // Control de bordes (outline) para estilo neobrutalista
+  const borderWidth = 3;
+  const surfaceOutlineStyle =
+    outlineSides === "all"
+      ? outline({ width: borderWidth })
+      : {
+          borderColor: theme.colors.border,
+          borderLeftWidth: 0,
+          borderTopWidth: 0,
+          borderRightWidth: borderWidth,
+          borderBottomWidth: borderWidth,
+        };
+
+  // Color de fondo final: deshabilitado tiene prioridad; si no, usa bgColor prop, luego el del estilo, luego el del variant
+  const baseBg = bgColor ?? externalBg ?? variantBg;
+  const currentBg =
+    disabled && disabledBgColor != null ? disabledBgColor : baseBg;
 
   return (
     <Pressable
@@ -43,6 +68,7 @@ export default function RetroButton({
       style={[
         styles.wrapper,
         buttonWidth != null && { width: buttonWidth, alignSelf: "center" },
+        disabled && styles.disabled,
       ]}
     >
       {({ pressed }) => (
@@ -50,60 +76,69 @@ export default function RetroButton({
           style={[
             styles.layerWrap,
             {
-              paddingLeft: reserveRightOnly
+              paddingLeft: disabled
+                ? 0
+                : reserveRightOnly
+                  ? 0
+                  : pressed
+                    ? offsetPressedX
+                    : offsetDefaultX,
+              paddingRight: disabled
                 ? 0
                 : pressed
                   ? offsetPressedX
                   : offsetDefaultX,
-              paddingRight: pressed ? offsetPressedX : offsetDefaultX,
-              paddingBottom: reserveRightOnly
+              paddingBottom: disabled
                 ? 0
-                : pressed
-                  ? offsetPressedY
-                  : offsetDefaultY,
+                : reserveRightOnly
+                  ? 0
+                  : pressed
+                    ? offsetPressedY
+                    : offsetDefaultY,
             },
           ]}
         >
           {/* Capa de sombra dura (neobrutal) */}
-          <View
-            pointerEvents="none"
-            style={[
-              styles.shadowBlock,
-              { backgroundColor: shadowBg },
-              isRightBar
-                ? [
-                    styles.rightBar,
-                    {
-                      width: Math.max(
-                        2,
-                        (pressed ? offsetPressedX : offsetDefaultX) + 2,
-                      ),
-                    },
-                  ]
-                : pressed
-                  ? {
-                      transform: [
-                        { translateX: offsetPressedX },
-                        { translateY: offsetPressedY },
-                      ],
-                    }
-                  : {
-                      transform: [
-                        { translateX: offsetDefaultX },
-                        { translateY: offsetDefaultY },
-                      ],
-                    },
-            ]}
-          />
+          {!disabled && (
+            <View
+              pointerEvents="none"
+              style={[
+                styles.shadowBlock,
+                { backgroundColor: shadowBg },
+                isRightBar
+                  ? [
+                      styles.rightBar,
+                      {
+                        width: Math.max(
+                          2,
+                          (pressed ? offsetPressedX : offsetDefaultX) + 2,
+                        ),
+                      },
+                    ]
+                  : pressed
+                    ? {
+                        transform: [
+                          { translateX: offsetPressedX },
+                          { translateY: offsetPressedY },
+                        ],
+                      }
+                    : {
+                        transform: [
+                          { translateX: offsetDefaultX },
+                          { translateY: offsetDefaultY },
+                        ],
+                      },
+              ]}
+            />
+          )}
           {/* Superficie del botón */}
           <View
             style={[
               styles.surface,
-              { backgroundColor: variantBg },
-              outline({ width: 3 }),
+              surfaceOutlineStyle,
               pressed && styles.surfacePressed,
-              disabled && styles.disabled,
               restSurfaceStyle, // estilos externos (sin width) aplican a la superficie (paddings, etc.)
+              { backgroundColor: currentBg },
             ]}
           >
             {children ? (

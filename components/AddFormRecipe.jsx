@@ -1,18 +1,10 @@
 import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
-import {
-  Alert,
-  Modal,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Alert, Modal, Pressable, StyleSheet, Text, View } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 
 import { saveRecipe } from "../data/api";
-import { theme, outline, hardShadow } from "../utils/theme";
+import { hardShadow, outline, theme } from "../utils/theme";
 
 import NeoDropdown from "./ui/NeoDropdown";
 import RetroButton from "./ui/RetroButton";
@@ -100,7 +92,7 @@ const AddFormRecipe = () => {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.form_container}>
+    <View style={styles.form_container}>
       {/* Modal de confirmación de adición exitosa */}
       <Modal
         animationType="fade"
@@ -188,30 +180,38 @@ const AddFormRecipe = () => {
       {recipe.ingredients.map((ingredient, index) => (
         <View key={ingredient.id} style={styles.input_row}>
           <RetroInput
-            style={styles.input_flex}
+            containerStyle={styles.input_flex}
             placeholder="Ingrediente"
             value={ingredient.text}
             onChangeText={(value) => handleChange("ingredients", value, index)}
           />
-          <TouchableOpacity
-            style={[
-              styles.actionButton,
-              index !== recipe.ingredients.length - 1
-                ? styles.removeButton
-                : styles.addButton,
-            ]}
-            onPress={() =>
-              index === recipe.ingredients.length - 1
-                ? addInput("ingredients")
-                : removeInput("ingredients", index)
-            }
-          >
-            <Icon
-              name={index === recipe.ingredients.length - 1 ? "add" : "remove"}
-              size={18}
-              color={theme.colors.ink}
-            />
-          </TouchableOpacity>
+          <View style={styles.actionButtonWrap}>
+            <View pointerEvents="none" style={styles.actionBtnShadow} />
+            <Pressable
+              style={({ pressed }) => [
+                styles.actionButton,
+                index !== recipe.ingredients.length - 1
+                  ? styles.removeButton
+                  : styles.addButton,
+                pressed && {
+                  transform: [{ translateX: 1 }, { translateY: 1 }],
+                },
+              ]}
+              onPress={() =>
+                index === recipe.ingredients.length - 1
+                  ? addInput("ingredients")
+                  : removeInput("ingredients", index)
+              }
+            >
+              <Icon
+                name={
+                  index === recipe.ingredients.length - 1 ? "add" : "remove"
+                }
+                size={18}
+                color={theme.colors.ink}
+              />
+            </Pressable>
+          </View>
         </View>
       ))}
 
@@ -219,37 +219,53 @@ const AddFormRecipe = () => {
       {recipe.preparation.map((step, index) => (
         <View key={step.id} style={styles.input_row}>
           <RetroInput
-            style={styles.input_flex}
+            containerStyle={styles.input_flex}
             placeholder="Paso"
             value={step.text}
             onChangeText={(value) => handleChange("preparation", value, index)}
           />
-          <TouchableOpacity
-            style={[
-              styles.actionButton,
-              index !== recipe.preparation.length - 1
-                ? styles.removeButton
-                : styles.addButton,
-            ]}
-            onPress={() =>
-              index === recipe.preparation.length - 1
-                ? addInput("preparation")
-                : removeInput("preparation", index)
-            }
-          >
-            <Icon
-              name={index === recipe.preparation.length - 1 ? "add" : "remove"}
-              size={18}
-              color={theme.colors.ink}
-            />
-          </TouchableOpacity>
+          <View style={styles.actionButtonWrap}>
+            <View pointerEvents="none" style={styles.actionBtnShadow} />
+            <Pressable
+              style={({ pressed }) => [
+                styles.actionButton,
+                index !== recipe.preparation.length - 1
+                  ? styles.removeButton
+                  : styles.addButton,
+                pressed && {
+                  transform: [{ translateX: 1 }, { translateY: 1 }],
+                },
+              ]}
+              onPress={() =>
+                index === recipe.preparation.length - 1
+                  ? addInput("preparation")
+                  : removeInput("preparation", index)
+              }
+            >
+              <Icon
+                name={
+                  index === recipe.preparation.length - 1 ? "add" : "remove"
+                }
+                size={18}
+                color={theme.colors.ink}
+              />
+            </Pressable>
+          </View>
         </View>
       ))}
 
       <RetroButton
         title="Añadir receta"
         onPress={handleSubmit}
-        variant="accent"
+        variant="primary"
+        style={styles.addRecipeButton}
+        shadowColor={theme.colors.border}
+        shadowPadding="right"
+        shadowOffset={{
+          default: { x: 6, y: 6 },
+          pressed: { x: 3, y: 3 },
+        }}
+        outlineSides="all"
         disabled={
           !recipe.name?.trim() ||
           !recipe.category ||
@@ -259,15 +275,15 @@ const AddFormRecipe = () => {
           !recipe.preparation[0]?.text?.trim()
         }
       />
-    </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   form_container: {
     gap: 20,
-    alignItems: "center",
-    paddingHorizontal: 20,
+    alignItems: "stretch",
+    paddingHorizontal: 0,
     backgroundColor: "transparent",
   },
   selectWrapper: {
@@ -294,10 +310,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "100%",
     marginBottom: 15,
+    paddingRight: 8,
   },
   input_flex: {
     flex: 1,
-    marginRight: 10,
+    marginRight: 8,
+    minWidth: 0,
   },
   actionButton: {
     width: 40,
@@ -305,9 +323,26 @@ const styles = StyleSheet.create({
     borderRadius: 0,
     justifyContent: "center",
     alignItems: "center",
-    marginLeft: 10,
+    flexShrink: 0,
     ...outline({ width: 3 }),
-    ...hardShadow({ x: 3, y: 3, elevation: 6 }),
+    zIndex: 1,
+  },
+  actionButtonWrap: {
+    position: "relative",
+    width: 40,
+    height: 40,
+    marginLeft: 8,
+    flexShrink: 0,
+  },
+  actionBtnShadow: {
+    position: "absolute",
+    left: 0,
+    top: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: theme.colors.border,
+    transform: [{ translateX: 2 }, { translateY: 2 }],
+    zIndex: 0,
   },
   addButton: {
     backgroundColor: theme.colors.primary,
@@ -362,6 +397,9 @@ const styles = StyleSheet.create({
   },
   modalButtonCompat: {
     minWidth: "80%",
+  },
+  addRecipeButton: {
+    backgroundColor: "#FF7A00",
   },
 });
 

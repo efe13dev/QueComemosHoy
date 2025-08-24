@@ -22,7 +22,7 @@ export default function RetroInput({
 
 const styles = StyleSheet.create({
   wrapper: {
-    width: "100%",
+    alignSelf: "stretch",
     backgroundColor: theme.colors.surface,
     borderRadius: 0,
     ...outline({ width: 3 }),
