@@ -7,6 +7,7 @@ import {
   Image,
   Modal,
   Pressable,
+  Share,
   ScrollView,
   StatusBar,
   StyleSheet,
@@ -36,6 +37,7 @@ const DetailRecipe = ({ route }) => {
   const [updateModalVisible, setUpdateModalVisible] = useState(false);
   const [sharing, setSharing] = useState(false);
   const scrollRef = useRef(null);
+  const contentRef = useRef(null);
 
   // Generador de ID único
   const generateUniqueId = useCallback(
@@ -173,11 +175,10 @@ const DetailRecipe = ({ route }) => {
       }
 
       setSharing(true);
-      const uri = await captureRef(scrollRef.current, {
+      const uri = await captureRef(contentRef.current, {
         format: "png",
         quality: 1,
         result: "tmpfile",
-        snapshotContentContainer: true,
         backgroundColor: "#FFFFFF",
       });
 
@@ -186,11 +187,35 @@ const DetailRecipe = ({ route }) => {
         mimeType: "image/png",
       });
     } catch (e) {
-      console.error("Error al compartir receta:", e);
-      Alert.alert(
-        "Error",
-        "No se pudo generar la imagen para compartir. Inténtalo de nuevo.",
-      );
+      console.error("Error al compartir receta (imagen)", e);
+      // Fallback: compartir como texto si la imagen falla
+      try {
+        const text = [
+          `🍽️ ${recipe?.name ?? "Receta"}`,
+          recipe?.time ? `⏱️ Tiempo: ${recipe.time} min` : null,
+          recipe?.people ? `👥 Personas: ${recipe.people}` : null,
+          recipe?.category ? `🏷️ Categoría: ${recipe.category}` : null,
+          "",
+          "Ingredientes:",
+          ...((recipe?.ingredients ?? []).map((i) => `· ${i.text ?? i}`)),
+          "",
+          "Preparación:",
+          ...((recipe?.preparation ?? []).map((s, idx) => `${idx + 1}. ${s.text ?? s}`)),
+        ]
+          .filter(Boolean)
+          .join("\n");
+
+        await Share.share({
+          title: `Receta: ${recipe?.name ?? "Receta"}`,
+          message: text,
+        });
+      } catch (e2) {
+        console.error("Error al compartir receta (texto)", e2);
+        Alert.alert(
+          "Error",
+          "No se pudo compartir la receta. Inténtalo de nuevo.",
+        );
+      }
     } finally {
       setSharing(false);
     }
@@ -304,66 +329,71 @@ const DetailRecipe = ({ route }) => {
             </View>
           </View>
         </Modal>
-        {recipe && (
-          <View style={styles.imageContainer}>
-            <Image source={{ uri: recipe.image }} style={styles.image} />
-            <TouchableOpacity
-              style={styles.updateButton}
-              onPress={handleUpdate}
-            >
-              <View style={styles.iconStack}>
-                <MaterialCommunityIcons
-                  name="pencil"
-                  size={24}
-                  color={theme.colors.border}
-                  style={styles.iconShadow}
-                />
-                <MaterialCommunityIcons
-                  name="pencil"
-                  size={24}
-                  color="#FFFFFF"
-                />
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={showAlert}>
-              <View style={styles.iconStack}>
-                <MaterialCommunityIcons
-                  name="delete"
-                  size={24}
-                  color={theme.colors.border}
-                  style={styles.iconShadow}
-                />
-                <MaterialCommunityIcons
-                  name="delete"
-                  size={24}
-                  color="#FFFFFF"
-                />
-              </View>
-            </TouchableOpacity>
-            {!isEditing && (
-              <TouchableOpacity
-                style={[styles.shareButton, sharing && { opacity: 0.7 }]}
-                onPress={handleShare}
-                disabled={sharing}
-                activeOpacity={0.8}
-              >
-                <View style={styles.iconStack}>
-                  <MaterialCommunityIcons
-                    name="share-variant"
-                    size={24}
-                    color={theme.colors.border}
-                    style={styles.iconShadow}
-                  />
-                  <MaterialCommunityIcons
-                    name="share-variant"
-                    size={24}
-                    color="#FFFFFF"
-                  />
-                </View>
-              </TouchableOpacity>
-            )}
-          </View>
-        )}
+        <View ref={contentRef} collapsable={false}>
+          {recipe && (
+            <View style={styles.imageContainer}>
+              <Image source={{ uri: recipe.image }} style={styles.image} />
+              {!sharing && (
+                <TouchableOpacity
+                  style={styles.updateButton}
+                  onPress={handleUpdate}
+                >
+                  <View style={styles.iconStack}>
+                    <MaterialCommunityIcons
+                      name="pencil"
+                      size={24}
+                      color={theme.colors.border}
+                      style={styles.iconShadow}
+                    />
+                    <MaterialCommunityIcons
+                      name="pencil"
+                      size={24}
+                      color="#FFFFFF"
+                    />
+                  </View>
+                </TouchableOpacity>
+              )}
+              {!sharing && (
+                <TouchableOpacity style={styles.button} onPress={showAlert}>
+                  <View style={styles.iconStack}>
+                    <MaterialCommunityIcons
+                      name="delete"
+                      size={24}
+                      color={theme.colors.border}
+                      style={styles.iconShadow}
+                    />
+                    <MaterialCommunityIcons
+                      name="delete"
+                      size={24}
+                      color="#FFFFFF"
+                    />
+                  </View>
+                </TouchableOpacity>
+              )}
+              {!isEditing && !sharing && (
+                <TouchableOpacity
+                  style={styles.shareButton}
+                  onPress={handleShare}
+                  disabled={sharing}
+                  activeOpacity={0.8}
+                >
+                  <View style={styles.iconStack}>
+                    <MaterialCommunityIcons
+                      name="share-variant"
+                      size={24}
+                      color={theme.colors.border}
+                      style={styles.iconShadow}
+                    />
+                    <MaterialCommunityIcons
+                      name="share-variant"
+                      size={24}
+                      color="#FFFFFF"
+                    />
+                  </View>
+                </TouchableOpacity>
+              )}
+            </View>
+          )}
         {isEditing && updatedRecipe ? (
           <>
             <Text style={styles.label}>Nombre</Text>
@@ -600,6 +630,7 @@ const DetailRecipe = ({ route }) => {
             </View>
           </>
         )}
+        </View>
       </ScrollView>
     </View>
   );
