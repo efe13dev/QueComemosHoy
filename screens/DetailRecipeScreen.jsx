@@ -7,8 +7,8 @@ import {
   Image,
   Modal,
   Pressable,
-  Share,
   ScrollView,
+  Share,
   StatusBar,
   StyleSheet,
   Text,
@@ -188,6 +188,7 @@ const DetailRecipe = ({ route }) => {
       });
     } catch (e) {
       console.error("Error al compartir receta (imagen)", e);
+
       // Fallback: compartir como texto si la imagen falla
       try {
         const text = [
@@ -197,10 +198,12 @@ const DetailRecipe = ({ route }) => {
           recipe?.category ? `🏷️ Categoría: ${recipe.category}` : null,
           "",
           "Ingredientes:",
-          ...((recipe?.ingredients ?? []).map((i) => `· ${i.text ?? i}`)),
+          ...(recipe?.ingredients ?? []).map((i) => `· ${i.text ?? i}`),
           "",
           "Preparación:",
-          ...((recipe?.preparation ?? []).map((s, idx) => `${idx + 1}. ${s.text ?? s}`)),
+          ...(recipe?.preparation ?? []).map(
+            (s, idx) => `${idx + 1}. ${s.text ?? s}`,
+          ),
         ]
           .filter(Boolean)
           .join("\n");
@@ -394,242 +397,248 @@ const DetailRecipe = ({ route }) => {
               )}
             </View>
           )}
-        {isEditing && updatedRecipe ? (
-          <>
-            <Text style={styles.label}>Nombre</Text>
-            <TextInput
-              style={styles.input}
-              value={updatedRecipe.name || ""}
-              onChangeText={(text) =>
-                setUpdatedRecipe({ ...updatedRecipe, name: text })
-              }
-            />
-            <Text style={styles.label}>Categoría</Text>
-            {recipe && (
-              <Text style={styles.categoryText}>{recipe.category}</Text>
-            )}
-            <Text style={styles.label}>Tiempo (min)</Text>
-            <TextInput
-              style={styles.input}
-              value={updatedRecipe.time ? updatedRecipe.time.toString() : "0"}
-              onChangeText={(text) =>
-                setUpdatedRecipe({ ...updatedRecipe, time: text })
-              }
-              keyboardType="numeric"
-            />
-            <Text style={styles.label}>Imagen (URL)</Text>
-            <TextInput
-              style={styles.input}
-              value={updatedRecipe.image || ""}
-              onChangeText={(text) =>
-                setUpdatedRecipe({ ...updatedRecipe, image: text })
-              }
-            />
-            <Text style={styles.label}>Personas</Text>
-            <TextInput
-              style={styles.input}
-              value={
-                updatedRecipe.people ? updatedRecipe.people.toString() : "1"
-              }
-              onChangeText={(text) =>
-                setUpdatedRecipe({ ...updatedRecipe, people: text })
-              }
-              keyboardType="numeric"
-            />
-            <Text style={styles.label}>Ingredientes</Text>
-            {updatedRecipe?.ingredients?.map((ingredient) => (
-              <View key={ingredient.id} style={styles.inputRow}>
-                <TextInput
-                  style={[
-                    styles.input,
-                    { height: Math.max(50, inputHeights[ingredient.id] || 50) },
-                  ]}
-                  value={ingredient.text}
-                  onChangeText={(text) =>
-                    handleIngredientChange(text, ingredient.id)
-                  }
-                  multiline
-                  textAlignVertical="top"
-                  onContentSizeChange={(e) =>
-                    handleContentSizeChange(
-                      ingredient.id,
-                      e.nativeEvent.contentSize.height + 20,
-                    )
-                  }
-                />
-                {ingredient.id ===
-                  updatedRecipe?.ingredients[
-                    updatedRecipe.ingredients.length - 1
-                  ]?.id && (
-                  <TouchableOpacity
-                    style={[styles.actionButton, styles.addButton]}
-                    onPress={() => addInput("ingredients")}
-                  >
-                    <Icon name="add" size={18} color="#FFF" />
-                  </TouchableOpacity>
-                )}
-                {updatedRecipe?.ingredients?.length > 1 &&
-                  ingredient.id !==
+          {isEditing && updatedRecipe ? (
+            <>
+              <Text style={styles.label}>Nombre</Text>
+              <TextInput
+                style={styles.input}
+                value={updatedRecipe.name || ""}
+                onChangeText={(text) =>
+                  setUpdatedRecipe({ ...updatedRecipe, name: text })
+                }
+              />
+              <Text style={styles.label}>Categoría</Text>
+              {recipe && (
+                <Text style={styles.categoryText}>{recipe.category}</Text>
+              )}
+              <Text style={styles.label}>Tiempo (min)</Text>
+              <TextInput
+                style={styles.input}
+                value={updatedRecipe.time ? updatedRecipe.time.toString() : "0"}
+                onChangeText={(text) =>
+                  setUpdatedRecipe({ ...updatedRecipe, time: text })
+                }
+                keyboardType="numeric"
+              />
+              <Text style={styles.label}>Imagen (URL)</Text>
+              <TextInput
+                style={styles.input}
+                value={updatedRecipe.image || ""}
+                onChangeText={(text) =>
+                  setUpdatedRecipe({ ...updatedRecipe, image: text })
+                }
+              />
+              <Text style={styles.label}>Personas</Text>
+              <TextInput
+                style={styles.input}
+                value={
+                  updatedRecipe.people ? updatedRecipe.people.toString() : "1"
+                }
+                onChangeText={(text) =>
+                  setUpdatedRecipe({ ...updatedRecipe, people: text })
+                }
+                keyboardType="numeric"
+              />
+              <Text style={styles.label}>Ingredientes</Text>
+              {updatedRecipe?.ingredients?.map((ingredient) => (
+                <View key={ingredient.id} style={styles.inputRow}>
+                  <TextInput
+                    style={[
+                      styles.input,
+                      {
+                        height: Math.max(50, inputHeights[ingredient.id] || 50),
+                      },
+                    ]}
+                    value={ingredient.text}
+                    onChangeText={(text) =>
+                      handleIngredientChange(text, ingredient.id)
+                    }
+                    multiline
+                    textAlignVertical="top"
+                    onContentSizeChange={(e) =>
+                      handleContentSizeChange(
+                        ingredient.id,
+                        e.nativeEvent.contentSize.height + 20,
+                      )
+                    }
+                  />
+                  {ingredient.id ===
                     updatedRecipe?.ingredients[
                       updatedRecipe.ingredients.length - 1
                     ]?.id && (
                     <TouchableOpacity
-                      style={[styles.actionButton, styles.removeButton]}
-                      onPress={() => removeInput("ingredients", ingredient.id)}
+                      style={[styles.actionButton, styles.addButton]}
+                      onPress={() => addInput("ingredients")}
                     >
-                      <Icon name="remove" size={18} color="#FFF" />
+                      <Icon name="add" size={18} color="#FFF" />
                     </TouchableOpacity>
                   )}
-              </View>
-            ))}
-            <Text style={styles.label}>Preparación</Text>
-            {updatedRecipe?.preparation?.map((step) => (
-              <View key={step.id} style={styles.inputRow}>
-                <TextInput
-                  style={[
-                    styles.input,
-                    styles.preparationInput,
-                    { height: Math.max(50, inputHeights[step.id] || 50) },
-                  ]}
-                  value={step.text}
-                  onChangeText={(text) =>
-                    handlePreparationChange(text, step.id)
-                  }
-                  multiline
-                  textAlignVertical="top"
-                  onContentSizeChange={(e) =>
-                    handleContentSizeChange(
-                      step.id,
-                      e.nativeEvent.contentSize.height + 20,
-                    )
-                  }
-                  blurOnSubmit
-                  onSubmitEditing={() => {}}
-                />
-                {step.id ===
-                  updatedRecipe?.preparation[
-                    updatedRecipe.preparation.length - 1
-                  ]?.id && (
-                  <TouchableOpacity
-                    style={[styles.actionButton, styles.addButton]}
-                    onPress={() => addInput("preparation")}
-                  >
-                    <Icon name="add" size={18} color="#FFF" />
-                  </TouchableOpacity>
-                )}
-                {updatedRecipe?.preparation?.length > 1 &&
-                  step.id !==
+                  {updatedRecipe?.ingredients?.length > 1 &&
+                    ingredient.id !==
+                      updatedRecipe?.ingredients[
+                        updatedRecipe.ingredients.length - 1
+                      ]?.id && (
+                      <TouchableOpacity
+                        style={[styles.actionButton, styles.removeButton]}
+                        onPress={() =>
+                          removeInput("ingredients", ingredient.id)
+                        }
+                      >
+                        <Icon name="remove" size={18} color="#FFF" />
+                      </TouchableOpacity>
+                    )}
+                </View>
+              ))}
+              <Text style={styles.label}>Preparación</Text>
+              {updatedRecipe?.preparation?.map((step) => (
+                <View key={step.id} style={styles.inputRow}>
+                  <TextInput
+                    style={[
+                      styles.input,
+                      styles.preparationInput,
+                      { height: Math.max(50, inputHeights[step.id] || 50) },
+                    ]}
+                    value={step.text}
+                    onChangeText={(text) =>
+                      handlePreparationChange(text, step.id)
+                    }
+                    multiline
+                    textAlignVertical="top"
+                    onContentSizeChange={(e) =>
+                      handleContentSizeChange(
+                        step.id,
+                        e.nativeEvent.contentSize.height + 20,
+                      )
+                    }
+                    blurOnSubmit
+                    onSubmitEditing={() => {}}
+                  />
+                  {step.id ===
                     updatedRecipe?.preparation[
                       updatedRecipe.preparation.length - 1
                     ]?.id && (
                     <TouchableOpacity
-                      style={[styles.actionButton, styles.removeButton]}
-                      onPress={() => removeInput("preparation", step.id)}
+                      style={[styles.actionButton, styles.addButton]}
+                      onPress={() => addInput("preparation")}
                     >
-                      <Icon name="remove" size={18} color="#FFF" />
+                      <Icon name="add" size={18} color="#FFF" />
                     </TouchableOpacity>
                   )}
-              </View>
-            ))}
-            <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-              <Text style={styles.buttonText}>Guardar</Text>
-            </TouchableOpacity>
-          </>
-        ) : (
-          recipe && (
-            <>
-              <Text style={styles.title}>{recipe.name}</Text>
-              <View style={styles.metaRow}>
-                <View style={[styles.metaCard, styles.metaPrimary]}>
-                  <Ionicons
-                    name="time-outline"
-                    size={18}
-                    color={theme.colors.ink}
-                  />
-                  <Text style={styles.metaText}>{recipe.time} min</Text>
+                  {updatedRecipe?.preparation?.length > 1 &&
+                    step.id !==
+                      updatedRecipe?.preparation[
+                        updatedRecipe.preparation.length - 1
+                      ]?.id && (
+                      <TouchableOpacity
+                        style={[styles.actionButton, styles.removeButton]}
+                        onPress={() => removeInput("preparation", step.id)}
+                      >
+                        <Icon name="remove" size={18} color="#FFF" />
+                      </TouchableOpacity>
+                    )}
                 </View>
-                <View style={[styles.metaCard, styles.metaSuccess]}>
-                  <MaterialCommunityIcons
-                    name="account-group-outline"
-                    size={18}
-                    color={theme.colors.ink}
-                  />
-                  <Text style={styles.metaText}>{recipe.people} pers.</Text>
-                </View>
-                {!!recipe.category && (
-                  <View style={[styles.metaCard, styles.metaAccent]}>
-                    <MaterialCommunityIcons
-                      name="tag-outline"
+              ))}
+              <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+                <Text style={styles.buttonText}>Guardar</Text>
+              </TouchableOpacity>
+            </>
+          ) : (
+            recipe && (
+              <>
+                <Text style={styles.title}>{recipe.name}</Text>
+                <View style={styles.metaRow}>
+                  <View style={[styles.metaCard, styles.metaPrimary]}>
+                    <Ionicons
+                      name="time-outline"
                       size={18}
                       color={theme.colors.ink}
                     />
-                    <Text style={styles.metaText} numberOfLines={1}>
-                      {recipe.category}
-                    </Text>
+                    <Text style={styles.metaText}>{recipe.time} min</Text>
                   </View>
-                )}
+                  <View style={[styles.metaCard, styles.metaSuccess]}>
+                    <MaterialCommunityIcons
+                      name="account-group-outline"
+                      size={18}
+                      color={theme.colors.ink}
+                    />
+                    <Text style={styles.metaText}>{recipe.people} pers.</Text>
+                  </View>
+                  {!!recipe.category && (
+                    <View style={[styles.metaCard, styles.metaAccent]}>
+                      <MaterialCommunityIcons
+                        name="tag-outline"
+                        size={18}
+                        color={theme.colors.ink}
+                      />
+                      <Text style={styles.metaText} numberOfLines={1}>
+                        {recipe.category}
+                      </Text>
+                    </View>
+                  )}
+                </View>
+              </>
+            )
+          )}
+          {recipe && (
+            <>
+              <Text style={styles.titleIngredientsInstructions}>
+                Ingredientes:
+              </Text>
+              <View style={styles.containerIngredientsInstructions}>
+                {recipe.ingredients?.map((ingredient, idx) => (
+                  <View key={ingredient.id} style={styles.listItemWrapper}>
+                    {idx % 3 === 0 && (
+                      <WaveMark style={styles.itemBg} opacity={1} />
+                    )}
+                    {idx % 3 === 1 && (
+                      <PinkTarget style={styles.itemBg} opacity={1} />
+                    )}
+                    {idx % 3 === 2 && (
+                      <GreenDiamond style={styles.itemBg} opacity={1} />
+                    )}
+                    <View
+                      style={
+                        idx % 2 === 0
+                          ? styles.listIngredientsInstructionsPar
+                          : styles.listIngredientsInstructionsOdd
+                      }
+                    >
+                      <Text style={styles.listItemText}>
+                        · {ingredient.text}
+                      </Text>
+                    </View>
+                  </View>
+                ))}
+              </View>
+              <Text style={styles.titleIngredientsInstructions}>
+                Preparación:
+              </Text>
+              <View style={styles.containerIngredientsInstructions}>
+                {recipe.preparation?.map((step, idx) => (
+                  <View key={step.id} style={styles.listItemWrapper}>
+                    {idx % 3 === 0 && (
+                      <WaveMark style={styles.itemBg} opacity={1} />
+                    )}
+                    {idx % 3 === 1 && (
+                      <PinkTarget style={styles.itemBg} opacity={1} />
+                    )}
+                    {idx % 3 === 2 && (
+                      <GreenDiamond style={styles.itemBg} opacity={1} />
+                    )}
+                    <View
+                      style={
+                        idx % 2 === 0
+                          ? styles.listIngredientsInstructionsPar
+                          : styles.listIngredientsInstructionsOdd
+                      }
+                    >
+                      <Text style={styles.listItemText}>· {step.text}</Text>
+                    </View>
+                  </View>
+                ))}
               </View>
             </>
-          )
-        )}
-        {recipe && (
-          <>
-            <Text style={styles.titleIngredientsInstructions}>
-              Ingredientes:
-            </Text>
-            <View style={styles.containerIngredientsInstructions}>
-              {recipe.ingredients?.map((ingredient, idx) => (
-                <View key={ingredient.id} style={styles.listItemWrapper}>
-                  {idx % 3 === 0 && (
-                    <WaveMark style={styles.itemBg} opacity={1} />
-                  )}
-                  {idx % 3 === 1 && (
-                    <PinkTarget style={styles.itemBg} opacity={1} />
-                  )}
-                  {idx % 3 === 2 && (
-                    <GreenDiamond style={styles.itemBg} opacity={1} />
-                  )}
-                  <View
-                    style={
-                      idx % 2 === 0
-                        ? styles.listIngredientsInstructionsPar
-                        : styles.listIngredientsInstructionsOdd
-                    }
-                  >
-                    <Text style={styles.listItemText}>· {ingredient.text}</Text>
-                  </View>
-                </View>
-              ))}
-            </View>
-            <Text style={styles.titleIngredientsInstructions}>
-              Preparación:
-            </Text>
-            <View style={styles.containerIngredientsInstructions}>
-              {recipe.preparation?.map((step, idx) => (
-                <View key={step.id} style={styles.listItemWrapper}>
-                  {idx % 3 === 0 && (
-                    <WaveMark style={styles.itemBg} opacity={1} />
-                  )}
-                  {idx % 3 === 1 && (
-                    <PinkTarget style={styles.itemBg} opacity={1} />
-                  )}
-                  {idx % 3 === 2 && (
-                    <GreenDiamond style={styles.itemBg} opacity={1} />
-                  )}
-                  <View
-                    style={
-                      idx % 2 === 0
-                        ? styles.listIngredientsInstructionsPar
-                        : styles.listIngredientsInstructionsOdd
-                    }
-                  >
-                    <Text style={styles.listItemText}>· {step.text}</Text>
-                  </View>
-                </View>
-              ))}
-            </View>
-          </>
-        )}
+          )}
         </View>
       </ScrollView>
     </View>
