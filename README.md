@@ -1,4 +1,4 @@
-# Que comemos hoy v2.0
+# Que comemos hoy v3.0
 
 ## Descripción
 
@@ -12,9 +12,26 @@ Los menús semanales se guardan en el storage del dispositivo para que sigan dis
 
 Para usar la aplicación se genera una apk desde expo, se instala en el dispositivo móvil y se ejecuta.
 
+## Capturas
+
+### v 3.0 (pendientes de subir)
+
+<!-- Añade aquí las nuevas capturas de la v3.0 -->
+<!-- Ejemplo:
+<img src="./assets/capturas/v3.0/Vista_compartir_receta.jpg" width="200">
+<img src="./assets/capturas/v3.0/Vista_home_neobrutalista.jpg" width="200">
+-->
+
+### v 2.0
+
 <img src="./assets/Vista_mis_recetas.jpg" width="200"><img src="./assets/Vista_detalle_receta.jpg" width="200"><img src="./assets/Vista_añadir_receta.jpg" width="200">
 
 ## Novedades
+
+### v 3.0
+
+- [x] Cambio de estilo a neobrutalista
+- [x] Añadida posibilidad de compartir recetas
 
 ### v 2.0
 
