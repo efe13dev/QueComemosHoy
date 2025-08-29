@@ -18,10 +18,16 @@ Los menús semanales se guardan en el storage del dispositivo para que sigan dis
 ## Capturas
 
 ### v 3.0 
-<img src="./assets/vista_splash.png" width="200">
-<img src="./assets/vista_menu_semanal.png" width="200">
-<img src="./assets/vista_mis_recetas.png" width="200">
-<img src="./assets/vista_detalle_receta.png" width="200">
+<table>
+  <tr>
+    <td><img src="./assets/vista_splash.png" width="200"/></td>
+    <td><img src="./assets/vista_menu_semanal.png" width="200"/></td>
+  </tr>
+  <tr>
+    <td><img src="./assets/vista_mis_recetas.png" width="200"/></td>
+    <td><img src="./assets/vista_detalle_receta.png" width="200"/></td>
+  </tr>
+</table>
 
 ## Tabla de contenidos
 
