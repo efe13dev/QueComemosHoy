@@ -30,6 +30,7 @@ import WeekDayPicker from "./WeekDayPicker";
 
 // Animated wrapper para elementos SVG (debe ir después de todos los imports)
 const AnimatedG = Animated.createAnimatedComponent(G);
+const AnimatedPolygon = Animated.createAnimatedComponent(Polygon);
 
 // SVG decorativo proporcionado (como componente reutilizable)
 const DecorSvg1 = ({
@@ -80,6 +81,8 @@ const DecorStar = ({
   strokeWidth = 6,
   rotation = 0,
   style,
+  overlayOpacity,
+  overlayColor,
 }) => (
   <Svg width={size} height={size} viewBox="0 0 160 160" style={style}>
     <G transform={`rotate(${rotation} 80 80)`}>
@@ -89,6 +92,15 @@ const DecorStar = ({
         stroke={stroke}
         strokeWidth={strokeWidth}
       />
+      {overlayOpacity ? (
+        <AnimatedPolygon
+          points="80,10 100,60 150,60 110,90 125,140 80,110 35,140 50,90 10,60 60,60"
+          fill={overlayColor}
+          opacity={overlayOpacity}
+          stroke="none"
+          pointerEvents="none"
+        />
+      ) : null}
     </G>
   </Svg>
 );
@@ -105,9 +117,9 @@ export function GenerateMenu() {
   const [isResetting, setIsResetting] = useState(false);
   const [resetPressed, setResetPressed] = useState(false);
   const [flowerColor, setFlowerColor] = useState("#000000");
-  const [starColor, setStarColor] = useState("#4D4DFF");
+  const starColor = "#4D4DFF";
   const flowerScale = useRef(new Animated.Value(1)).current;
-  const starMidTimers = useRef([]);
+  const starOverlayOpacity = useRef(new Animated.Value(0)).current;
 
   const { width: screenW } = Dimensions.get("window");
   const decorations = useMemo(() => {
@@ -209,8 +221,6 @@ export function GenerateMenu() {
   }, [brutalistPalette, flowerColor, plantShakeAnimation]);
 
   const handleStarPress = useCallback(() => {
-    const prev = starColor;
-
     // Lanzamos la animación de giro
     const res = starRef.current?.animate?.(
       starSpinAnimation,
@@ -218,35 +228,39 @@ export function GenerateMenu() {
       "ease-in-out",
     );
 
-    // Limpiamos timers previos si hubiera
-    starMidTimers.current.forEach((t) => clearTimeout(t));
-    starMidTimers.current = [];
-
+    // Animar overlay rojo con fade in/out entre los porcentajes definidos
     const duration = STAR_DURATION;
-
     const tOn = Math.floor(duration * STAR_RED_ON_PCT);
     const tOff = Math.floor(duration * STAR_RED_OFF_PCT);
 
-    const onTimer = setTimeout(() => setStarColor(theme.colors.danger), tOn);
-    const offTimer = setTimeout(() => setStarColor(prev), tOff);
+    Animated.parallel([
+      Animated.sequence([
+        Animated.delay(tOn),
+        Animated.timing(starOverlayOpacity, {
+          toValue: 1,
+          duration: 140,
+          useNativeDriver: false,
+        }),
+      ]),
+      Animated.sequence([
+        Animated.delay(tOff),
+        Animated.timing(starOverlayOpacity, {
+          toValue: 0,
+          duration: 140,
+          useNativeDriver: false,
+        }),
+      ]),
+    ]).start();
 
-    starMidTimers.current.push(onTimer, offTimer);
-
-    // Aseguramos restauración al final por seguridad
+    // Aseguramos opacidad en 0 al terminar
     if (res && typeof res.then === "function") {
-      res.then(() => setStarColor(prev));
+      res.then(() => starOverlayOpacity.setValue(0));
     } else {
-      setTimeout(() => setStarColor(prev), duration);
+      setTimeout(() => starOverlayOpacity.setValue(0), duration);
     }
-  }, [starColor, starSpinAnimation]);
+  }, [starSpinAnimation, starOverlayOpacity]);
 
-  // Limpieza de timers al desmontar
-  useEffect(() => {
-    return () => {
-      starMidTimers.current.forEach((t) => clearTimeout(t));
-      starMidTimers.current = [];
-    };
-  }, []);
+  // No necesitamos timers; overlay usa Animated
 
   const starDecoration = useMemo(() => {
     const size = Math.min(screenW * 0.2, 160);
@@ -490,6 +504,8 @@ export function GenerateMenu() {
               stroke={starDecoration.stroke}
               strokeWidth={starDecoration.strokeWidth}
               rotation={starDecoration.rotate}
+              overlayOpacity={starOverlayOpacity}
+              overlayColor={theme.colors.danger}
             />
           </Animatable.View>
         </View>
