@@ -12,8 +12,6 @@ module.exports = function (api) {
           path: ".env",
         },
       ],
-      // El plugin de Reanimated DEBE ser el último
-      "react-native-reanimated/plugin",
     ],
   };
 };
