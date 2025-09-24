@@ -224,6 +224,149 @@ const DetailRecipe = ({ route }) => {
     }
   }, [recipe]);
 
+  const renderDecoratedItem = (item, idx, content) => {
+    const variant = idx % 3;
+    const isEven = idx % 2 === 0;
+
+    let background = null;
+
+    if (variant === 0) {
+      background = (
+        <WaveMark
+          style={[styles.readItemBg, styles.readBgWave]}
+          opacity={0.24}
+          color={theme.colors.primary}
+          strokeWidth={12}
+        />
+      );
+    } else if (variant === 1) {
+      background = (
+        <PinkTarget
+          style={[styles.readItemBg, styles.readBgTarget]}
+          opacity={0.3}
+          outer={theme.colors.secondary}
+          inner="#F4EEFF"
+          stroke={theme.colors.border}
+          strokeWidth={6}
+        />
+      );
+    } else {
+      background = (
+        <GreenDiamond
+          style={[styles.readItemBg, styles.readBgDiamond]}
+          opacity={0.22}
+          fill={theme.colors.success}
+          stroke={theme.colors.border}
+          strokeWidth={6}
+        />
+      );
+    }
+
+    return (
+      <View
+        key={item.id ?? `${content}-${idx}`}
+        style={[
+          styles.listItemWrapper,
+          isEven ? styles.readItemWrapper : styles.readItemWrapperAlt,
+        ]}
+      >
+        <View style={styles.readItemBackground}>{background}</View>
+        <View style={styles.readItemContentWrapper}>
+          <View
+            style={[
+              styles.readItemCard,
+              isEven ? styles.readItemCardPrimary : styles.readItemCardAlt,
+            ]}
+          >
+            <Text style={styles.listItemText}>{content}</Text>
+          </View>
+        </View>
+      </View>
+    );
+  };
+
+  const renderEditableInputRow = ({
+    item,
+    idx,
+    isLast,
+    canRemove,
+    onAddPress,
+    onRemovePress,
+    inputStyle,
+    inputProps = {},
+  }) => {
+    const variant = idx % 3;
+
+    let background = null;
+
+    if (variant === 0) {
+      background = (
+        <WaveMark
+          style={[styles.editItemBg, styles.editBgWave]}
+          opacity={0.2}
+          color={theme.colors.primary}
+          strokeWidth={12}
+        />
+      );
+    } else if (variant === 1) {
+      background = (
+        <PinkTarget
+          style={[styles.editItemBg, styles.editBgTarget]}
+          opacity={0.24}
+          outer={theme.colors.secondary}
+          inner="#F5ECFF"
+          stroke={theme.colors.border}
+          strokeWidth={5}
+        />
+      );
+    } else {
+      background = (
+        <GreenDiamond
+          style={[styles.editItemBg, styles.editBgDiamond]}
+          opacity={0.2}
+          fill={theme.colors.success}
+          stroke={theme.colors.border}
+          strokeWidth={5}
+        />
+      );
+    }
+
+    const composedInputStyle = [
+      styles.input,
+      styles.inputInsideRow,
+      ...(Array.isArray(inputStyle) ? inputStyle : [inputStyle]),
+    ].filter(Boolean);
+
+    return (
+      <View key={item.id ?? `edit-${idx}`} style={styles.editItemWrapper}>
+        <View style={styles.editItemBackground}>{background}</View>
+        <View style={styles.editItemContentWrapper}>
+          <View style={styles.inputRow}>
+            <TextInput {...inputProps} style={composedInputStyle} />
+            <View style={styles.inputActions}>
+              {isLast && onAddPress ? (
+                <TouchableOpacity
+                  style={[styles.actionButton, styles.addButton]}
+                  onPress={onAddPress}
+                >
+                  <Icon name="add" size={18} color="#FFF" />
+                </TouchableOpacity>
+              ) : null}
+              {canRemove && onRemovePress ? (
+                <TouchableOpacity
+                  style={[styles.actionButton, styles.removeButton]}
+                  onPress={onRemovePress}
+                >
+                  <Icon name="remove" size={18} color="#FFF" />
+                </TouchableOpacity>
+              ) : null}
+            </View>
+          </View>
+        </View>
+      </View>
+    );
+  };
+
   return (
     <View style={styles.screenRoot}>
       <ScrollView
@@ -440,104 +583,79 @@ const DetailRecipe = ({ route }) => {
                 keyboardType="numeric"
               />
               <Text style={styles.label}>Ingredientes</Text>
-              {updatedRecipe?.ingredients?.map((ingredient) => (
-                <View key={ingredient.id} style={styles.inputRow}>
-                  <TextInput
-                    style={[
-                      styles.input,
-                      {
-                        height: Math.max(50, inputHeights[ingredient.id] || 50),
-                      },
-                    ]}
-                    value={ingredient.text}
-                    onChangeText={(text) =>
-                      handleIngredientChange(text, ingredient.id)
-                    }
-                    multiline
-                    textAlignVertical="top"
-                    onContentSizeChange={(e) =>
-                      handleContentSizeChange(
-                        ingredient.id,
-                        e.nativeEvent.contentSize.height + 20,
-                      )
-                    }
-                  />
-                  {ingredient.id ===
+              {updatedRecipe?.ingredients?.map((ingredient, idx) =>
+                renderEditableInputRow({
+                  item: ingredient,
+                  idx,
+                  isLast:
+                    ingredient.id ===
                     updatedRecipe?.ingredients[
                       updatedRecipe.ingredients.length - 1
-                    ]?.id && (
-                    <TouchableOpacity
-                      style={[styles.actionButton, styles.addButton]}
-                      onPress={() => addInput("ingredients")}
-                    >
-                      <Icon name="add" size={18} color="#FFF" />
-                    </TouchableOpacity>
-                  )}
-                  {updatedRecipe?.ingredients?.length > 1 &&
+                    ]?.id,
+                  canRemove:
+                    (updatedRecipe?.ingredients?.length ?? 0) > 1 &&
                     ingredient.id !==
                       updatedRecipe?.ingredients[
                         updatedRecipe.ingredients.length - 1
-                      ]?.id && (
-                      <TouchableOpacity
-                        style={[styles.actionButton, styles.removeButton]}
-                        onPress={() =>
-                          removeInput("ingredients", ingredient.id)
-                        }
-                      >
-                        <Icon name="remove" size={18} color="#FFF" />
-                      </TouchableOpacity>
-                    )}
-                </View>
-              ))}
-              <Text style={styles.label}>Preparación</Text>
-              {updatedRecipe?.preparation?.map((step) => (
-                <View key={step.id} style={styles.inputRow}>
-                  <TextInput
-                    style={[
-                      styles.input,
-                      styles.preparationInput,
-                      { height: Math.max(50, inputHeights[step.id] || 50) },
-                    ]}
-                    value={step.text}
-                    onChangeText={(text) =>
-                      handlePreparationChange(text, step.id)
-                    }
-                    multiline
-                    textAlignVertical="top"
-                    onContentSizeChange={(e) =>
+                      ]?.id,
+                  onAddPress: () => addInput("ingredients"),
+                  onRemovePress: () =>
+                    removeInput("ingredients", ingredient.id),
+                  inputProps: {
+                    value: ingredient.text,
+                    onChangeText: (text) =>
+                      handleIngredientChange(text, ingredient.id),
+                    multiline: true,
+                    textAlignVertical: "top",
+                    onContentSizeChange: (e) =>
                       handleContentSizeChange(
-                        step.id,
+                        ingredient.id,
                         e.nativeEvent.contentSize.height + 20,
-                      )
-                    }
-                    blurOnSubmit
-                    onSubmitEditing={() => {}}
-                  />
-                  {step.id ===
+                      ),
+                  },
+                  inputStyle: {
+                    height: Math.max(50, inputHeights[ingredient.id] || 50),
+                  },
+                }),
+              )}
+              <Text style={styles.label}>Preparación</Text>
+              {updatedRecipe?.preparation?.map((step, idx) =>
+                renderEditableInputRow({
+                  item: step,
+                  idx,
+                  isLast:
+                    step.id ===
                     updatedRecipe?.preparation[
                       updatedRecipe.preparation.length - 1
-                    ]?.id && (
-                    <TouchableOpacity
-                      style={[styles.actionButton, styles.addButton]}
-                      onPress={() => addInput("preparation")}
-                    >
-                      <Icon name="add" size={18} color="#FFF" />
-                    </TouchableOpacity>
-                  )}
-                  {updatedRecipe?.preparation?.length > 1 &&
+                    ]?.id,
+                  canRemove:
+                    (updatedRecipe?.preparation?.length ?? 0) > 1 &&
                     step.id !==
                       updatedRecipe?.preparation[
                         updatedRecipe.preparation.length - 1
-                      ]?.id && (
-                      <TouchableOpacity
-                        style={[styles.actionButton, styles.removeButton]}
-                        onPress={() => removeInput("preparation", step.id)}
-                      >
-                        <Icon name="remove" size={18} color="#FFF" />
-                      </TouchableOpacity>
-                    )}
-                </View>
-              ))}
+                      ]?.id,
+                  onAddPress: () => addInput("preparation"),
+                  onRemovePress: () => removeInput("preparation", step.id),
+                  inputProps: {
+                    value: step.text,
+                    onChangeText: (text) =>
+                      handlePreparationChange(text, step.id),
+                    multiline: true,
+                    textAlignVertical: "top",
+                    onContentSizeChange: (e) =>
+                      handleContentSizeChange(
+                        step.id,
+                        e.nativeEvent.contentSize.height + 20,
+                      ),
+                    blurOnSubmit: true,
+                    onSubmitEditing: () => {},
+                  },
+                  inputStyle: [
+                    styles.preparationInput,
+                    { height: Math.max(50, inputHeights[step.id] || 50) },
+                  ],
+                }),
+              )}
               <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
                 <Text style={styles.buttonText}>Guardar</Text>
               </TouchableOpacity>
@@ -585,57 +703,17 @@ const DetailRecipe = ({ route }) => {
                 Ingredientes:
               </Text>
               <View style={styles.containerIngredientsInstructions}>
-                {recipe.ingredients?.map((ingredient, idx) => (
-                  <View key={ingredient.id} style={styles.listItemWrapper}>
-                    {idx % 3 === 0 && (
-                      <WaveMark style={styles.itemBg} opacity={1} />
-                    )}
-                    {idx % 3 === 1 && (
-                      <PinkTarget style={styles.itemBg} opacity={1} />
-                    )}
-                    {idx % 3 === 2 && (
-                      <GreenDiamond style={styles.itemBg} opacity={1} />
-                    )}
-                    <View
-                      style={
-                        idx % 2 === 0
-                          ? styles.listIngredientsInstructionsPar
-                          : styles.listIngredientsInstructionsOdd
-                      }
-                    >
-                      <Text style={styles.listItemText}>
-                        · {ingredient.text}
-                      </Text>
-                    </View>
-                  </View>
-                ))}
+                {recipe.ingredients?.map((ingredient, idx) =>
+                  renderDecoratedItem(ingredient, idx, `· ${ingredient.text}`),
+                )}
               </View>
               <Text style={styles.titleIngredientsInstructions}>
                 Preparación:
               </Text>
               <View style={styles.containerIngredientsInstructions}>
-                {recipe.preparation?.map((step, idx) => (
-                  <View key={step.id} style={styles.listItemWrapper}>
-                    {idx % 3 === 0 && (
-                      <WaveMark style={styles.itemBg} opacity={1} />
-                    )}
-                    {idx % 3 === 1 && (
-                      <PinkTarget style={styles.itemBg} opacity={1} />
-                    )}
-                    {idx % 3 === 2 && (
-                      <GreenDiamond style={styles.itemBg} opacity={1} />
-                    )}
-                    <View
-                      style={
-                        idx % 2 === 0
-                          ? styles.listIngredientsInstructionsPar
-                          : styles.listIngredientsInstructionsOdd
-                      }
-                    >
-                      <Text style={styles.listItemText}>· {step.text}</Text>
-                    </View>
-                  </View>
-                ))}
+                {recipe.preparation?.map((step, idx) =>
+                  renderDecoratedItem(step, idx, `· ${step.text}`),
+                )}
               </View>
             </>
           )}
@@ -743,6 +821,7 @@ const styles = StyleSheet.create({
   listItemWrapper: {
     position: "relative",
     width: "100%",
+    marginBottom: 12,
   },
   listIngredientsInstructionsPar: {
     fontSize: 16,
@@ -807,14 +886,123 @@ const styles = StyleSheet.create({
     color: theme.colors.ink,
     fontFamily: theme.fonts.regular,
     fontSize: 16,
+    position: "relative",
+    zIndex: 1,
   },
-  itemBg: {
+  readItemWrapper: {
+    position: "relative",
+    width: "100%",
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    marginBottom: 6,
+  },
+  readItemWrapperAlt: {
+    position: "relative",
+    width: "100%",
+    paddingVertical: 8,
+    paddingHorizontal: 8,
+    marginBottom: 6,
+  },
+  readItemBg: {
     position: "absolute",
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
     zIndex: 0,
+  },
+  readItemBackground: {
+    ...StyleSheet.absoluteFillObject,
+    zIndex: 0,
+  },
+  readItemContentWrapper: {
+    position: "relative",
+    zIndex: 1,
+  },
+  readBgWave: {
+    transform: [
+      { translateX: -16 },
+      { translateY: -28 },
+      { scale: 0.95 },
+      { rotate: "-8deg" },
+    ],
+  },
+  readBgTarget: {
+    transform: [{ translateX: 24 }, { translateY: -34 }, { scale: 0.78 }],
+  },
+  readBgDiamond: {
+    transform: [
+      { translateX: -20 },
+      { translateY: -22 },
+      { scale: 0.92 },
+      { rotate: "-10deg" },
+    ],
+  },
+  readItemCard: {
+    position: "relative",
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 0,
+    borderLeftWidth: 8,
+    borderLeftColor: theme.colors.border,
+    ...outline({ width: 3 }),
+    ...hardShadow({ x: 3, y: 3, elevation: 6 }),
+  },
+  readItemCardPrimary: {
+    backgroundColor: theme.colors.surface,
+  },
+  readItemCardAlt: {
+    backgroundColor: theme.colors.surfaceAlt,
+  },
+  editItemWrapper: {
+    position: "relative",
+    width: "100%",
+    marginBottom: 14,
+    paddingTop: 8,
+    paddingBottom: 8,
+    paddingLeft: 10,
+    paddingRight: 10,
+  },
+  editItemBg: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 0,
+  },
+  editItemBackground: {
+    ...StyleSheet.absoluteFillObject,
+    zIndex: 0,
+  },
+  editItemContentWrapper: {
+    position: "relative",
+    zIndex: 1,
+  },
+  editBgWave: {
+    transform: [
+      { translateX: -8 },
+      { translateY: -10 },
+      { scale: 1.05 },
+      { rotate: "-6deg" },
+    ],
+  },
+  editBgTarget: {
+    transform: [{ translateX: 24 }, { translateY: -18 }, { scale: 0.8 }],
+  },
+  editBgDiamond: {
+    transform: [
+      { translateX: -20 },
+      { translateY: -12 },
+      { scale: 0.95 },
+      { rotate: "-15deg" },
+    ],
+  },
+  inputActions: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginLeft: 8,
+    gap: 8,
   },
   metaText: {
     marginLeft: 8,
@@ -895,8 +1083,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     width: "100%",
-    marginBottom: 15,
-    justifyContent: "space-between", // Distribuir el espacio entre el input y el botón
+    marginBottom: 0,
+    justifyContent: "space-between",
+  },
+  inputInsideRow: {
+    flex: 1,
+    backgroundColor: "rgba(255, 255, 255, 0.9)",
+    marginBottom: 0,
+    borderLeftWidth: 8,
+    borderLeftColor: theme.colors.border,
   },
   actionButton: {
     width: 36,
