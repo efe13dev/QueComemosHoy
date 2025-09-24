@@ -559,17 +559,31 @@ const DetailRecipe = ({ route }) => {
                 style={styles.input}
                 value={updatedRecipe.time ? updatedRecipe.time.toString() : "0"}
                 onChangeText={(text) =>
-                  setUpdatedRecipe({ ...updatedRecipe, time: text })
+                  setUpdatedRecipe({
+                    ...updatedRecipe,
+                    time: Number.parseInt(text, 10) || 0,
+                  })
                 }
                 keyboardType="numeric"
+                autoCorrect={false}
+                autoCapitalize="none"
               />
               <Text style={styles.label}>Imagen (URL)</Text>
               <TextInput
-                style={styles.input}
+                style={[styles.input, styles.imageUrlInput]}
                 value={updatedRecipe.image || ""}
                 onChangeText={(text) =>
-                  setUpdatedRecipe({ ...updatedRecipe, image: text })
+                  setUpdatedRecipe({ ...updatedRecipe, image: text.trim() })
                 }
+                autoCorrect={false}
+                autoCapitalize="none"
+                keyboardType="url"
+                textContentType="URL"
+                selectTextOnFocus
+                multiline
+                numberOfLines={3}
+                scrollEnabled={false}
+                placeholder="https://ejemplo.com/imagen.jpg"
               />
               <Text style={styles.label}>Personas</Text>
               <TextInput
@@ -578,9 +592,14 @@ const DetailRecipe = ({ route }) => {
                   updatedRecipe.people ? updatedRecipe.people.toString() : "1"
                 }
                 onChangeText={(text) =>
-                  setUpdatedRecipe({ ...updatedRecipe, people: text })
+                  setUpdatedRecipe({
+                    ...updatedRecipe,
+                    people: Number.parseInt(text, 10) || 1,
+                  })
                 }
                 keyboardType="numeric"
+                autoCorrect={false}
+                autoCapitalize="none"
               />
               <Text style={styles.label}>Ingredientes</Text>
               {updatedRecipe?.ingredients?.map((ingredient, idx) =>
@@ -1093,6 +1112,19 @@ const styles = StyleSheet.create({
     borderLeftWidth: 8,
     borderLeftColor: theme.colors.border,
   },
+  singleLineInput: {
+    minHeight: 44,
+    height: 48,
+    paddingVertical: 8,
+    textAlignVertical: "center",
+  },
+  imageUrlInput: {
+    width: "100%",
+    minHeight: 60,
+    paddingVertical: 12,
+    textAlignVertical: "top",
+    lineHeight: 20,
+  },
   actionButton: {
     width: 36,
     height: 36,
@@ -1117,7 +1149,6 @@ const styles = StyleSheet.create({
   },
   categoryText: {
     fontSize: 16,
-    marginBottom: 10,
     width: "100%",
     color: theme.colors.textDark,
     fontStyle: "italic",
@@ -1125,8 +1156,8 @@ const styles = StyleSheet.create({
   preparationInput: {
     height: "auto",
     minHeight: 50,
-    textAlignVertical: "center",
-    justifyContent: "center",
+    textAlignVertical: "top",
+    justifyContent: "flex-start",
     paddingTop: 10,
     paddingBottom: 10,
   },

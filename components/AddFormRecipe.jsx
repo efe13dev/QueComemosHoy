@@ -127,6 +127,7 @@ const AddFormRecipe = () => {
         placeholder="Nombre de la receta"
         value={recipe.name}
         onChangeText={(value) => handleChange("name", value)}
+        autoGrow
       />
 
       <View
@@ -157,16 +158,26 @@ const AddFormRecipe = () => {
       </View>
 
       <RetroInput
-        placeholder="Tiempo de preparación"
+        placeholder="Tiempo de preparación (minutos)"
         value={recipe.time}
         keyboardType="numeric"
         onChangeText={(value) => handleChange("time", value)}
+        autoGrow
       />
 
       <RetroInput
-        placeholder="Imagen..."
+        placeholder="https://ejemplo.com/imagen.jpg"
         value={recipe.image}
-        onChangeText={(value) => handleChange("image", value)}
+        onChangeText={(value) => handleChange("image", value.trim())}
+        style={styles.imageUrlInput}
+        multiline
+        numberOfLines={3}
+        autoCapitalize="none"
+        autoCorrect={false}
+        keyboardType="url"
+        textContentType="URL"
+        selectTextOnFocus
+        autoGrow
       />
 
       <RetroInput
@@ -174,6 +185,7 @@ const AddFormRecipe = () => {
         value={recipe.people}
         keyboardType="numeric"
         onChangeText={(value) => handleChange("people", value)}
+        autoGrow
       />
 
       <Text style={styles.label}>Ingredientes:</Text>
@@ -184,6 +196,7 @@ const AddFormRecipe = () => {
             placeholder="Ingrediente"
             value={ingredient.text}
             onChangeText={(value) => handleChange("ingredients", value, index)}
+            autoGrow
           />
           <View style={styles.actionButtonWrap}>
             <View pointerEvents="none" style={styles.actionBtnShadow} />
@@ -223,6 +236,7 @@ const AddFormRecipe = () => {
             placeholder="Paso"
             value={step.text}
             onChangeText={(value) => handleChange("preparation", value, index)}
+            autoGrow
           />
           <View style={styles.actionButtonWrap}>
             <View pointerEvents="none" style={styles.actionBtnShadow} />
@@ -363,6 +377,12 @@ const styles = StyleSheet.create({
     color: theme.colors.textDark,
     alignSelf: "flex-start",
     marginLeft: 5,
+  },
+  imageUrlInput: {
+    minHeight: 60,
+    paddingVertical: 12,
+    textAlignVertical: "top",
+    lineHeight: 20,
   },
 
   // Estilos para el modal personalizado

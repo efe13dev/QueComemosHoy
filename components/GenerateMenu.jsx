@@ -1,3 +1,4 @@
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import React, {
   useCallback,
   useEffect,
@@ -585,61 +586,70 @@ export function GenerateMenu() {
           </View>
         </Animatable.View>
 
-        <View style={styles.saveWrap}>
-          <View
-            style={[
-              styles.saveShadow,
-              (savePressed || isSaving) && styles.saveShadowPressed,
-              (!hasPendingChanges || isSaving) && styles.saveShadowDisabled,
-            ]}
-          />
-          <TouchableOpacity
-            style={[
-              styles.saveButton,
-              (savePressed || isSaving) && styles.saveButtonPressed,
-              (!hasPendingChanges || isSaving) && styles.saveButtonDisabled,
-            ]}
-            onPress={handleSaveMenu}
-            onPressIn={() => setSavePressed(true)}
-            onPressOut={() => setSavePressed(false)}
-            disabled={!hasPendingChanges || isSaving}
-            activeOpacity={0.9}
-          >
-            <Text
+        <View style={styles.actionsRow}>
+          <View style={styles.saveWrap}>
+            <View
               style={[
-                styles.saveButtonText,
-                (!hasPendingChanges || isSaving) &&
-                  styles.saveButtonTextDisabled,
+                styles.saveShadow,
+                (savePressed || isSaving) && styles.saveShadowPressed,
+                (!hasPendingChanges || isSaving) && styles.saveShadowDisabled,
               ]}
+            />
+            <TouchableOpacity
+              style={[
+                styles.saveButton,
+                (savePressed || isSaving) && styles.saveButtonPressed,
+                (!hasPendingChanges || isSaving) && styles.saveButtonDisabled,
+              ]}
+              onPress={handleSaveMenu}
+              onPressIn={() => setSavePressed(true)}
+              onPressOut={() => setSavePressed(false)}
+              disabled={!hasPendingChanges || isSaving}
+              activeOpacity={0.9}
             >
-              {isSaving ? "Guardando..." : "Guardar Menú"}
-            </Text>
-          </TouchableOpacity>
-        </View>
+              <Text
+                style={[
+                  styles.saveButtonText,
+                  (!hasPendingChanges || isSaving) &&
+                    styles.saveButtonTextDisabled,
+                  hasPendingChanges &&
+                    !isSaving &&
+                    styles.saveButtonTextHighlight,
+                ]}
+              >
+                {isSaving ? "Guardando..." : "Guardar Menú"}
+              </Text>
+            </TouchableOpacity>
+          </View>
 
-        <View style={styles.resetWrap}>
-          <View
-            style={[
-              styles.resetShadow,
-              resetPressed && styles.resetShadowPressed,
-            ]}
-          />
-          <TouchableOpacity
-            style={[
-              styles.resetButton,
-              resetPressed && styles.resetButtonPressed,
-              isResetting && styles.resetButtonDisabled,
-            ]}
-            onPress={confirmResetMenu}
-            onPressIn={() => setResetPressed(true)}
-            onPressOut={() => setResetPressed(false)}
-            disabled={isResetting}
-            activeOpacity={0.9}
-          >
-            <Text style={styles.resetButtonText}>
-              {isResetting ? "Eliminando..." : "Eliminar Menú"}
-            </Text>
-          </TouchableOpacity>
+          <View style={styles.trashWrap}>
+            <View
+              style={[
+                styles.trashShadow,
+                resetPressed && styles.trashShadowPressed,
+                isResetting && styles.trashShadowDisabled,
+              ]}
+            />
+            <TouchableOpacity
+              style={[
+                styles.trashButton,
+                resetPressed && styles.trashButtonPressed,
+                isResetting && styles.trashButtonDisabled,
+              ]}
+              onPress={confirmResetMenu}
+              onPressIn={() => setResetPressed(true)}
+              onPressOut={() => setResetPressed(false)}
+              disabled={isResetting}
+              activeOpacity={0.85}
+            >
+              <MaterialCommunityIcons
+                name={isResetting ? "progress-clock" : "trash-can-outline"}
+                size={32}
+                color={isResetting ? theme.colors.textMuted : theme.colors.ink}
+                style={styles.trashIcon}
+              />
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
 
@@ -804,25 +814,16 @@ const styles = StyleSheet.create({
     zIndex: 5,
     backgroundColor: "transparent",
   },
-  resetWrap: {
-    position: "relative",
-    width: "100%",
-    marginTop: theme.spacing.xl,
+  actionsRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginTop: theme.spacing.lg,
+    gap: theme.spacing.lg,
   },
   saveWrap: {
+    flex: 1,
     position: "relative",
-    width: "100%",
-    marginTop: theme.spacing.lg,
-  },
-  resetShadow: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-    backgroundColor: theme.colors.border, // sombra negra
-    transform: [{ translateX: 6 }, { translateY: 6 }], // abajo-derecha
-    zIndex: 0,
   },
   saveShadow: {
     position: "absolute",
@@ -834,9 +835,6 @@ const styles = StyleSheet.create({
     transform: [{ translateX: 6 }, { translateY: 6 }],
     zIndex: 0,
   },
-  resetShadowPressed: {
-    transform: [{ translateX: 3 }, { translateY: 3 }],
-  },
   saveShadowPressed: {
     transform: [{ translateX: 3 }, { translateY: 3 }],
   },
@@ -844,52 +842,84 @@ const styles = StyleSheet.create({
     opacity: 0.25,
     transform: [{ translateX: 4 }, { translateY: 4 }],
   },
-  resetButton: {
-    backgroundColor: theme.colors.danger, // rojo neobrutalista para acción destructiva
-    borderRadius: 0,
-    padding: theme.spacing.md,
-    alignItems: "center",
-    ...outline({ width: 3 }),
-    zIndex: 1,
-  },
   saveButton: {
     backgroundColor: theme.colors.primary,
     borderRadius: 0,
-    padding: theme.spacing.md,
+    paddingVertical: theme.spacing.md,
+    paddingHorizontal: theme.spacing.lg,
     alignItems: "center",
+    justifyContent: "center",
     ...outline({ width: 3 }),
+    ...hardShadow({ x: 4, y: 4, elevation: 8 }),
     zIndex: 1,
-  },
-  resetButtonPressed: {
-    transform: [{ translateX: 2 }, { translateY: 2 }],
-  },
-  saveButtonPressed: {
-    transform: [{ translateX: 2 }, { translateY: 2 }],
-  },
-  resetButtonDisabled: {
-    backgroundColor: theme.colors.border,
-    borderColor: theme.colors.borderDark,
-    opacity: 0.7,
   },
   saveButtonDisabled: {
     backgroundColor: "#FFE8A3",
     ...outline({ width: 3, color: "#8C8C8C" }),
   },
-  resetButtonText: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    textAlign: "center",
-    fontFamily: theme.fonts.bold,
-    zIndex: 1,
-  },
   saveButtonText: {
-    color: theme.colors.ink,
     fontSize: 16,
-    textAlign: "center",
     fontFamily: theme.fonts.bold,
-    zIndex: 1,
+    fontWeight: "normal",
+    color: theme.colors.ink,
+    textAlign: "center",
   },
   saveButtonTextDisabled: {
+    fontSize: 16,
     color: "#9CA3AF",
+    fontFamily: theme.fonts.bold,
+    fontWeight: "normal",
+    textAlign: "center",
+  },
+  saveButtonTextHighlight: {
+    fontSize: 16,
+    fontFamily: theme.fonts.bold,
+    fontWeight: "normal",
+    color: theme.colors.ink,
+    textAlign: "center",
+  },
+  trashWrap: {
+    height: 52,
+    position: "relative",
+  },
+  trashShadow: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    backgroundColor: theme.colors.border,
+    transform: [{ translateX: 6 }, { translateY: 6 }],
+    zIndex: 0,
+  },
+  trashShadowPressed: {
+    transform: [{ translateX: 3 }, { translateY: 3 }],
+  },
+  trashShadowDisabled: {
+    opacity: 0.35,
+    transform: [{ translateX: 4 }, { translateY: 4 }],
+  },
+  trashButton: {
+    width: 60,
+    height: 52,
+    backgroundColor: theme.colors.danger,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 0,
+    ...outline({ width: 3 }),
+    ...hardShadow({ x: 4, y: 4, elevation: 8 }),
+    zIndex: 1,
+  },
+  trashButtonPressed: {
+    transform: [{ translateX: 2 }, { translateY: 2 }],
+    ...hardShadow({ x: 2, y: 2, elevation: 4 }),
+  },
+  trashButtonDisabled: {
+    backgroundColor: theme.colors.border,
+    ...outline({ width: 3, color: theme.colors.border }),
+  },
+  trashIcon: {
+    textAlign: "center",
+    color: theme.colors.ink,
   },
 });
