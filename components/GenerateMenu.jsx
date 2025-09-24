@@ -67,12 +67,21 @@ const DecorSvg1 = ({
         strokeWidth={0.2}
         strokeOpacity={opacity}
         strokeLinecap="round"
-        strokeLinejoin="round"
         vectorEffect="non-scaling-stroke"
       />
     </G>
   </Svg>
 );
+
+const DAYS_OF_WEEK = [
+  "lunes",
+  "martes",
+  "miercoles",
+  "jueves",
+  "viernes",
+  "sabado",
+  "domingo",
+];
 
 const DecorStar = ({
   size = 160,
@@ -108,14 +117,18 @@ const DecorStar = ({
 export function GenerateMenu() {
   const [recipesName, setRecipesName] = useState([]);
   const [weekMenu, setweekMenu] = useState({});
+  const [draftMenu, setDraftMenu] = useState({});
   const [refreshing, setRefreshing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [resetModalVisible, setResetModalVisible] = useState(false);
   const [successModalVisible, setSuccessModalVisible] = useState(false);
+  const [saveSuccessModalVisible, setSaveSuccessModalVisible] = useState(false);
   const [errorModalVisible, setErrorModalVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [isResetting, setIsResetting] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [resetPressed, setResetPressed] = useState(false);
+  const [savePressed, setSavePressed] = useState(false);
   const [flowerColor, setFlowerColor] = useState("#000000");
   const starColor = "#4D4DFF";
   const flowerScale = useRef(new Animated.Value(1)).current;
@@ -321,6 +334,8 @@ export function GenerateMenu() {
       }
 
       setweekMenu(menuObject);
+      setDraftMenu({ ...menuObject });
+      setSaveSuccessModalVisible(false);
     } catch (error) {
       handleError(error, "No se pudo cargar el menú");
     } finally {
@@ -335,53 +350,64 @@ export function GenerateMenu() {
     }
   }, [isLoading, getListRecipesName, loadMenuFromSupabase]);
 
-  const handleChange = useCallback(
-    async (day, value) => {
-      try {
-        if (weekMenu[day] === value) {
-          return;
+  const handleDraftChange = useCallback((day, value) => {
+    setDraftMenu((prev) => ({
+      ...prev,
+      [day]: value,
+    }));
+    setSaveSuccessModalVisible(false);
+  }, []);
+
+  const hasPendingChanges = useMemo(() => {
+    for (const day of DAYS_OF_WEEK) {
+      const draftValue = draftMenu[day] ?? "";
+      const savedValue = weekMenu[day] ?? "";
+
+      if (draftValue !== savedValue) {
+        return true;
+      }
+    }
+
+    return false;
+  }, [draftMenu, weekMenu]);
+
+  const handleSaveMenu = useCallback(async () => {
+    if (!hasPendingChanges || isSaving) return;
+
+    try {
+      setIsSaving(true);
+
+      for (const day of DAYS_OF_WEEK) {
+        const draftValue = draftMenu[day] ?? "";
+        const savedValue = weekMenu[day] ?? "";
+
+        if (draftValue === savedValue) {
+          continue;
         }
 
-        const previousValue = weekMenu[day];
-
-        setweekMenu((prev) => ({
-          ...prev,
-          [day]: value,
-        }));
-
-        const valueToSend = value || "";
+        const valueToSend = draftValue || "";
         const { error } = await actualizarRecetaDelDia(day, valueToSend);
 
         if (error) {
-          console.error(`Error al actualizar ${day}:`, error);
-          setweekMenu((prev) => ({
-            ...prev,
-            [day]: previousValue,
-          }));
           throw error;
         }
-      } catch (error) {
-        handleError(error, "No se pudo actualizar el menú");
       }
-    },
-    [weekMenu, handleError],
-  ); // Añadir weekMenu y handleError como dependencias
+
+      setweekMenu({ ...draftMenu });
+      setSaveSuccessModalVisible(true);
+    } catch (error) {
+      handleError(error, "No se pudo guardar el menú");
+    } finally {
+      setIsSaving(false);
+      setSavePressed(false);
+    }
+  }, [draftMenu, weekMenu, hasPendingChanges, isSaving, handleError]);
 
   const resetMenu = useCallback(async () => {
     try {
       setIsResetting(true);
 
-      const diasSemana = [
-        "lunes",
-        "martes",
-        "miercoles",
-        "jueves",
-        "viernes",
-        "sabado",
-        "domingo",
-      ];
-
-      for (const dia of diasSemana) {
+      for (const dia of DAYS_OF_WEEK) {
         const { error } = await actualizarRecetaDelDia(dia, " ");
 
         if (error) {
@@ -392,11 +418,12 @@ export function GenerateMenu() {
 
       const updatedWeekMenu = {};
 
-      for (const dia of diasSemana) {
+      for (const dia of DAYS_OF_WEEK) {
         updatedWeekMenu[dia] = "";
       }
 
       setweekMenu(updatedWeekMenu);
+      setDraftMenu({ ...updatedWeekMenu });
       setResetModalVisible(false);
       setTimeout(() => {
         setSuccessModalVisible(true);
@@ -424,16 +451,6 @@ export function GenerateMenu() {
       setRefreshing(false);
     });
   }, [getListRecipesName, loadMenuFromSupabase]); // Depende de las funciones que llama
-
-  const daysOfWeek = [
-    "lunes",
-    "martes",
-    "miercoles",
-    "jueves",
-    "viernes",
-    "sabado",
-    "domingo",
-  ];
 
   return (
     <ScrollView
@@ -556,17 +573,49 @@ export function GenerateMenu() {
           ]}
         >
           <View style={{ zIndex: 1 }}>
-            {daysOfWeek.map((day) => (
+            {DAYS_OF_WEEK.map((day) => (
               <WeekDayPicker
                 key={day}
                 day={day}
-                handleChange={handleChange}
+                handleChange={handleDraftChange}
                 recipesName={recipesName}
-                selectedRecipe={weekMenu[day]}
+                selectedRecipe={draftMenu[day]}
               />
             ))}
           </View>
         </Animatable.View>
+
+        <View style={styles.saveWrap}>
+          <View
+            style={[
+              styles.saveShadow,
+              (savePressed || isSaving) && styles.saveShadowPressed,
+              (!hasPendingChanges || isSaving) && styles.saveShadowDisabled,
+            ]}
+          />
+          <TouchableOpacity
+            style={[
+              styles.saveButton,
+              (savePressed || isSaving) && styles.saveButtonPressed,
+              (!hasPendingChanges || isSaving) && styles.saveButtonDisabled,
+            ]}
+            onPress={handleSaveMenu}
+            onPressIn={() => setSavePressed(true)}
+            onPressOut={() => setSavePressed(false)}
+            disabled={!hasPendingChanges || isSaving}
+            activeOpacity={0.9}
+          >
+            <Text
+              style={[
+                styles.saveButtonText,
+                (!hasPendingChanges || isSaving) &&
+                  styles.saveButtonTextDisabled,
+              ]}
+            >
+              {isSaving ? "Guardando..." : "Guardar Menú"}
+            </Text>
+          </TouchableOpacity>
+        </View>
 
         <View style={styles.resetWrap}>
           <View
@@ -628,6 +677,15 @@ export function GenerateMenu() {
         message="El menú semanal ha sido reiniciado exitosamente."
         icon="checkmark-circle"
         iconColor={theme.colors.primary}
+      />
+
+      <CustomModal
+        visible={saveSuccessModalVisible}
+        onClose={() => setSaveSuccessModalVisible(false)}
+        title="Menú Guardado"
+        message="Los cambios se han guardado exitosamente."
+        icon="checkmark-circle"
+        iconColor={theme.colors.success}
       />
 
       {/* Modal de error */}
@@ -751,6 +809,11 @@ const styles = StyleSheet.create({
     width: "100%",
     marginTop: theme.spacing.xl,
   },
+  saveWrap: {
+    position: "relative",
+    width: "100%",
+    marginTop: theme.spacing.lg,
+  },
   resetShadow: {
     position: "absolute",
     left: 0,
@@ -761,8 +824,25 @@ const styles = StyleSheet.create({
     transform: [{ translateX: 6 }, { translateY: 6 }], // abajo-derecha
     zIndex: 0,
   },
+  saveShadow: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    backgroundColor: theme.colors.border,
+    transform: [{ translateX: 6 }, { translateY: 6 }],
+    zIndex: 0,
+  },
   resetShadowPressed: {
     transform: [{ translateX: 3 }, { translateY: 3 }],
+  },
+  saveShadowPressed: {
+    transform: [{ translateX: 3 }, { translateY: 3 }],
+  },
+  saveShadowDisabled: {
+    opacity: 0.25,
+    transform: [{ translateX: 4 }, { translateY: 4 }],
   },
   resetButton: {
     backgroundColor: theme.colors.danger, // rojo neobrutalista para acción destructiva
@@ -772,7 +852,18 @@ const styles = StyleSheet.create({
     ...outline({ width: 3 }),
     zIndex: 1,
   },
+  saveButton: {
+    backgroundColor: theme.colors.primary,
+    borderRadius: 0,
+    padding: theme.spacing.md,
+    alignItems: "center",
+    ...outline({ width: 3 }),
+    zIndex: 1,
+  },
   resetButtonPressed: {
+    transform: [{ translateX: 2 }, { translateY: 2 }],
+  },
+  saveButtonPressed: {
     transform: [{ translateX: 2 }, { translateY: 2 }],
   },
   resetButtonDisabled: {
@@ -780,11 +871,25 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.borderDark,
     opacity: 0.7,
   },
+  saveButtonDisabled: {
+    backgroundColor: "#FFE8A3",
+    ...outline({ width: 3, color: "#8C8C8C" }),
+  },
   resetButtonText: {
     color: "#FFFFFF",
     fontSize: 16,
     textAlign: "center",
     fontFamily: theme.fonts.bold,
     zIndex: 1,
+  },
+  saveButtonText: {
+    color: theme.colors.ink,
+    fontSize: 16,
+    textAlign: "center",
+    fontFamily: theme.fonts.bold,
+    zIndex: 1,
+  },
+  saveButtonTextDisabled: {
+    color: "#9CA3AF",
   },
 });
