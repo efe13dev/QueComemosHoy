@@ -217,7 +217,7 @@ const SplashScreen = () => {
                 { fontFamily: marioFont },
               ]}
             >
-              3.1.1
+              3.2.1
             </Text>
             <Animatable.Text
               allowFontScaling={false}
@@ -228,7 +228,7 @@ const SplashScreen = () => {
               useNativeDriver
               style={[styles.versionText, { fontFamily: marioFont }]}
             >
-              3.1.1
+              3.2.1
             </Animatable.Text>
           </View>
         </Animatable.View>

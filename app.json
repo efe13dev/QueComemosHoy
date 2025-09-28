@@ -2,13 +2,11 @@
   "expo": {
     "name": "QueComemosHoy",
     "slug": "QueComemosHoy",
-    "version": "3.2.0",
+    "version": "3.2.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "newArchEnabled": true
@@ -24,11 +22,7 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": [
-      "expo-secure-store",
-      "expo-router",
-      "expo-font"
-    ],
+    "plugins": ["expo-secure-store", "expo-router", "expo-font"],
     "extra": {
       "eas": {
         "projectId": "5a4bf6e2-4943-41e3-85bd-8f361be42589"
