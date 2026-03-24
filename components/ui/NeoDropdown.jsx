@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import {
+  Animated,
   Dimensions,
   FlatList,
   Modal,
@@ -63,6 +64,10 @@ export default function NeoDropdown({
   modalTitle = "Selecciona receta",
 }) {
   const [open, setOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const backdropOpacity = useRef(new Animated.Value(0)).current;
+  const panelTranslateY = useRef(new Animated.Value(28)).current;
+  const panelScale = useRef(new Animated.Value(0.92)).current;
 
   const selected = useMemo(
     () => items.find((i) => i.value === value),
@@ -74,11 +79,63 @@ export default function NeoDropdown({
   const panelBg = tintWithWhite(accent, 0.92);
   const selectedBg = hexToRgba(accent, 0.16);
 
+  const animateOpen = useCallback(() => {
+    setOpen(true);
+    setIsVisible(true);
+    backdropOpacity.setValue(0);
+    panelTranslateY.setValue(28);
+    panelScale.setValue(0.92);
+
+    Animated.parallel([
+      Animated.timing(backdropOpacity, {
+        toValue: 1,
+        duration: 180,
+        useNativeDriver: true,
+      }),
+      Animated.spring(panelScale, {
+        toValue: 1,
+        friction: 6,
+        tension: 120,
+        useNativeDriver: true,
+      }),
+      Animated.timing(panelTranslateY, {
+        toValue: 0,
+        duration: 220,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, [backdropOpacity, panelScale, panelTranslateY]);
+
+  const animateClose = useCallback(() => {
+    Animated.parallel([
+      Animated.timing(backdropOpacity, {
+        toValue: 0,
+        duration: 140,
+        useNativeDriver: true,
+      }),
+      Animated.timing(panelScale, {
+        toValue: 0.96,
+        duration: 140,
+        useNativeDriver: true,
+      }),
+      Animated.timing(panelTranslateY, {
+        toValue: 18,
+        duration: 140,
+        useNativeDriver: true,
+      }),
+    ]).start(({ finished }) => {
+      if (finished) {
+        setOpen(false);
+        setIsVisible(false);
+      }
+    });
+  }, [backdropOpacity, panelScale, panelTranslateY]);
+
   return (
     <>
       <Pressable
         style={({ pressed }) => [styles.box, pressed && styles.boxPressed]}
-        onPress={() => setOpen(true)}
+        onPress={animateOpen}
         onPressIn={onPressIn}
         onPressOut={onPressOut}
         android_ripple={{ color: theme.colors.textDark, borderless: false }}
@@ -96,13 +153,25 @@ export default function NeoDropdown({
       </Pressable>
 
       <Modal
-        animationType="fade"
+        animationType="none"
         transparent
         visible={open}
-        onRequestClose={() => setOpen(false)}
+        onRequestClose={animateClose}
       >
-        <View style={styles.backdrop}>
-          <View style={[styles.panel, { backgroundColor: panelBg }]}>
+        <Animated.View style={[styles.backdrop, { opacity: backdropOpacity }]}>
+          <Animated.View
+            style={[
+              styles.panel,
+              { backgroundColor: panelBg },
+              {
+                opacity: isVisible ? 1 : 0,
+                transform: [
+                  { translateY: panelTranslateY },
+                  { scale: panelScale },
+                ],
+              },
+            ]}
+          >
             <View style={[styles.headerBar, { backgroundColor: accent }]} />
             <Text style={[styles.title, { textShadowColor: accent }]}>
               {modalTitle}
@@ -126,9 +195,8 @@ export default function NeoDropdown({
                     ]}
                     onPress={() => {
                       onValueChange?.(item.value);
-                      setOpen(false);
+                      animateClose();
                     }}
-                    activeOpacity={0.9}
                   >
                     <Text
                       style={[
@@ -147,11 +215,11 @@ export default function NeoDropdown({
                 );
               }}
             />
-            <Pressable style={styles.closeBtn} onPress={() => setOpen(false)}>
+            <Pressable style={styles.closeBtn} onPress={animateClose}>
               <Text style={styles.closeBtnText}>Cancelar</Text>
             </Pressable>
-          </View>
-        </View>
+          </Animated.View>
+        </Animated.View>
       </Modal>
     </>
   );

@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { memo, useCallback, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import * as Animatable from "react-native-animatable";
 
@@ -6,7 +6,13 @@ import { hardShadow, outline, theme } from "../utils/theme";
 
 import NeoDropdown from "./ui/NeoDropdown";
 
-const WeekDayPicker = ({ day, handleChange, recipesName, selectedRecipe }) => {
+const WeekDayPicker = ({
+  day,
+  handleChange,
+  recipesName,
+  selectedRecipe,
+  isLoading = false,
+}) => {
   const capitalizedDay = day.charAt(0).toUpperCase() + day.slice(1);
 
   // Paleta neobrutalista por día (vibrante y con alto contraste)
@@ -62,15 +68,30 @@ const WeekDayPicker = ({ day, handleChange, recipesName, selectedRecipe }) => {
                 pickerPressed && styles.pickerBoxPressed,
               ]}
             >
-              <NeoDropdown
-                value={selectedRecipe}
-                items={recipesName}
-                placeholder="Selecciona una receta..."
-                onValueChange={handleValueChange}
-                accentColor={dayBackgroundColor}
-                onPressIn={() => setPickerPressed(true)}
-                onPressOut={() => setPickerPressed(false)}
-              />
+              {isLoading ? (
+                <View style={styles.loadingShell}>
+                  <View
+                    style={[
+                      styles.loadingAccent,
+                      { backgroundColor: dayBackgroundColor },
+                    ]}
+                  />
+                  <View style={styles.loadingContent}>
+                    <View style={styles.loadingBarPrimary} />
+                    <View style={styles.loadingBarSecondary} />
+                  </View>
+                </View>
+              ) : (
+                <NeoDropdown
+                  value={selectedRecipe}
+                  items={recipesName}
+                  placeholder="Selecciona una receta..."
+                  onValueChange={handleValueChange}
+                  accentColor={dayBackgroundColor}
+                  onPressIn={() => setPickerPressed(true)}
+                  onPressOut={() => setPickerPressed(false)}
+                />
+              )}
             </View>
           </View>
         </View>
@@ -149,6 +170,35 @@ const styles = StyleSheet.create({
     zIndex: 1,
     borderLeftWidth: 6,
   },
+  loadingShell: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 10,
+    opacity: 0.7,
+  },
+  loadingAccent: {
+    width: 10,
+    height: 10,
+    marginRight: 10,
+    ...outline({ width: 2 }),
+  },
+  loadingContent: {
+    flex: 1,
+    gap: 4,
+  },
+  loadingBarPrimary: {
+    width: "58%",
+    height: 8,
+    backgroundColor: theme.colors.border,
+    opacity: 0.12,
+  },
+  loadingBarSecondary: {
+    width: "34%",
+    height: 6,
+    backgroundColor: theme.colors.border,
+    opacity: 0.08,
+  },
   pickerBoxPressed: {
     transform: [{ translateX: 2 }, { translateY: 2 }],
   },
@@ -158,4 +208,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default WeekDayPicker;
+export default memo(WeekDayPicker);

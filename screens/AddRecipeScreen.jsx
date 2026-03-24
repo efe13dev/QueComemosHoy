@@ -3,31 +3,39 @@ import { StyleSheet, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 import AddFormRecipe from "../components/AddFormRecipe";
+import DecorativeFoodBackground from "../components/ui/DecorativeFoodBackground";
 import NeoIcon from "../components/ui/NeoIcon";
 import NeoTitle from "../components/ui/NeoTitle";
+import { useResponsive } from "../hooks/useResponsive";
 import { theme } from "../utils/theme";
 
 const AddRecipeScreen = () => {
+  const { isNarrow } = useResponsive();
+
   return (
     <View style={styles.container}>
+      <DecorativeFoodBackground />
       <View style={styles.iconContainer}>
         <NeoIcon
           name="notebook-plus"
-          size={48}
+          size={isNarrow ? 36 : 48}
           color={theme.colors.primary}
           shadowColor="#000000"
-          shadowOffset={3}
+          shadowOffset={isNarrow ? 2 : 3}
         />
         <NeoTitle
           text="Añade una receta"
-          fontSize={theme.fontSize.xl}
+          fontSize={isNarrow ? theme.fontSize.lg : theme.fontSize.xl}
           shadowColor={theme.colors.primary}
           style={styles.titleSpacing}
         />
-        <View style={styles.headerBar} />
+        <View style={[styles.headerBar, isNarrow && styles.headerBarNarrow]} />
       </View>
       <KeyboardAwareScrollView
-        contentContainerStyle={styles.scroll_container}
+        contentContainerStyle={[
+          styles.scroll_container,
+          isNarrow && styles.scroll_containerNarrow,
+        ]}
         keyboardShouldPersistTaps="handled"
         enableOnAndroid
         extraScrollHeight={0}
@@ -63,11 +71,20 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.primary,
     marginTop: theme.spacing.xs,
   },
+  headerBarNarrow: {
+    width: 60,
+    height: 4,
+  },
   scroll_container: {
     paddingTop: 20,
     flexGrow: 1,
     paddingHorizontal: 15,
     paddingBottom: 48,
+  },
+  scroll_containerNarrow: {
+    paddingTop: 12,
+    paddingHorizontal: 10,
+    paddingBottom: 32,
   },
   form_container: {
     flexGrow: 1,

@@ -11,63 +11,24 @@ import {
   View,
 } from "react-native";
 import * as Animatable from "react-native-animatable";
-import Svg, { G, Path, Polygon } from "react-native-svg";
+import Svg, { Circle, G, Path, Polygon } from "react-native-svg";
 
 import {
   actualizarRecetaDelDia,
   getRecipes,
   obtenerMenuSemanalSinInicializar,
 } from "../data/api";
+import { useResponsive } from "../hooks/useResponsive";
+import { getSeason } from "../utils/season";
 import { hardShadow, outline, theme } from "../utils/theme";
 
 import CustomModal from "./CustomModal";
 import NeoTitle from "./ui/NeoTitle";
+import SeasonalTree from "./ui/SeasonalTree";
 import WeekDayPicker from "./WeekDayPicker";
 
 // Animated wrapper para elementos SVG (debe ir después de todos los imports)
-const AnimatedG = Animated.createAnimatedComponent(G);
 const AnimatedPolygon = Animated.createAnimatedComponent(Polygon);
-
-// SVG decorativo proporcionado (como componente reutilizable)
-const DecorSvg1 = ({
-  size = 100,
-  color = "#000000",
-  rotation = 0,
-  opacity = 1,
-  style,
-  flowerFill = "#000000",
-  flowerScaleValue = 1,
-}) => (
-  <Svg width={size} height={size} viewBox="0 0 128 128" style={style}>
-    <G transform={`rotate(${rotation} 64 64)`}>
-      <AnimatedG
-        originX={64}
-        originY={22}
-        style={{ transform: [{ scale: flowerScaleValue }] }}
-      >
-        <Path
-          d="M64.2,22.4l0.2-0.1l4.2-2.1l-2.8,4c0,0-3.7,5.1,1.7,7c0,0,0.1,0,0.1,0l0,0c5.5,1.9,5.5-4.6,5.5-4.6l0.2-4.8l2,4.3l0,0.1 c0,0,1.2,2.7,3.4,3.2c1,0.2,2.2,0,3.5-1.2c4.4-3.8-1.2-7.1-1.2-7.1l-0.1,0L77,18.5l4.5,0.4l0.3,0.1c0,0,4.8,0.5,5.3-3.1 c0.1-0.5,0-1.1-0.1-1.8c-1.1-5.8-6.7-2.5-6.7-2.5l-0.2,0.1L76,13.7l2.8-4c0,0,3.7-5.1-1.7-7c0,0-0.1,0-0.1,0c0,0,0,0,0,0 c-5.5-1.9-5.5,4.5-5.5,4.5l-0.3,4.9l-2-4.3l-0.1-0.1c0,0-1.4-3.2-4-3.3c-0.9,0-1.8,0.3-2.9,1.3c-4.4,3.8,1.2,7.1,1.2,7.1l0.1,0 l4.1,2.6L63,15l-0.3-0.1c0,0-4.8-0.5-5.3,3.1c-0.1,0.5,0,1.1,0.1,1.8C58.6,25.6,64.2,22.4,64.2,22.4z"
-          fill={flowerFill}
-          stroke={color}
-          strokeWidth={0.2}
-          strokeOpacity={opacity}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          vectorEffect="non-scaling-stroke"
-        />
-      </AnimatedG>
-      <Path
-        d="M105.5,91.2h-30l21.3-26.5c0.9-1.1,0.9-2.7,0-3.6c-1.1-0.9-2.5-0.8-3.5,0.1l-14.1,17V60.3c0-1.1-0.9-1.9-2-1.9 c-1.1,0-1.9,0.8-1.9,1.9v18.4l-21,26.8l-13.8,10.7V108V97.9V79l28-28c1.2-1.2,1.3-3.4,0-4.7c-1.2-1.2-3.4-1.1-4.6,0.1L50.2,60 l-1.5-16.9l13.9-13.9c-0.5-1.5-0.2-3,0.3-4.2c-0.9,0.2-1.9,0.4-3,0.2l-12,12L44.2,3.5c0-1.5-1.2-2.5-2.5-2.5 c-1.5,0-2.4,1.2-2.4,2.5l2.1,22L28.8,12.9c-0.8-0.8-2-0.7-2.8,0c-0.8,0.8-0.7,1.9,0,2.7l13,13l3.9,33.8L30.5,74.7 c0,0-2.1,2.3-2.1,5c0,1.3,0,12.2,0,23.5c0,6,0,12.2,0,16.9c0,2,0,3.4,0,4.4h14l11.7-9.1h26.1c1.7,0,3.4-1.5,3.4-3.4 c0-1.7-1.6-3.2-3.4-3.2H61l11-13h33.7c1.3,0,2.3-1.1,2.3-2.4C107.9,92.2,106.8,91.2,105.5,91.2z"
-        fill="#000000"
-        stroke={color}
-        strokeWidth={0.2}
-        strokeOpacity={opacity}
-        strokeLinecap="round"
-        vectorEffect="non-scaling-stroke"
-      />
-    </G>
-  </Svg>
-);
 
 const DAYS_OF_WEEK = [
   "lunes",
@@ -91,15 +52,59 @@ const DecorStar = ({
 }) => (
   <Svg width={size} height={size} viewBox="0 0 160 160" style={style}>
     <G transform={`rotate(${rotation} 80 80)`}>
+      <G transform="translate(6 6)" opacity="0.2">
+        <Polygon
+          points="80,8 96,42 132,28 118,64 152,80 118,96 132,132 96,118 80,152 64,118 28,132 42,96 8,80 42,64 28,28 64,42"
+          fill="#000000"
+          stroke="none"
+        />
+      </G>
       <Polygon
-        points="80,10 100,60 150,60 110,90 125,140 80,110 35,140 50,90 10,60 60,60"
+        points="80,8 96,42 132,28 118,64 152,80 118,96 132,132 96,118 80,152 64,118 28,132 42,96 8,80 42,64 28,28 64,42"
         fill={fill}
         stroke={stroke}
         strokeWidth={strokeWidth}
       />
+      <Polygon
+        points="80,28 91,51 116,44 108,69 132,80 108,91 116,116 91,109 80,132 69,109 44,116 52,91 28,80 52,69 44,44 69,51"
+        fill="#FFF4CC"
+        stroke={stroke}
+        strokeWidth="4"
+      />
+      <Circle
+        cx="80"
+        cy="80"
+        r="20"
+        fill="#FFFFFF"
+        stroke={stroke}
+        strokeWidth="4"
+      />
+      <Path
+        d="M80 62 L84 76 L98 80 L84 84 L80 98 L76 84 L62 80 L76 76 Z"
+        fill={fill}
+        stroke={stroke}
+        strokeWidth="3"
+        strokeLinejoin="round"
+      />
+      <Circle
+        cx="49"
+        cy="47"
+        r="6"
+        fill="#FFFFFF"
+        stroke={stroke}
+        strokeWidth="3"
+      />
+      <Circle
+        cx="113"
+        cy="113"
+        r="5"
+        fill="#FFD84D"
+        stroke={stroke}
+        strokeWidth="3"
+      />
       {overlayOpacity ? (
         <AnimatedPolygon
-          points="80,10 100,60 150,60 110,90 125,140 80,110 35,140 50,90 10,60 60,60"
+          points="80,8 96,42 132,28 118,64 152,80 118,96 132,132 96,118 80,152 64,118 28,132 42,96 8,80 42,64 28,28 64,42"
           fill={overlayColor}
           opacity={overlayOpacity}
           stroke="none"
@@ -111,6 +116,7 @@ const DecorStar = ({
 );
 
 export function GenerateMenu() {
+  const { isNarrow } = useResponsive();
   const [recipesName, setRecipesName] = useState([]);
   const [weekMenu, setweekMenu] = useState({});
   const [draftMenu, setDraftMenu] = useState({});
@@ -125,9 +131,9 @@ export function GenerateMenu() {
   const [isSaving, setIsSaving] = useState(false);
   const [resetPressed, setResetPressed] = useState(false);
   const [savePressed, setSavePressed] = useState(false);
-  const [flowerColor, setFlowerColor] = useState("#000000");
+  const [season, setSeason] = useState(getSeason());
   const starColor = "#4D4DFF";
-  const flowerScale = useRef(new Animated.Value(1)).current;
+  const treeScale = useRef(new Animated.Value(1)).current;
   const starOverlayOpacity = useRef(new Animated.Value(0)).current;
 
   const { width: screenW } = Dimensions.get("window");
@@ -147,31 +153,30 @@ export function GenerateMenu() {
     ];
   }, [screenW]);
 
-  // Paleta neobrutalista de la app para colores aleatorios de la flor
-  const brutalistPalette = useMemo(
-    () => [
-      theme.colors.primary,
-      theme.colors.accent,
-      theme.colors.success,
-      theme.colors.danger,
-      theme.colors.secondary,
-    ],
-    [],
-  );
-
   // Constantes de animación (ajustables en un solo lugar)
-  const STAR_DURATION = 1600; // ms
-  const STAR_RED_ON_PCT = 0.2; // 20%
-  const STAR_RED_OFF_PCT = 0.45; // 45%
+  const STAR_DURATION = 720; // ms
 
-  // Rotación de la estrella: no lineal + scale sutil (4 vueltas)
-  const starSpinAnimation = useMemo(
+  // Animación tipo spark badge: golpe, twist y rebote corto
+  const starPunchAnimation = useMemo(
     () => ({
-      0: { transform: [{ rotate: "0deg" }, { scale: 1 }] },
-      0.25: { transform: [{ rotate: "360deg" }, { scale: 1.08 }] },
-      0.5: { transform: [{ rotate: "720deg" }, { scale: 1.11 }] },
-      0.75: { transform: [{ rotate: "1080deg" }, { scale: 1.08 }] },
-      1: { transform: [{ rotate: "1440deg" }, { scale: 1 }] },
+      0: {
+        transform: [{ rotate: "0deg" }, { scale: 1 }, { translateY: 0 }],
+      },
+      0.12: {
+        transform: [{ rotate: "-10deg" }, { scale: 0.9 }, { translateY: 4 }],
+      },
+      0.28: {
+        transform: [{ rotate: "14deg" }, { scale: 1.14 }, { translateY: -6 }],
+      },
+      0.48: {
+        transform: [{ rotate: "-8deg" }, { scale: 0.98 }, { translateY: 1 }],
+      },
+      0.68: {
+        transform: [{ rotate: "6deg" }, { scale: 1.06 }, { translateY: -2 }],
+      },
+      1: {
+        transform: [{ rotate: "0deg" }, { scale: 1 }, { translateY: 0 }],
+      },
     }),
     [],
   );
@@ -179,17 +184,14 @@ export function GenerateMenu() {
   // Color inicial aleatorio para la flor (evitar negro al inicio)
   const initOnceRef = useRef(false);
 
+  // Inicializar estación actual (se actualiza al montar)
   useEffect(() => {
     if (initOnceRef.current) return;
     initOnceRef.current = true;
+    setSeason(getSeason());
+  }, []);
 
-    const start =
-      brutalistPalette[Math.floor(Math.random() * brutalistPalette.length)];
-
-    setFlowerColor(start);
-  }, [brutalistPalette]);
-
-  // Vibración con desplazamiento bajo (solo planta) — el scale va en la flor
+  // Vibración con desplazamiento bajo — el scale va en el árbol
   const plantShakeAnimation = useMemo(
     () => ({
       0: { transform: [{ translateX: 0 }] },
@@ -202,72 +204,76 @@ export function GenerateMenu() {
     [],
   );
 
-  const handlePlantPress = useCallback(() => {
-    // Elegimos un nuevo color aleatorio distinto al actual
-    const options = brutalistPalette.filter((c) => c !== flowerColor);
-    const next =
-      options[Math.floor(Math.random() * options.length)] || flowerColor;
+  const handleTreePress = useCallback(() => {
+    const seasons = ["spring", "summer", "autumn", "winter"];
 
-    // Aplicamos directamente el nuevo color
-    setFlowerColor(next);
+    setSeason((prev) => {
+      const currentIndex = seasons.indexOf(prev);
+      const nextIndex =
+        currentIndex === -1 ? 0 : (currentIndex + 1) % seasons.length;
 
-    // Pop sutil en la flor
+      return seasons[nextIndex];
+    });
+
+    // Pop sutil en el árbol
     Animated.sequence([
-      Animated.timing(flowerScale, {
+      Animated.timing(treeScale, {
         toValue: 1.03,
         duration: 120,
         useNativeDriver: false,
       }),
-      Animated.timing(flowerScale, {
+      Animated.timing(treeScale, {
         toValue: 1,
         duration: 120,
         useNativeDriver: false,
       }),
     ]).start();
 
-    // Vibración izquierda-derecha con poca amplitud al pulsar la planta
+    // Vibración izquierda-derecha con poca amplitud al pulsar el árbol
     plantRef.current?.animate?.(plantShakeAnimation, 450);
-  }, [brutalistPalette, flowerColor, plantShakeAnimation]);
+  }, [plantShakeAnimation, treeScale]);
 
   const handleStarPress = useCallback(() => {
-    // Lanzamos la animación de giro
+    // Lanzamos la animación de golpe + twist
     const res = starRef.current?.animate?.(
-      starSpinAnimation,
+      starPunchAnimation,
       STAR_DURATION,
-      "ease-in-out",
+      "ease-out-back",
     );
 
-    // Animar overlay rojo con fade in/out entre los porcentajes definidos
-    const duration = STAR_DURATION;
-    const tOn = Math.floor(duration * STAR_RED_ON_PCT);
-    const tOff = Math.floor(duration * STAR_RED_OFF_PCT);
-
-    Animated.parallel([
-      Animated.sequence([
-        Animated.delay(tOn),
-        Animated.timing(starOverlayOpacity, {
-          toValue: 1,
-          duration: 140,
-          useNativeDriver: false,
-        }),
-      ]),
-      Animated.sequence([
-        Animated.delay(tOff),
-        Animated.timing(starOverlayOpacity, {
-          toValue: 0,
-          duration: 140,
-          useNativeDriver: false,
-        }),
-      ]),
+    // Doble destello rápido acorde al nuevo badge
+    starOverlayOpacity.setValue(0);
+    Animated.sequence([
+      Animated.delay(40),
+      Animated.timing(starOverlayOpacity, {
+        toValue: 0.95,
+        duration: 70,
+        useNativeDriver: false,
+      }),
+      Animated.timing(starOverlayOpacity, {
+        toValue: 0.18,
+        duration: 90,
+        useNativeDriver: false,
+      }),
+      Animated.timing(starOverlayOpacity, {
+        toValue: 0.85,
+        duration: 60,
+        useNativeDriver: false,
+      }),
+      Animated.timing(starOverlayOpacity, {
+        toValue: 0,
+        duration: 130,
+        useNativeDriver: false,
+      }),
     ]).start();
 
     // Aseguramos opacidad en 0 al terminar
     if (res && typeof res.then === "function") {
       res.then(() => starOverlayOpacity.setValue(0));
     } else {
-      setTimeout(() => starOverlayOpacity.setValue(0), duration);
+      setTimeout(() => starOverlayOpacity.setValue(0), STAR_DURATION);
     }
-  }, [starSpinAnimation, starOverlayOpacity]);
+  }, [starOverlayOpacity, starPunchAnimation]);
 
   // No necesitamos timers; overlay usa Animated
 
@@ -485,13 +491,11 @@ export function GenerateMenu() {
                   top: d.top ?? 0,
                 }}
               >
-                <DecorSvg1
+                <SeasonalTree
                   size={d.size}
-                  color="#000000"
+                  season={season}
                   rotation={d.rotate}
-                  opacity={d.opacity}
-                  flowerFill={flowerColor}
-                  flowerScaleValue={flowerScale}
+                  flowerScaleValue={treeScale}
                 />
               </Animatable.View>
             );
@@ -523,7 +527,7 @@ export function GenerateMenu() {
                 <Pressable
                   key={`hit_${d.key}`}
                   activeOpacity={1}
-                  onPress={handlePlantPress}
+                  onPress={handleTreePress}
                   style={{
                     position: "absolute",
                     left: d.left ?? 0,
@@ -570,6 +574,7 @@ export function GenerateMenu() {
                 handleChange={handleDraftChange}
                 recipesName={recipesName}
                 selectedRecipe={draftMenu[day]}
+                isLoading={isLoading}
               />
             ))}
           </View>
@@ -623,7 +628,7 @@ export function GenerateMenu() {
             </Pressable>
           </View>
 
-          <View style={styles.trashWrap}>
+          <View style={[styles.trashWrap, isNarrow && styles.trashWrapNarrow]}>
             <View
               style={[
                 styles.trashShadow,
@@ -634,6 +639,7 @@ export function GenerateMenu() {
             <Pressable
               style={[
                 styles.trashButton,
+                isNarrow && styles.trashButtonNarrow,
                 resetPressed && styles.trashButtonPressed,
                 isResetting && styles.trashButtonDisabled,
               ]}
@@ -645,7 +651,7 @@ export function GenerateMenu() {
             >
               <MaterialCommunityIcons
                 name={isResetting ? "progress-clock" : "trash-can-outline"}
-                size={32}
+                size={isNarrow ? 26 : 32}
                 color={isResetting ? theme.colors.textMuted : theme.colors.ink}
                 style={styles.trashIcon}
               />
