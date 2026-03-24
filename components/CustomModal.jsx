@@ -1,21 +1,21 @@
 import { Ionicons } from "@expo/vector-icons";
-import React from "react";
+import { memo } from "react";
 import {
   ActivityIndicator,
   Dimensions,
   Modal,
+  Pressable,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
 } from "react-native";
 import * as Animatable from "react-native-animatable";
 
-import { theme, outline, hardShadow } from "../utils/theme";
+import { hardShadow, outline, theme } from "../utils/theme";
 
 const { width } = Dimensions.get("window");
 
-const CustomModal = ({
+const CustomModal = memo(function CustomModal({
   visible,
   onClose,
   title,
@@ -23,7 +23,7 @@ const CustomModal = ({
   icon,
   iconColor,
   buttons,
-}) => {
+}) {
   return (
     <Modal
       animationType="fade"
@@ -50,13 +50,14 @@ const CustomModal = ({
           {buttons ? (
             <View style={styles.buttonContainer}>
               {buttons.map((button, index) => (
-                <TouchableOpacity
+                <Pressable
                   key={index}
-                  style={[
+                  style={({ pressed }) => [
                     styles.button,
                     button.style === "cancel" ? styles.cancelButton : null,
                     button.loading ? styles.loadingButton : null,
                     index > 0 ? { marginLeft: 10 } : null,
+                    pressed ? { transform: [{ scale: 0.96 }] } : null,
                   ]}
                   onPress={button.onPress}
                   disabled={button.loading || button.disabled}
@@ -90,19 +91,19 @@ const CustomModal = ({
                       {button.text}
                     </Text>
                   )}
-                </TouchableOpacity>
+                </Pressable>
               ))}
             </View>
           ) : (
-            <TouchableOpacity style={styles.button} onPress={onClose}>
+            <Pressable style={styles.button} onPress={onClose}>
               <Text style={styles.buttonText}>Aceptar</Text>
-            </TouchableOpacity>
+            </Pressable>
           )}
         </Animatable.View>
       </View>
     </Modal>
   );
-};
+});
 
 const styles = StyleSheet.create({
   centeredView: {
@@ -124,11 +125,14 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   modalTitle: {
-    fontSize: 22,
-    fontWeight: "bold",
+    fontSize: theme.fontSize.xl,
+    fontFamily: theme.fonts.bold,
     textAlign: "center",
     color: theme.colors.textDark,
     marginBottom: theme.spacing.sm,
+    textShadowColor: theme.colors.primary,
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 0,
   },
   modalText: {
     fontSize: 16,
@@ -161,9 +165,9 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: theme.colors.textDark,
-    fontWeight: "bold",
+    fontFamily: theme.fonts.bold,
     textAlign: "center",
-    fontSize: 16,
+    fontSize: theme.fontSize.base,
     marginLeft: 5,
   },
   cancelButtonText: {

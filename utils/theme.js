@@ -7,6 +7,7 @@ export const theme = {
     background: "#F5F5F5", // blanco periódico suave, elimina tonos salmón
     surface: "#FFFFFF",
     surfaceAlt: "#FFFFFF",
+    surfaceElevated: "#F0F0F0",
 
     // Tinta/negro para contornos y texto
     ink: "#111111",
@@ -51,6 +52,19 @@ export const theme = {
     bold: "Sora_700Bold",
     extrabold: "Sora_800ExtraBold",
   },
+  fontSize: {
+    xs: 11,
+    sm: 13,
+    base: 16,
+    lg: 18,
+    xl: 24,
+    xxl: 32,
+  },
+  lineHeight: {
+    tight: 1.2,
+    normal: 1.5,
+    relaxed: 1.75,
+  },
 };
 
 // Utilidad para crear un efecto biselado retro (3D) en contenedores
@@ -90,6 +104,64 @@ export const outline = ({ color = theme.colors.border, width = 3 } = {}) => ({
   borderColor: color,
   borderWidth: width,
 });
+
+// Genera estilos para títulos neobrutalistas con sombras múltiples
+export const neoTitleStyles = ({
+  fontSize = theme.fontSize.xl,
+  color = theme.colors.textDark,
+  shadowColor = theme.colors.primary,
+  offset = 2,
+} = {}) => {
+  const base = {
+    fontSize,
+    fontFamily: theme.fonts.bold,
+    textAlign: "center",
+    color,
+  };
+  const abs = {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    zIndex: 0,
+  };
+
+  return {
+    wrap: { position: "relative", alignItems: "center" },
+    main: {
+      ...base,
+      textShadowColor: shadowColor,
+      textShadowOffset: { width: offset, height: offset },
+      textShadowRadius: 0,
+      zIndex: 1,
+    },
+    shadow1: {
+      ...base,
+      ...abs,
+      color: shadowColor,
+      transform: [{ translateX: offset }, { translateY: offset }],
+    },
+    shadow2: {
+      ...base,
+      ...abs,
+      color: shadowColor,
+      transform: [{ translateX: -offset }, { translateY: 0 }],
+    },
+    shadow3: {
+      ...base,
+      ...abs,
+      color: shadowColor,
+      transform: [{ translateX: 0 }, { translateY: -offset }],
+    },
+    shadow4: {
+      ...base,
+      ...abs,
+      color: shadowColor,
+      transform: [{ translateX: -offset }, { translateY: -offset }],
+    },
+  };
+};
 
 // Sombra dura sin blur (neobrutalismo)
 export const hardShadow = ({

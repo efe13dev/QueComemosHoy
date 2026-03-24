@@ -1,7 +1,12 @@
 import React from "react";
 import Svg, { Path } from "react-native-svg";
 
-const WaveMark = ({ style, opacity = 0.1, color = "#000", strokeWidth = 8 }) => (
+const WaveMark = ({
+  style,
+  opacity = 0.1,
+  color = "#000",
+  strokeWidth = 8,
+}) => (
   <Svg
     viewBox="0 0 120 200"
     width="100%"

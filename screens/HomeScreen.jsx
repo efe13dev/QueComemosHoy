@@ -1,11 +1,10 @@
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Constants from "expo-constants";
-import React from "react";
 import { StatusBar, StyleSheet, View } from "react-native";
 import * as Animatable from "react-native-animatable";
 
 import { GenerateMenu } from "../components/GenerateMenu";
-import { theme, hardShadow } from "../utils/theme";
+import NeoIcon from "../components/ui/NeoIcon";
+import { theme } from "../utils/theme";
 
 export default function HomeScreen() {
   return (
@@ -21,20 +20,13 @@ export default function HomeScreen() {
         useNativeDriver
         style={styles.iconContainer}
       >
-        <View style={styles.iconWrap}>
-          <MaterialCommunityIcons
-            name="chef-hat"
-            size={50}
-            color={theme.colors.border}
-            style={styles.iconShadow}
-          />
-          <MaterialCommunityIcons
-            name="chef-hat"
-            size={50}
-            color={theme.colors.primary}
-            style={styles.icon}
-          />
-        </View>
+        <NeoIcon
+          name="chef-hat"
+          size={56}
+          color={theme.colors.primary}
+          shadowColor={theme.colors.border}
+          shadowOffset={3}
+        />
       </Animatable.View>
       <GenerateMenu />
     </View>
@@ -48,25 +40,7 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     alignItems: "center",
-    paddingTop: Constants.statusBarHeight,
-    paddingBottom: theme.spacing.sm,
-    ...hardShadow({ x: 2, y: 2, elevation: 4 }),
-  },
-  iconWrap: {
-    position: "relative",
-    width: 50,
-    height: 50,
-  },
-  icon: {
-    position: "absolute",
-    left: 0,
-    top: 0,
-    zIndex: 1,
-  },
-  iconShadow: {
-    position: "absolute",
-    left: 2,
-    top: 2,
-    zIndex: 0,
+    paddingTop: Constants.statusBarHeight + 4,
+    paddingBottom: theme.spacing.md,
   },
 });

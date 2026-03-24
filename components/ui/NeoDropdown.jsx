@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Dimensions,
   FlatList,
@@ -7,7 +7,6 @@ import {
   Pressable,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
 } from "react-native";
 
@@ -117,7 +116,7 @@ export default function NeoDropdown({
                 const isSelected = item.value === value;
 
                 return (
-                  <TouchableOpacity
+                  <Pressable
                     style={[
                       styles.item,
                       isSelected && [
@@ -144,16 +143,13 @@ export default function NeoDropdown({
                     >
                       {item.label}
                     </Text>
-                  </TouchableOpacity>
+                  </Pressable>
                 );
               }}
             />
-            <TouchableOpacity
-              style={styles.closeBtn}
-              onPress={() => setOpen(false)}
-            >
+            <Pressable style={styles.closeBtn} onPress={() => setOpen(false)}>
               <Text style={styles.closeBtnText}>Cancelar</Text>
-            </TouchableOpacity>
+            </Pressable>
           </View>
         </View>
       </Modal>

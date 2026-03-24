@@ -1,11 +1,11 @@
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { Image } from "expo-image";
+import { LinearGradient } from "expo-linear-gradient";
 import * as Sharing from "expo-sharing";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Alert,
-  Image,
-  Modal,
   Pressable,
   ScrollView,
   Share,
@@ -13,12 +13,12 @@ import {
   StyleSheet,
   Text,
   TextInput,
-  TouchableOpacity,
   View,
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { captureRef } from "react-native-view-shot";
 
+import CustomModal from "../components/CustomModal";
 import GreenDiamond from "../components/svg/GreenDiamond";
 import PinkTarget from "../components/svg/PinkTarget";
 import WaveMark from "../components/svg/WaveMark";
@@ -234,30 +234,30 @@ const DetailRecipe = ({ route }) => {
       background = (
         <WaveMark
           style={[styles.readItemBg, styles.readBgWave]}
-          opacity={0.24}
+          opacity={0.35}
           color={theme.colors.primary}
-          strokeWidth={12}
+          strokeWidth={14}
         />
       );
     } else if (variant === 1) {
       background = (
         <PinkTarget
           style={[styles.readItemBg, styles.readBgTarget]}
-          opacity={0.3}
+          opacity={0.4}
           outer={theme.colors.secondary}
-          inner="#F4EEFF"
+          inner="#F5ECFF"
           stroke={theme.colors.border}
-          strokeWidth={6}
+          strokeWidth={8}
         />
       );
     } else {
       background = (
         <GreenDiamond
           style={[styles.readItemBg, styles.readBgDiamond]}
-          opacity={0.22}
+          opacity={0.35}
           fill={theme.colors.success}
           stroke={theme.colors.border}
-          strokeWidth={6}
+          strokeWidth={8}
         />
       );
     }
@@ -345,20 +345,20 @@ const DetailRecipe = ({ route }) => {
             <TextInput {...inputProps} style={composedInputStyle} />
             <View style={styles.inputActions}>
               {isLast && onAddPress ? (
-                <TouchableOpacity
+                <Pressable
                   style={[styles.actionButton, styles.addButton]}
                   onPress={onAddPress}
                 >
                   <Icon name="add" size={18} color="#FFF" />
-                </TouchableOpacity>
+                </Pressable>
               ) : null}
               {canRemove && onRemovePress ? (
-                <TouchableOpacity
+                <Pressable
                   style={[styles.actionButton, styles.removeButton]}
                   onPress={onRemovePress}
                 >
                   <Icon name="remove" size={18} color="#FFF" />
-                </TouchableOpacity>
+                </Pressable>
               ) : null}
             </View>
           </View>
@@ -382,142 +382,92 @@ const DetailRecipe = ({ route }) => {
           backgroundColor="transparent"
           translucent
         />
-        {/* Modal de confirmación personalizado */}
-        <Modal
-          animationType="fade"
-          transparent
+        <CustomModal
           visible={modalVisible}
-          onRequestClose={() => setModalVisible(false)}
-        >
-          <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <View style={styles.iconContainer}>
-                <Ionicons name="warning-outline" size={40} color="#FF6B6B" />
-              </View>
-              <Text style={styles.modalTitle}>Eliminar receta</Text>
-              <Text style={styles.modalText}>
-                ¿Estás seguro de que quieres eliminar esta receta?
-              </Text>
-              <View style={styles.modalButtons}>
-                <Pressable
-                  style={[styles.modalButton, styles.buttonCancel]}
-                  onPress={() => setModalVisible(false)}
-                >
-                  <Text style={styles.buttonCancelText}>Cancelar</Text>
-                </Pressable>
-                <Pressable
-                  style={[styles.modalButton, styles.buttonDelete]}
-                  onPress={handleDelete}
-                >
-                  <Text style={styles.buttonDeleteText}>Eliminar</Text>
-                </Pressable>
-              </View>
-            </View>
-          </View>
-        </Modal>
+          onClose={() => setModalVisible(false)}
+          title="Eliminar receta"
+          message="¿Estás seguro de que quieres eliminar esta receta?"
+          icon="warning-outline"
+          iconColor={theme.colors.danger}
+          buttons={[
+            {
+              text: "Cancelar",
+              style: "cancel",
+              onPress: () => setModalVisible(false),
+            },
+            { text: "Eliminar", onPress: handleDelete },
+          ]}
+        />
 
-        {/* Modal de confirmación de eliminación exitosa */}
-        <Modal
-          animationType="fade"
-          transparent
+        <CustomModal
           visible={successModalVisible}
-          onRequestClose={handleSuccessConfirm}
-        >
-          <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <View style={styles.iconContainer}>
-                <Ionicons
-                  name="checkmark-circle-outline"
-                  size={40}
-                  color="#28A745"
-                />
-              </View>
-              <Text style={styles.modalTitle}>Receta eliminada</Text>
-              <Text style={styles.modalText}>
-                La receta se eliminó correctamente
-              </Text>
-              <Pressable
-                style={[styles.modalButton, styles.buttonSuccess]}
-                onPress={handleSuccessConfirm}
-              >
-                <Text style={styles.buttonSuccessText}>Aceptar</Text>
-              </Pressable>
-            </View>
-          </View>
-        </Modal>
+          onClose={handleSuccessConfirm}
+          title="Receta eliminada"
+          message="La receta se eliminó correctamente"
+          icon="checkmark-circle-outline"
+          iconColor={theme.colors.success}
+          buttons={[{ text: "Aceptar", onPress: handleSuccessConfirm }]}
+        />
 
-        {/* Modal de confirmación de actualización exitosa */}
-        <Modal
-          animationType="fade"
-          transparent
+        <CustomModal
           visible={updateModalVisible}
-          onRequestClose={handleUpdateConfirm}
-        >
-          <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <View style={styles.iconContainer}>
-                <Ionicons
-                  name="checkmark-circle-outline"
-                  size={40}
-                  color="#28A745"
-                />
-              </View>
-              <Text style={styles.modalTitle}>Receta actualizada</Text>
-              <Text style={styles.modalText}>
-                La receta se actualizó correctamente
-              </Text>
-              <Pressable
-                style={[styles.modalButton, styles.buttonUpdate]}
-                onPress={handleUpdateConfirm}
-              >
-                <Text style={styles.buttonUpdateText}>Aceptar</Text>
-              </Pressable>
-            </View>
-          </View>
-        </Modal>
+          onClose={handleUpdateConfirm}
+          title="Receta actualizada"
+          message="La receta se actualizó correctamente"
+          icon="checkmark-circle-outline"
+          iconColor={theme.colors.success}
+          buttons={[{ text: "Aceptar", onPress: handleUpdateConfirm }]}
+        />
         <View ref={contentRef} collapsable={false}>
           {recipe && (
             <View style={styles.imageContainer}>
-              <Image source={{ uri: recipe.image }} style={styles.image} />
+              <Image
+                source={{ uri: recipe.image }}
+                style={styles.image}
+                contentFit="cover"
+                transition={200}
+              />
+              <LinearGradient
+                colors={["transparent", "rgba(0,0,0,0.4)"]}
+                style={styles.imageOverlay}
+              />
+              <View style={styles.imageDivider} />
               {!sharing && (
-                <TouchableOpacity
-                  style={styles.updateButton}
-                  onPress={handleUpdate}
-                >
+                <Pressable style={styles.updateButton} onPress={handleUpdate}>
                   <View style={styles.iconStack}>
                     <MaterialCommunityIcons
                       name="pencil"
-                      size={24}
+                      size={28}
                       color={theme.colors.border}
                       style={styles.iconShadow}
                     />
                     <MaterialCommunityIcons
                       name="pencil"
-                      size={24}
+                      size={28}
                       color="#FFFFFF"
                     />
                   </View>
-                </TouchableOpacity>
+                </Pressable>
               )}
               {!sharing && (
-                <TouchableOpacity style={styles.button} onPress={showAlert}>
+                <Pressable style={styles.button} onPress={showAlert}>
                   <View style={styles.iconStack}>
                     <MaterialCommunityIcons
                       name="delete"
-                      size={24}
+                      size={28}
                       color={theme.colors.border}
                       style={styles.iconShadow}
                     />
                     <MaterialCommunityIcons
                       name="delete"
-                      size={24}
+                      size={28}
                       color="#FFFFFF"
                     />
                   </View>
-                </TouchableOpacity>
+                </Pressable>
               )}
               {!isEditing && !sharing && (
-                <TouchableOpacity
+                <Pressable
                   style={styles.shareButton}
                   onPress={handleShare}
                   disabled={sharing}
@@ -526,17 +476,17 @@ const DetailRecipe = ({ route }) => {
                   <View style={styles.iconStack}>
                     <MaterialCommunityIcons
                       name="share-variant"
-                      size={24}
+                      size={28}
                       color={theme.colors.border}
                       style={styles.iconShadow}
                     />
                     <MaterialCommunityIcons
                       name="share-variant"
-                      size={24}
+                      size={28}
                       color="#FFFFFF"
                     />
                   </View>
-                </TouchableOpacity>
+                </Pressable>
               )}
             </View>
           )}
@@ -675,9 +625,9 @@ const DetailRecipe = ({ route }) => {
                   ],
                 }),
               )}
-              <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+              <Pressable style={styles.saveButton} onPress={handleSave}>
                 <Text style={styles.buttonText}>Guardar</Text>
-              </TouchableOpacity>
+              </Pressable>
             </>
           ) : (
             recipe && (
@@ -687,7 +637,7 @@ const DetailRecipe = ({ route }) => {
                   <View style={[styles.metaCard, styles.metaPrimary]}>
                     <Ionicons
                       name="time-outline"
-                      size={18}
+                      size={20}
                       color={theme.colors.ink}
                     />
                     <Text style={styles.metaText}>{recipe.time} min</Text>
@@ -695,7 +645,7 @@ const DetailRecipe = ({ route }) => {
                   <View style={[styles.metaCard, styles.metaSuccess]}>
                     <MaterialCommunityIcons
                       name="account-group-outline"
-                      size={18}
+                      size={20}
                       color={theme.colors.ink}
                     />
                     <Text style={styles.metaText}>{recipe.people} pers.</Text>
@@ -704,7 +654,7 @@ const DetailRecipe = ({ route }) => {
                     <View style={[styles.metaCard, styles.metaAccent]}>
                       <MaterialCommunityIcons
                         name="tag-outline"
-                        size={18}
+                        size={20}
                         color={theme.colors.ink}
                       />
                       <Text style={styles.metaText} numberOfLines={1}>
@@ -726,12 +676,13 @@ const DetailRecipe = ({ route }) => {
                   renderDecoratedItem(ingredient, idx, `· ${ingredient.text}`),
                 )}
               </View>
+              <View style={styles.sectionDivider} />
               <Text style={styles.titleIngredientsInstructions}>
                 Preparación:
               </Text>
               <View style={styles.containerIngredientsInstructions}>
                 {recipe.preparation?.map((step, idx) =>
-                  renderDecoratedItem(step, idx, `· ${step.text}`),
+                  renderDecoratedItem(step, idx, `${idx + 1}. ${step.text}`),
                 )}
               </View>
             </>
@@ -757,13 +708,15 @@ const styles = StyleSheet.create({
   imageContainer: {
     position: "relative",
     width: "100%",
-    height: 300,
+    height: 320,
     overflow: "hidden",
     borderRadius: 0,
-    marginBottom: 20,
+    marginBottom: 25,
     backgroundColor: theme.colors.surface,
-    ...outline({ width: 3 }),
-    ...hardShadow({ x: 4, y: 4, elevation: 8 }),
+    ...outline({ width: 4 }),
+    ...hardShadow({ x: 5, y: 5, elevation: 10 }),
+    borderWidth: 4,
+    borderColor: theme.colors.border,
   },
   image: {
     width: "100%",
@@ -772,44 +725,54 @@ const styles = StyleSheet.create({
   },
   button: {
     position: "absolute",
-    top: 15,
-    right: 15,
+    top: 18,
+    right: 18,
     backgroundColor: theme.colors.danger,
-    paddingVertical: 10,
-    paddingHorizontal: 10,
-    borderRadius: 0,
-    width: 44,
-    height: 44,
+    width: 52,
+    height: 52,
     alignItems: "center",
     justifyContent: "center",
-    ...outline({ width: 3 }),
-    ...hardShadow({ x: 3, y: 3, elevation: 6 }),
+    ...outline({ width: 4 }),
+    ...hardShadow({ x: 4, y: 4, elevation: 8 }),
   },
   shareButton: {
     position: "absolute",
-    bottom: 15,
-    right: 15,
+    bottom: 18,
+    right: 18,
     backgroundColor: theme.colors.secondary,
-    paddingVertical: 10,
-    paddingHorizontal: 10,
-    borderRadius: 0,
-    width: 44,
-    height: 44,
+    width: 52,
+    height: 52,
     alignItems: "center",
     justifyContent: "center",
-    ...outline({ width: 3 }),
-    ...hardShadow({ x: 3, y: 3, elevation: 6 }),
+    ...outline({ width: 4 }),
+    ...hardShadow({ x: 4, y: 4, elevation: 8 }),
+  },
+  imageOverlay: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: "50%",
+  },
+  imageDivider: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: 6,
+    backgroundColor: theme.colors.primary,
   },
   title: {
-    fontSize: 24,
-    fontFamily: theme.fonts.bold,
-    marginVertical: 15,
+    fontSize: 34,
+    fontFamily: theme.fonts.extrabold,
+    marginVertical: 20,
     color: theme.colors.textDark,
     textAlign: "center",
     width: "100%",
     textShadowColor: theme.colors.border,
-    textShadowOffset: { width: 3, height: 3 },
+    textShadowOffset: { width: 4, height: 4 },
     textShadowRadius: 0,
+    letterSpacing: 1.2,
   },
   textTime: {
     color: theme.colors.textDark,
@@ -822,20 +785,32 @@ const styles = StyleSheet.create({
     fontFamily: theme.fonts.bold,
   },
   titleIngredientsInstructions: {
-    fontSize: 20,
+    fontSize: theme.fontSize.xl,
     fontFamily: theme.fonts.bold,
-    marginTop: 20,
-    marginBottom: 10,
-    color: theme.colors.textDark,
+    marginTop: 25,
+    marginBottom: 12,
+    color: "#FFFFFF",
     width: "100%",
-    textShadowColor: theme.colors.border,
-    textShadowOffset: { width: 3, height: 3 },
-    textShadowRadius: 0,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    backgroundColor: theme.colors.secondary,
+    ...outline({ width: 3 }),
+    ...hardShadow({ x: 3, y: 3, elevation: 6 }),
+    textAlign: "left",
+    letterSpacing: 0.8,
+    textTransform: "uppercase",
   },
   containerIngredientsInstructions: {
     paddingHorizontal: 10,
-    marginBottom: 20,
+    marginBottom: 25,
     width: "100%",
+  },
+  sectionDivider: {
+    width: "100%",
+    height: 4,
+    backgroundColor: theme.colors.border,
+    marginVertical: 20,
+    ...hardShadow({ x: 2, y: 2, elevation: 4 }),
   },
   listItemWrapper: {
     position: "relative",
@@ -887,24 +862,25 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     flexWrap: "wrap",
-    marginBottom: 20,
+    marginBottom: 25,
   },
   metaCard: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: theme.colors.surface,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    backgroundColor: theme.colors.surfaceAlt,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
     borderRadius: 0,
-    marginHorizontal: 6,
-    marginVertical: 6,
+    marginHorizontal: 8,
+    marginVertical: 8,
     ...outline({ width: 3 }),
-    ...hardShadow({ x: 3, y: 3, elevation: 6 }),
+    ...hardShadow({ x: 4, y: 4, elevation: 7 }),
   },
   listItemText: {
     color: theme.colors.ink,
     fontFamily: theme.fonts.regular,
-    fontSize: 16,
+    fontSize: 17,
+    lineHeight: 24,
     position: "relative",
     zIndex: 1,
   },
@@ -940,38 +916,38 @@ const styles = StyleSheet.create({
   },
   readBgWave: {
     transform: [
-      { translateX: -16 },
-      { translateY: -28 },
-      { scale: 0.95 },
-      { rotate: "-8deg" },
+      { translateX: -20 },
+      { translateY: -35 },
+      { scale: 1.05 },
+      { rotate: "-12deg" },
     ],
   },
   readBgTarget: {
-    transform: [{ translateX: 24 }, { translateY: -34 }, { scale: 0.78 }],
+    transform: [{ translateX: 30 }, { translateY: -40 }, { scale: 0.85 }],
   },
   readBgDiamond: {
     transform: [
-      { translateX: -20 },
-      { translateY: -22 },
-      { scale: 0.92 },
-      { rotate: "-10deg" },
+      { translateX: -25 },
+      { translateY: -30 },
+      { scale: 1.0 },
+      { rotate: "-15deg" },
     ],
   },
   readItemCard: {
     position: "relative",
-    paddingVertical: 8,
-    paddingHorizontal: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
     borderRadius: 0,
-    borderLeftWidth: 8,
+    borderLeftWidth: 12,
     borderLeftColor: theme.colors.border,
     ...outline({ width: 3 }),
-    ...hardShadow({ x: 3, y: 3, elevation: 6 }),
+    ...hardShadow({ x: 5, y: 5, elevation: 8 }),
   },
   readItemCardPrimary: {
     backgroundColor: theme.colors.surface,
   },
   readItemCardAlt: {
-    backgroundColor: theme.colors.surfaceAlt,
+    backgroundColor: "#F8F8F8",
   },
   editItemWrapper: {
     position: "relative",
@@ -1027,23 +1003,29 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     color: theme.colors.ink,
     fontFamily: theme.fonts.bold,
+    fontSize: 15,
   },
   metaPrimary: {
     borderLeftWidth: 8,
     borderLeftColor: theme.colors.primary,
+    backgroundColor: "#FFF9E6",
   },
   metaSuccess: {
     borderLeftWidth: 8,
     borderLeftColor: theme.colors.success,
+    backgroundColor: "#EAFAF1",
   },
   metaAccent: {
     borderLeftWidth: 8,
     borderLeftColor: theme.colors.accent,
+    backgroundColor: "#FFF0F0",
   },
   iconStack: {
     position: "relative",
-    width: 24,
-    height: 24,
+    width: 28,
+    height: 28,
+    alignItems: "center",
+    justifyContent: "center",
   },
   iconShadow: {
     position: "absolute",
@@ -1052,18 +1034,15 @@ const styles = StyleSheet.create({
   },
   updateButton: {
     position: "absolute",
-    top: 15,
-    left: 15,
+    top: 18,
+    left: 18,
     backgroundColor: theme.colors.primary,
-    paddingVertical: 10,
-    paddingHorizontal: 10,
-    borderRadius: 0,
-    width: 44,
-    height: 44,
+    width: 52,
+    height: 52,
     alignItems: "center",
     justifyContent: "center",
-    ...outline({ width: 3 }),
-    ...hardShadow({ x: 3, y: 3, elevation: 6 }),
+    ...outline({ width: 4 }),
+    ...hardShadow({ x: 4, y: 4, elevation: 8 }),
   },
   input: {
     minHeight: 50,

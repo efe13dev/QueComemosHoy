@@ -43,7 +43,9 @@
     "react-native-svg": "15.8.0",
     "react-native-url-polyfill": "^2.0.0",
     "react-native-vector-icons": "^10.2.0",
-    "react-native-view-shot": "~4.0.3"
+    "react-native-view-shot": "~4.0.3",
+    "@shopify/flash-list": "1.7.3",
+    "expo-image": "~2.0.7"
   },
   "devDependencies": {
     "@babel/core": "^7.24.0",

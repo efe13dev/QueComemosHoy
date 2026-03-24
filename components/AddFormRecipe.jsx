@@ -1,15 +1,15 @@
-import { Ionicons } from "@expo/vector-icons";
-import React, { useState } from "react";
-import { Alert, Modal, Pressable, StyleSheet, Text, View } from "react-native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useState } from "react";
+import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 
 import { saveRecipe } from "../data/api";
 import { hardShadow, outline, theme } from "../utils/theme";
 
+import CustomModal from "./CustomModal";
 import NeoDropdown from "./ui/NeoDropdown";
 import RetroButton from "./ui/RetroButton";
 import RetroInput from "./ui/RetroInput";
-import RetroPanel from "./ui/RetroPanel";
 
 const AddFormRecipe = () => {
   const [recipe, setRecipe] = useState({
@@ -93,35 +93,15 @@ const AddFormRecipe = () => {
 
   return (
     <View style={styles.form_container}>
-      {/* Modal de confirmación de adición exitosa */}
-      <Modal
-        animationType="fade"
-        transparent
+      <CustomModal
         visible={successModalVisible}
-        onRequestClose={handleSuccessConfirm}
-      >
-        <View style={styles.centeredView}>
-          <RetroPanel style={styles.modalView}>
-            <View style={styles.iconContainer}>
-              <Ionicons
-                name="checkmark-circle-outline"
-                size={40}
-                color={theme.colors.success}
-              />
-            </View>
-            <Text style={styles.modalTitle}>¡Receta añadida!</Text>
-            <Text style={styles.modalText}>
-              La receta se ha guardado correctamente
-            </Text>
-            <RetroButton
-              variant="success"
-              title="Aceptar"
-              onPress={handleSuccessConfirm}
-              style={styles.modalButtonCompat}
-            />
-          </RetroPanel>
-        </View>
-      </Modal>
+        onClose={handleSuccessConfirm}
+        title="¡Receta añadida!"
+        message="La receta se ha guardado correctamente"
+        icon="checkmark-circle-outline"
+        iconColor={theme.colors.success}
+        buttons={[{ text: "Aceptar", onPress: handleSuccessConfirm }]}
+      />
 
       <RetroInput
         placeholder="Nombre de la receta"
@@ -188,7 +168,14 @@ const AddFormRecipe = () => {
         autoGrow
       />
 
-      <Text style={styles.label}>Ingredientes:</Text>
+      <View style={styles.sectionHeader}>
+        <MaterialCommunityIcons
+          name="format-list-bulleted"
+          size={20}
+          color="#FFFFFF"
+        />
+        <Text style={styles.sectionLabel}>Ingredientes</Text>
+      </View>
       {recipe.ingredients.map((ingredient, index) => (
         <View key={ingredient.id} style={styles.input_row}>
           <RetroInput
@@ -228,7 +215,10 @@ const AddFormRecipe = () => {
         </View>
       ))}
 
-      <Text style={styles.label}>Preparación:</Text>
+      <View style={[styles.sectionHeader, styles.sectionHeaderAlt]}>
+        <MaterialCommunityIcons name="chef-hat" size={20} color="#FFFFFF" />
+        <Text style={styles.sectionLabel}>Preparación</Text>
+      </View>
       {recipe.preparation.map((step, index) => (
         <View key={step.id} style={styles.input_row}>
           <RetroInput
@@ -269,7 +259,6 @@ const AddFormRecipe = () => {
       ))}
 
       <RetroButton
-        title="Añadir receta"
         onPress={handleSubmit}
         variant="primary"
         style={styles.addRecipeButton}
@@ -288,7 +277,16 @@ const AddFormRecipe = () => {
           !recipe.ingredients[0]?.text?.trim() ||
           !recipe.preparation[0]?.text?.trim()
         }
-      />
+      >
+        <View style={styles.submitRow}>
+          <MaterialCommunityIcons
+            name="plus-circle"
+            size={22}
+            color={theme.colors.ink}
+          />
+          <Text style={styles.submitText}>Añadir receta</Text>
+        </View>
+      </RetroButton>
     </View>
   );
 };
@@ -370,13 +368,39 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginLeft: 10,
   },
-  label: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 10,
-    color: theme.colors.textDark,
-    alignSelf: "flex-start",
-    marginLeft: 5,
+  sectionHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    alignSelf: "stretch",
+    backgroundColor: theme.colors.secondary,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    gap: 8,
+    ...outline({ width: 3 }),
+    ...hardShadow({ x: 3, y: 3, elevation: 6 }),
+  },
+  sectionHeaderAlt: {
+    backgroundColor: theme.colors.success,
+  },
+  sectionLabel: {
+    fontSize: theme.fontSize.base,
+    fontFamily: theme.fonts.bold,
+    color: "#FFFFFF",
+    textTransform: "uppercase",
+    letterSpacing: 1,
+  },
+  submitRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+  },
+  submitText: {
+    fontFamily: theme.fonts.bold,
+    fontSize: theme.fontSize.base,
+    color: theme.colors.ink,
+    textTransform: "uppercase",
+    letterSpacing: 0.8,
   },
   imageUrlInput: {
     minHeight: 60,
@@ -385,39 +409,6 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
 
-  // Estilos para el modal personalizado
-  centeredView: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  modalView: {
-    width: "80%",
-    alignItems: "center",
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 15,
-    color: theme.colors.textDark,
-    textAlign: "center",
-  },
-  iconContainer: {
-    marginBottom: 15,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  modalText: {
-    marginBottom: 20,
-    textAlign: "center",
-    fontSize: 16,
-    color: theme.colors.textDark,
-    lineHeight: 22,
-  },
-  modalButtonCompat: {
-    minWidth: "80%",
-  },
   addRecipeButton: {
     backgroundColor: "#FF7A00",
   },

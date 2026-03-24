@@ -3,7 +3,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useEffect, useState } from "react";
-import { Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 
 import AddRecipe from "./screens/AddRecipeScreen";
 import DetailRecipe from "./screens/DetailRecipeScreen";
@@ -101,26 +101,83 @@ function RecipesStack() {
   );
 }
 
+// Configuración de tabs con sus colores activos
+const TAB_CONFIG = {
+  Home: { label: "Inicio", activeColor: "#FF7A00", shadowColor: "#FF7A00" },
+  MyRecipesScreen: {
+    label: "Mis recetas",
+    activeColor: theme.colors.secondary,
+    shadowColor: theme.colors.primary,
+  },
+  AddRecipeScreen: {
+    label: "Añadir receta",
+    activeColor: theme.colors.success,
+    shadowColor: theme.colors.primary,
+  },
+};
+
+function TabLabel({ focused, color, routeName }) {
+  const cfg = TAB_CONFIG[routeName];
+
+  return (
+    <Text
+      style={[
+        tabStyles.label,
+        {
+          color,
+          fontSize: focused ? 13 : theme.fontSize.xs,
+          fontFamily: focused ? theme.fonts.bold : theme.fonts.medium,
+          textShadowColor: cfg?.shadowColor || theme.colors.primary,
+          letterSpacing: focused ? 0.8 : 0.3,
+        },
+      ]}
+    >
+      {cfg?.label || routeName}
+    </Text>
+  );
+}
+
+function TabIcon({ focused, color, children }) {
+  return (
+    <View style={[tabStyles.iconWrap, focused ? tabStyles.iconFocused : null]}>
+      {children}
+    </View>
+  );
+}
+
+const tabStyles = StyleSheet.create({
+  bar: {
+    backgroundColor: theme.colors.surfaceAlt,
+    borderTopWidth: 4,
+    borderTopColor: theme.colors.border,
+    height: 68,
+    paddingBottom: 6,
+    paddingTop: 6,
+    ...outline({ width: 3 }),
+    ...hardShadow({ x: 0, y: -2, elevation: 8 }),
+  },
+  label: {
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 0,
+    marginTop: -4,
+  },
+  iconWrap: {
+    alignItems: "center",
+    justifyContent: "center",
+    width: 40,
+    height: 36,
+  },
+  iconFocused: {
+    ...hardShadow({ x: 2, y: 2, elevation: 4 }),
+    transform: [{ scale: 1.1 }],
+  },
+});
+
 function MyTabs() {
   return (
     <Tab.Navigator
       screenOptions={{
-        tabBarStyle: {
-          backgroundColor: theme.colors.surfaceAlt,
-          borderTopColor: theme.colors.border,
-          height: 60,
-          paddingBottom: 5,
-          paddingTop: 5,
-          ...outline({ width: 3 }),
-          ...hardShadow({ x: 2, y: 2, elevation: 6 }),
-        },
-        tabBarLabelStyle: {
-          fontSize: 12,
-          fontFamily: theme.fonts.medium,
-          textShadowColor: theme.colors.primary,
-          textShadowOffset: { width: 1, height: 1 },
-          textShadowRadius: 0,
-        },
+        tabBarStyle: tabStyles.bar,
         tabBarActiveTintColor: theme.colors.accent,
         tabBarInactiveTintColor: theme.colors.textDark,
       }}
@@ -130,33 +187,14 @@ function MyTabs() {
         component={HomeStack}
         options={{
           tabBarLabel: ({ focused, color }) => (
-            <Text
-              style={{
-                color,
-                fontSize: focused ? 13 : 12,
-                fontFamily: focused ? theme.fonts.bold : theme.fonts.medium,
-                textShadowColor: "#FF7A00",
-                textShadowOffset: { width: 1, height: 1 },
-                textShadowRadius: 0,
-                marginTop: -5,
-              }}
-            >
-              Inicio
-            </Text>
+            <TabLabel focused={focused} color={color} routeName="Home" />
           ),
-          tabBarIcon: ({ color, size, focused }) => (
-            <View
-              style={focused ? hardShadow({ x: 2, y: 2, elevation: 3 }) : null}
-            >
-              <FontAwesome
-                name="home"
-                size={focused ? 30 : 24}
-                color={color}
-                style={focused ? { marginBottom: -3 } : {}}
-              />
-            </View>
+          tabBarIcon: ({ color, focused }) => (
+            <TabIcon focused={focused} color={color}>
+              <FontAwesome name="home" size={focused ? 28 : 24} color={color} />
+            </TabIcon>
           ),
-          tabBarActiveTintColor: "#FF7A00",
+          tabBarActiveTintColor: TAB_CONFIG.Home.activeColor,
           headerShown: false,
         }}
       />
@@ -165,33 +203,18 @@ function MyTabs() {
         component={RecipesStack}
         options={{
           tabBarLabel: ({ focused, color }) => (
-            <Text
-              style={{
-                color,
-                fontSize: focused ? 13 : 12,
-                fontFamily: focused ? theme.fonts.bold : theme.fonts.medium,
-                textShadowColor: theme.colors.primary,
-                textShadowOffset: { width: 1, height: 1 },
-                textShadowRadius: 0,
-                marginTop: -5,
-              }}
-            >
-              Mis recetas
-            </Text>
+            <TabLabel
+              focused={focused}
+              color={color}
+              routeName="MyRecipesScreen"
+            />
           ),
-          tabBarIcon: ({ color, size, focused }) => (
-            <View
-              style={focused ? hardShadow({ x: 2, y: 2, elevation: 3 }) : null}
-            >
-              <Entypo
-                name="bowl"
-                size={focused ? 30 : 24}
-                color={color}
-                style={focused ? { marginBottom: -3 } : {}}
-              />
-            </View>
+          tabBarIcon: ({ color, focused }) => (
+            <TabIcon focused={focused} color={color}>
+              <Entypo name="bowl" size={focused ? 28 : 24} color={color} />
+            </TabIcon>
           ),
-          tabBarActiveTintColor: theme.colors.secondary,
+          tabBarActiveTintColor: TAB_CONFIG.MyRecipesScreen.activeColor,
           headerShown: false,
         }}
       />
@@ -200,33 +223,22 @@ function MyTabs() {
         component={AddRecipe}
         options={{
           tabBarLabel: ({ focused, color }) => (
-            <Text
-              style={{
-                color,
-                fontSize: focused ? 13 : 12,
-                fontFamily: focused ? theme.fonts.bold : theme.fonts.medium,
-                textShadowColor: theme.colors.primary,
-                textShadowOffset: { width: 1, height: 1 },
-                textShadowRadius: 0,
-                marginTop: -5,
-              }}
-            >
-              Añadir receta
-            </Text>
+            <TabLabel
+              focused={focused}
+              color={color}
+              routeName="AddRecipeScreen"
+            />
           ),
-          tabBarIcon: ({ color, size, focused }) => (
-            <View
-              style={focused ? hardShadow({ x: 2, y: 2, elevation: 3 }) : null}
-            >
+          tabBarIcon: ({ color, focused }) => (
+            <TabIcon focused={focused} color={color}>
               <Ionicons
                 name="add-circle"
-                size={focused ? 30 : 24}
+                size={focused ? 28 : 24}
                 color={color}
-                style={focused ? { marginBottom: -3 } : {}}
               />
-            </View>
+            </TabIcon>
           ),
-          tabBarActiveTintColor: theme.colors.success,
+          tabBarActiveTintColor: TAB_CONFIG.AddRecipeScreen.activeColor,
           headerShown: false,
         }}
       />

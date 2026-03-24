@@ -1,30 +1,31 @@
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { FlashList } from "@shopify/flash-list";
 import Constants from "expo-constants";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import {
-  FlatList,
-  RefreshControl,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  useWindowDimensions,
-} from "react-native";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { Pressable, RefreshControl, StyleSheet, View } from "react-native";
 
 import { RecipeCard } from "../components/RecipeCard";
+import NeoIcon from "../components/ui/NeoIcon";
+import NeoTitle from "../components/ui/NeoTitle";
 import RetroInput from "../components/ui/RetroInput";
 import { getRecipes } from "../data/api";
-import { hardShadow, theme } from "../utils/theme";
+import { hardShadow, outline, theme } from "../utils/theme";
 
 const MyRecipes = ({ navigation }) => {
   const [recipes, setRecipes] = useState([]);
-  const [filteredRecipes, setFilteredRecipes] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [searchText, setSearchText] = useState("");
-  const { width } = useWindowDimensions();
 
   const ICON_SIZE = 50;
-  const numColumns = 2; // Definimos esto como una constante
+  const numColumns = 2;
+
+  const filteredRecipes = useMemo(
+    () =>
+      recipes.filter((recipe) =>
+        recipe.name.toLowerCase().startsWith(searchText.toLowerCase()),
+      ),
+    [searchText, recipes],
+  );
 
   const getListRecipes = useCallback(async () => {
     const data = await getRecipes();
@@ -41,36 +42,28 @@ const MyRecipes = ({ navigation }) => {
     return unsubscribe;
   }, [navigation, getListRecipes]);
 
-  useEffect(() => {
-    const filtered = recipes.filter((recipe) =>
-      recipe.name.toLowerCase().startsWith(searchText.toLowerCase()),
-    );
-
-    setFilteredRecipes(filtered);
-  }, [searchText, recipes]);
-
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     await getListRecipes();
     setRefreshing(false);
   }, [getListRecipes]);
 
-  const renderItem = ({ item }) => (
-    <View style={styles.recipeCardContainer}>
-      <RecipeCard
-        recipe={item}
-        buttonShadowOffset={{
-          default: { x: 3, y: 3 },
-          pressed: { x: 1, y: 1 },
-        }}
-        buttonShadowColor="#000000"
-        buttonShadowPadding="right"
-      />
-    </View>
+  const renderItem = useCallback(
+    ({ item }) => (
+      <View style={styles.recipeCardContainer}>
+        <RecipeCard
+          recipe={item}
+          buttonShadowOffset={{
+            default: { x: 3, y: 3 },
+            pressed: { x: 1, y: 1 },
+          }}
+          buttonShadowColor="#000000"
+          buttonShadowPadding="right"
+        />
+      </View>
+    ),
+    [],
   );
-
-  // Usamos useMemo para crear una key única basada en el ancho de la pantalla
-  const flatListKey = useMemo(() => `flatList-${width}`, [width]);
 
   const clearSearchText = () => {
     setSearchText("");
@@ -79,33 +72,20 @@ const MyRecipes = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <View style={styles.iconContainer}>
-        <View
-          style={[styles.iconWrap, { width: ICON_SIZE, height: ICON_SIZE }]}
-        >
-          {/* Sombra negra del icono (duplicado detrás) */}
-          <MaterialCommunityIcons
-            name="silverware-fork-knife"
-            size={ICON_SIZE}
-            color="#000000"
-            style={styles.recipeIconShadow}
-          />
-          {/* Icono principal */}
-          <MaterialCommunityIcons
-            name="silverware-fork-knife"
-            size={ICON_SIZE}
-            color={theme.colors.primary}
-            style={styles.recipeIcon}
-          />
-        </View>
+        <NeoIcon
+          name="silverware-fork-knife"
+          size={ICON_SIZE}
+          color={theme.colors.primary}
+          shadowColor="#000000"
+          shadowOffset={2.5}
+        />
       </View>
-      {/* Título con sombras superpuestas al estilo GenerateMenu */}
-      <View style={styles.titleWrap}>
-        <Text style={styles.text_titleShadow}>Mis recetas</Text>
-        <Text style={styles.text_titleShadow2}>Mis recetas</Text>
-        <Text style={styles.text_titleShadow3}>Mis recetas</Text>
-        <Text style={styles.text_titleShadow4}>Mis recetas</Text>
-        <Text style={styles.text_title}>Mis recetas</Text>
-      </View>
+      <NeoTitle
+        text="Mis recetas"
+        fontSize={theme.fontSize.xl}
+        shadowColor={theme.colors.primary}
+        marginBottom={theme.spacing.md}
+      />
       <View style={styles.searchContainer}>
         <RetroInput
           placeholder="Buscar en mis recetas"
@@ -122,24 +102,24 @@ const MyRecipes = ({ navigation }) => {
             color={theme.colors.textMuted}
           />
         </View>
-        {searchText !== "" && (
-          <TouchableOpacity
+        {searchText !== "" ? (
+          <Pressable
             style={styles.clearButton}
             onPress={clearSearchText}
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           >
             <Ionicons name="close-circle" size={24} color={theme.colors.ink} />
-          </TouchableOpacity>
-        )}
+          </Pressable>
+        ) : null}
       </View>
-      <FlatList
-        key={flatListKey}
+      <FlashList
         data={filteredRecipes}
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
         numColumns={numColumns}
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
+        estimatedItemSize={320}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -160,80 +140,8 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     alignItems: "center",
-    paddingTop: Constants.statusBarHeight,
-    paddingBottom: 10,
-  },
-  iconWrap: {
-    position: "relative",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  titleWrap: {
-    position: "relative",
-    alignItems: "center",
-  },
-  text_title: {
-    color: theme.colors.textDark,
-    textAlign: "center",
-    fontFamily: theme.fonts.bold,
-    fontSize: 24,
-    marginBottom: theme.spacing.md,
-    textShadowColor: theme.colors.primary,
-    textShadowOffset: { width: 2, height: 2 },
-    textShadowRadius: 0,
-    zIndex: 1,
-  },
-  text_titleShadow: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-    fontSize: 24,
-    fontFamily: theme.fonts.bold,
-    color: theme.colors.primary,
-    textAlign: "center",
-    transform: [{ translateX: 2 }, { translateY: 2 }],
-    zIndex: 0,
-  },
-  text_titleShadow2: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-    fontSize: 24,
-    fontFamily: theme.fonts.bold,
-    color: theme.colors.primary,
-    textAlign: "center",
-    transform: [{ translateX: -2 }, { translateY: 0 }],
-    zIndex: 0,
-  },
-  text_titleShadow3: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-    fontSize: 24,
-    fontFamily: theme.fonts.bold,
-    color: theme.colors.primary,
-    textAlign: "center",
-    transform: [{ translateX: 0 }, { translateY: -2 }],
-    zIndex: 0,
-  },
-  text_titleShadow4: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-    fontSize: 24,
-    fontFamily: theme.fonts.bold,
-    color: theme.colors.primary,
-    textAlign: "center",
-    transform: [{ translateX: -2 }, { translateY: -2 }],
-    zIndex: 0,
+    paddingTop: Constants.statusBarHeight + 4,
+    paddingBottom: theme.spacing.md,
   },
   listContent: {
     paddingHorizontal: 15,
@@ -250,9 +158,17 @@ const styles = StyleSheet.create({
     marginHorizontal: 15,
     marginBottom: 15,
     position: "relative",
+    ...outline({ width: 3 }),
+    ...hardShadow({ x: 3, y: 3, elevation: 6 }),
+    backgroundColor: theme.colors.surface,
+    borderLeftWidth: 6,
+    borderLeftColor: theme.colors.primary,
   },
   searchInputContainer: {
     flex: 1,
+    borderWidth: 0,
+    shadowOpacity: 0,
+    elevation: 0,
   },
   searchInputText: {
     paddingLeft: 36,
@@ -269,20 +185,6 @@ const styles = StyleSheet.create({
     left: 18,
     top: "50%",
     transform: [{ translateY: -10 }],
-  },
-  recipeIcon: {
-    ...hardShadow({ x: 3, y: 3, elevation: 6 }),
-    position: "absolute",
-    left: 0,
-    top: 0,
-    zIndex: 1,
-  },
-  recipeIconShadow: {
-    position: "absolute",
-    left: 0,
-    top: 0,
-    transform: [{ translateX: 2.5 }, { translateY: 2.5 }],
-    zIndex: 0,
   },
 });
 

@@ -1,19 +1,13 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Animated,
   Dimensions,
+  Pressable,
   RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
 } from "react-native";
 import * as Animatable from "react-native-animatable";
@@ -27,6 +21,7 @@ import {
 import { hardShadow, outline, theme } from "../utils/theme";
 
 import CustomModal from "./CustomModal";
+import NeoTitle from "./ui/NeoTitle";
 import WeekDayPicker from "./WeekDayPicker";
 
 // Animated wrapper para elementos SVG (debe ir después de todos los imports)
@@ -466,20 +461,13 @@ export function GenerateMenu() {
       }
     >
       <View style={styles.container}>
-        <View style={styles.titleWrap}>
-          <Text style={styles.titleShadow}>Menú Semanal</Text>
-          <Text style={styles.titleShadow2}>Menú Semanal</Text>
-          <Text style={styles.titleShadow3}>Menú Semanal</Text>
-          <Text style={styles.titleShadow4}>Menú Semanal</Text>
-          <Animatable.Text
-            animation="fadeInDown"
-            duration={500}
-            useNativeDriver
-            style={styles.title}
-          >
-            Menú Semanal
-          </Animatable.Text>
-        </View>
+        <NeoTitle
+          text="Menú Semanal"
+          fontSize={theme.fontSize.xl}
+          shadowColor={theme.colors.primary}
+          animated
+          marginBottom={theme.spacing.md}
+        />
         {/* Decoraciones SVG: visibles por debajo (no capturan toques) */}
         <View pointerEvents="none" style={[styles.decorationsWrap]}>
           {decorations.map((d) => {
@@ -532,7 +520,7 @@ export function GenerateMenu() {
           {decorations.map((d) => {
             if (d.key === "dec1") {
               return (
-                <TouchableOpacity
+                <Pressable
                   key={`hit_${d.key}`}
                   activeOpacity={1}
                   onPress={handlePlantPress}
@@ -549,7 +537,7 @@ export function GenerateMenu() {
 
             return null;
           })}
-          <TouchableOpacity
+          <Pressable
             activeOpacity={1}
             onPress={handleStarPress}
             style={{
@@ -573,6 +561,7 @@ export function GenerateMenu() {
             },
           ]}
         >
+          <View style={styles.menuHeaderBar} />
           <View style={{ zIndex: 1 }}>
             {DAYS_OF_WEEK.map((day) => (
               <WeekDayPicker
@@ -595,7 +584,7 @@ export function GenerateMenu() {
                 (!hasPendingChanges || isSaving) && styles.saveShadowDisabled,
               ]}
             />
-            <TouchableOpacity
+            <Pressable
               style={[
                 styles.saveButton,
                 (savePressed || isSaving) && styles.saveButtonPressed,
@@ -607,19 +596,31 @@ export function GenerateMenu() {
               disabled={!hasPendingChanges || isSaving}
               activeOpacity={0.9}
             >
-              <Text
-                style={[
-                  styles.saveButtonText,
-                  (!hasPendingChanges || isSaving) &&
-                    styles.saveButtonTextDisabled,
-                  hasPendingChanges &&
-                    !isSaving &&
-                    styles.saveButtonTextHighlight,
-                ]}
-              >
-                {isSaving ? "Guardando..." : "Guardar Menú"}
-              </Text>
-            </TouchableOpacity>
+              <View style={styles.saveButtonContent}>
+                <MaterialCommunityIcons
+                  name={isSaving ? "progress-clock" : "content-save"}
+                  size={20}
+                  color={
+                    !hasPendingChanges || isSaving
+                      ? "#9CA3AF"
+                      : theme.colors.ink
+                  }
+                  style={styles.saveButtonIcon}
+                />
+                <Text
+                  style={[
+                    styles.saveButtonText,
+                    (!hasPendingChanges || isSaving) &&
+                      styles.saveButtonTextDisabled,
+                    hasPendingChanges &&
+                      !isSaving &&
+                      styles.saveButtonTextHighlight,
+                  ]}
+                >
+                  {isSaving ? "Guardando..." : "Guardar Menú"}
+                </Text>
+              </View>
+            </Pressable>
           </View>
 
           <View style={styles.trashWrap}>
@@ -630,7 +631,7 @@ export function GenerateMenu() {
                 isResetting && styles.trashShadowDisabled,
               ]}
             />
-            <TouchableOpacity
+            <Pressable
               style={[
                 styles.trashButton,
                 resetPressed && styles.trashButtonPressed,
@@ -648,7 +649,7 @@ export function GenerateMenu() {
                 color={isResetting ? theme.colors.textMuted : theme.colors.ink}
                 style={styles.trashIcon}
               />
-            </TouchableOpacity>
+            </Pressable>
           </View>
         </View>
       </View>
@@ -721,72 +722,12 @@ const styles = StyleSheet.create({
     flex: 1,
     position: "relative",
   },
-  titleWrap: {
-    position: "relative",
-    alignItems: "center",
-  },
-  title: {
-    fontSize: 24,
-    fontFamily: theme.fonts.bold,
-    marginBottom: theme.spacing.md,
-    textAlign: "center",
-    color: theme.colors.textDark,
-    textShadowColor: theme.colors.primary,
-    textShadowOffset: { width: 2, height: 2 },
-    textShadowRadius: 0,
-    zIndex: 1,
-  },
-  titleShadow: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-    fontSize: 24,
-    fontFamily: theme.fonts.bold,
-    color: theme.colors.primary,
-    textAlign: "center",
-    transform: [{ translateX: 2 }, { translateY: 2 }],
-    zIndex: 0,
-  },
-  titleShadow2: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-    fontSize: 24,
-    fontFamily: theme.fonts.bold,
-    color: theme.colors.primary,
-    textAlign: "center",
-    transform: [{ translateX: -2 }, { translateY: 0 }],
-    zIndex: 0,
-  },
-  titleShadow3: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-    fontSize: 24,
-    fontFamily: theme.fonts.bold,
-    color: theme.colors.primary,
-    textAlign: "center",
-    transform: [{ translateX: 0 }, { translateY: -2 }],
-    zIndex: 0,
-  },
-  titleShadow4: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-    fontSize: 24,
-    fontFamily: theme.fonts.bold,
-    color: theme.colors.primary,
-    textAlign: "center",
-    transform: [{ translateX: -2 }, { translateY: -2 }],
-    zIndex: 0,
+  menuHeaderBar: {
+    height: 6,
+    backgroundColor: theme.colors.primary,
+    marginBottom: theme.spacing.sm,
+    marginHorizontal: -theme.spacing.md,
+    marginTop: -theme.spacing.md,
   },
   menuContainer: {
     width: "100%",
@@ -857,22 +798,30 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFE8A3",
     ...outline({ width: 3, color: "#8C8C8C" }),
   },
+  saveButtonContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  saveButtonIcon: {
+    marginRight: 8,
+  },
   saveButtonText: {
-    fontSize: 16,
+    fontSize: theme.fontSize.base,
     fontFamily: theme.fonts.bold,
     fontWeight: "normal",
     color: theme.colors.ink,
     textAlign: "center",
   },
   saveButtonTextDisabled: {
-    fontSize: 16,
+    fontSize: theme.fontSize.base,
     color: "#9CA3AF",
     fontFamily: theme.fonts.bold,
     fontWeight: "normal",
     textAlign: "center",
   },
   saveButtonTextHighlight: {
-    fontSize: 16,
+    fontSize: theme.fontSize.base,
     fontFamily: theme.fonts.bold,
     fontWeight: "normal",
     color: theme.colors.ink,

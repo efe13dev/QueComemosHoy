@@ -1,44 +1,30 @@
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Constants from "expo-constants";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 import AddFormRecipe from "../components/AddFormRecipe";
+import NeoIcon from "../components/ui/NeoIcon";
+import NeoTitle from "../components/ui/NeoTitle";
 import { theme } from "../utils/theme";
 
 const AddRecipeScreen = () => {
   return (
     <View style={styles.container}>
       <View style={styles.iconContainer}>
-        <View style={styles.iconWrapper}>
-          <MaterialCommunityIcons
-            name="notebook-plus"
-            size={40}
-            color="#000000"
-            style={[styles.iconBase, styles.iconShadow]}
-          />
-          <MaterialCommunityIcons
-            name="notebook-plus"
-            size={40}
-            color={theme.colors.primary}
-            style={[styles.iconBase, styles.iconMain]}
-          />
-        </View>
-        <View style={styles.titleWrap}>
-          <Text style={[styles.text_title, styles.titleShadow]}>
-            Añade una receta
-          </Text>
-          <Text style={[styles.text_title, styles.titleShadow2]}>
-            Añade una receta
-          </Text>
-          <Text style={[styles.text_title, styles.titleShadow3]}>
-            Añade una receta
-          </Text>
-          <Text style={[styles.text_title, styles.titleShadow4]}>
-            Añade una receta
-          </Text>
-          <Text style={styles.text_title}>Añade una receta</Text>
-        </View>
+        <NeoIcon
+          name="notebook-plus"
+          size={48}
+          color={theme.colors.primary}
+          shadowColor="#000000"
+          shadowOffset={3}
+        />
+        <NeoTitle
+          text="Añade una receta"
+          fontSize={theme.fontSize.xl}
+          shadowColor={theme.colors.primary}
+          style={styles.titleSpacing}
+        />
+        <View style={styles.headerBar} />
       </View>
       <KeyboardAwareScrollView
         contentContainerStyle={styles.scroll_container}
@@ -64,79 +50,18 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     alignItems: "center",
-    paddingTop: Constants.statusBarHeight,
-    paddingBottom: 10,
+    paddingTop: Constants.statusBarHeight + 4,
+    paddingBottom: theme.spacing.lg,
+    gap: theme.spacing.sm,
   },
-  iconWrapper: {
-    position: "relative",
-    width: 40,
-    height: 40,
-    marginBottom: 10,
+  titleSpacing: {
+    marginTop: theme.spacing.sm,
   },
-  iconBase: {
-    position: "absolute",
-    left: 0,
-    top: 0,
-  },
-  iconShadow: {
-    transform: [{ translateX: 3 }, { translateY: 3 }],
-    zIndex: 0,
-  },
-  iconMain: {
-    zIndex: 1,
-  },
-  titleWrap: {
-    position: "relative",
-    alignItems: "center",
-    marginTop: 14,
-  },
-  text_title: {
-    color: theme.colors.textDark,
-    textAlign: "center",
-    fontFamily: theme.fonts.bold,
-    fontSize: 24,
-    marginBottom: 0,
-    zIndex: 1,
-  },
-  titleShadow: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-    color: theme.colors.primary,
-    zIndex: 0,
-    transform: [{ translateX: 2 }, { translateY: 2 }],
-  },
-  titleShadow2: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-    color: theme.colors.primary,
-    zIndex: 0,
-    transform: [{ translateX: -2 }, { translateY: 0 }],
-  },
-  titleShadow3: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-    color: theme.colors.primary,
-    zIndex: 0,
-    transform: [{ translateX: 0 }, { translateY: -2 }],
-  },
-  titleShadow4: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-    color: theme.colors.primary,
-    zIndex: 0,
-    transform: [{ translateX: -2 }, { translateY: -2 }],
+  headerBar: {
+    width: 80,
+    height: 5,
+    backgroundColor: theme.colors.primary,
+    marginTop: theme.spacing.xs,
   },
   scroll_container: {
     paddingTop: 20,

@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import * as Animatable from "react-native-animatable";
 
@@ -42,7 +42,11 @@ const WeekDayPicker = ({ day, handleChange, recipesName, selectedRecipe }) => {
         <View
           style={[styles.dayContainer, { backgroundColor: dayBackgroundColor }]}
         >
-          <Text style={styles.dayText}>{capitalizedDay}</Text>
+          <Text
+            style={[styles.dayText, { textShadowColor: dayBackgroundColor }]}
+          >
+            {capitalizedDay}
+          </Text>
         </View>
         <View style={styles.pickerContainer}>
           <View style={styles.pickerWrap}>
@@ -95,7 +99,7 @@ const styles = StyleSheet.create({
     height: "100%",
     justifyContent: "center",
     alignItems: "center",
-    minWidth: 95,
+    width: 95,
     marginRight: 6,
     backgroundColor: theme.colors.surfaceAlt,
     borderRadius: 0,
@@ -103,13 +107,14 @@ const styles = StyleSheet.create({
     ...hardShadow({ x: 4, y: 4, elevation: 6 }),
   },
   dayText: {
-    fontSize: 16,
+    fontSize: 12,
     fontFamily: theme.fonts.bold,
     color: theme.colors.ink,
     textAlign: "center",
-    textShadowColor: theme.colors.primary,
     textShadowOffset: { width: 2, height: 2 },
     textShadowRadius: 0,
+    textTransform: "uppercase",
+    letterSpacing: 1.2,
   },
   pickerContainer: {
     flex: 1,
@@ -142,6 +147,7 @@ const styles = StyleSheet.create({
     ...outline({ width: 3 }),
     justifyContent: "center",
     zIndex: 1,
+    borderLeftWidth: 6,
   },
   pickerBoxPressed: {
     transform: [{ translateX: 2 }, { translateY: 2 }],
