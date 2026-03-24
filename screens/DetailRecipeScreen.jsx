@@ -5,23 +5,20 @@ import { LinearGradient } from "expo-linear-gradient";
 import * as Sharing from "expo-sharing";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
-  Alert,
-  Pressable,
-  ScrollView,
-  Share,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
+    Alert,
+    Pressable,
+    ScrollView,
+    Share,
+    StatusBar,
+    StyleSheet,
+    Text,
+    TextInput,
+    View,
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { captureRef } from "react-native-view-shot";
 
 import CustomModal from "../components/CustomModal";
-import GreenDiamond from "../components/svg/GreenDiamond";
-import PinkTarget from "../components/svg/PinkTarget";
-import WaveMark from "../components/svg/WaveMark";
 import { deleteRecipe, getRecipe, updateRecipe } from "../data/api";
 import { hardShadow, outline, theme } from "../utils/theme";
 
@@ -224,62 +221,29 @@ const DetailRecipe = ({ route }) => {
     }
   }, [recipe]);
 
+  const ITEM_COLORS = [
+    {
+      border: theme.colors.primary,
+      bg: "#FFFBEB",
+      icon: "silverware-fork-knife",
+    },
+    { border: theme.colors.secondary, bg: "#F5F0FF", icon: "pot-steam" },
+    { border: theme.colors.success, bg: "#EEFBF3", icon: "leaf" },
+    { border: theme.colors.accent, bg: "#FFF0F0", icon: "fire" },
+  ];
+
   const renderDecoratedItem = (item, idx, content) => {
-    const variant = idx % 3;
-    const isEven = idx % 2 === 0;
-
-    let background = null;
-
-    if (variant === 0) {
-      background = (
-        <WaveMark
-          style={[styles.readItemBg, styles.readBgWave]}
-          opacity={0.35}
-          color={theme.colors.primary}
-          strokeWidth={14}
-        />
-      );
-    } else if (variant === 1) {
-      background = (
-        <PinkTarget
-          style={[styles.readItemBg, styles.readBgTarget]}
-          opacity={0.4}
-          outer={theme.colors.secondary}
-          inner="#F5ECFF"
-          stroke={theme.colors.border}
-          strokeWidth={8}
-        />
-      );
-    } else {
-      background = (
-        <GreenDiamond
-          style={[styles.readItemBg, styles.readBgDiamond]}
-          opacity={0.35}
-          fill={theme.colors.success}
-          stroke={theme.colors.border}
-          strokeWidth={8}
-        />
-      );
-    }
+    const colorSet = ITEM_COLORS[idx % ITEM_COLORS.length];
 
     return (
-      <View
-        key={item.id ?? `${content}-${idx}`}
-        style={[
-          styles.listItemWrapper,
-          isEven ? styles.readItemWrapper : styles.readItemWrapperAlt,
-        ]}
-      >
-        <View style={styles.readItemBackground}>{background}</View>
-        <View style={styles.readItemContentWrapper}>
-          <View
-            style={[
-              styles.readItemCard,
-              isEven ? styles.readItemCardPrimary : styles.readItemCardAlt,
-            ]}
-          >
-            <Text style={styles.listItemText}>{content}</Text>
-          </View>
+      <View key={item.id ?? `${content}-${idx}`} style={styles.listItemWrapper}>
+        <View
+          style={[
+            styles.readItemCard,
+            { backgroundColor: colorSet.bg, borderLeftColor: colorSet.border },
+          ]}
+        >
+          <Text style={styles.listItemText}>{content}</Text>
         </View>
       </View>
     );
@@ -295,77 +259,256 @@ const DetailRecipe = ({ route }) => {
     inputStyle,
     inputProps = {},
   }) => {
-    const variant = idx % 3;
-
-    let background = null;
-
-    if (variant === 0) {
-      background = (
-        <WaveMark
-          style={[styles.editItemBg, styles.editBgWave]}
-          opacity={0.2}
-          color={theme.colors.primary}
-          strokeWidth={12}
-        />
-      );
-    } else if (variant === 1) {
-      background = (
-        <PinkTarget
-          style={[styles.editItemBg, styles.editBgTarget]}
-          opacity={0.24}
-          outer={theme.colors.secondary}
-          inner="#F5ECFF"
-          stroke={theme.colors.border}
-          strokeWidth={5}
-        />
-      );
-    } else {
-      background = (
-        <GreenDiamond
-          style={[styles.editItemBg, styles.editBgDiamond]}
-          opacity={0.2}
-          fill={theme.colors.success}
-          stroke={theme.colors.border}
-          strokeWidth={5}
-        />
-      );
-    }
+    const colorSet = ITEM_COLORS[idx % ITEM_COLORS.length];
 
     const composedInputStyle = [
       styles.input,
       styles.inputInsideRow,
+      {
+        borderLeftWidth: 6,
+        borderLeftColor: colorSet.border,
+        backgroundColor: colorSet.bg,
+      },
       ...(Array.isArray(inputStyle) ? inputStyle : [inputStyle]),
     ].filter(Boolean);
 
     return (
       <View key={item.id ?? `edit-${idx}`} style={styles.editItemWrapper}>
-        <View style={styles.editItemBackground}>{background}</View>
-        <View style={styles.editItemContentWrapper}>
-          <View style={styles.inputRow}>
-            <TextInput {...inputProps} style={composedInputStyle} />
-            <View style={styles.inputActions}>
-              {isLast && onAddPress ? (
-                <Pressable
-                  style={[styles.actionButton, styles.addButton]}
-                  onPress={onAddPress}
-                >
-                  <Icon name="add" size={18} color="#FFF" />
-                </Pressable>
-              ) : null}
-              {canRemove && onRemovePress ? (
-                <Pressable
-                  style={[styles.actionButton, styles.removeButton]}
-                  onPress={onRemovePress}
-                >
-                  <Icon name="remove" size={18} color="#FFF" />
-                </Pressable>
-              ) : null}
-            </View>
+        <View style={styles.inputRow}>
+          <TextInput {...inputProps} style={composedInputStyle} />
+          <View style={styles.inputActions}>
+            {isLast && onAddPress ? (
+              <Pressable
+                style={[styles.actionButton, styles.addButton]}
+                onPress={onAddPress}
+              >
+                <Icon name="add" size={18} color="#FFF" />
+              </Pressable>
+            ) : null}
+            {canRemove && onRemovePress ? (
+              <Pressable
+                style={[styles.actionButton, styles.removeButton]}
+                onPress={onRemovePress}
+              >
+                <Icon name="remove" size={18} color="#FFF" />
+              </Pressable>
+            ) : null}
           </View>
         </View>
       </View>
     );
   };
+
+  const BG_ICONS = [
+    {
+      name: "silverware-fork-knife",
+      top: 50,
+      left: 10,
+      size: 34,
+      rotate: "-15deg",
+      color: theme.colors.primary,
+    },
+    {
+      name: "pot-steam",
+      top: 110,
+      right: 20,
+      size: 30,
+      rotate: "10deg",
+      color: theme.colors.secondary,
+    },
+    {
+      name: "food-apple-outline",
+      top: 180,
+      left: 45,
+      size: 28,
+      rotate: "20deg",
+      color: theme.colors.accent,
+    },
+    {
+      name: "chef-hat",
+      top: 250,
+      right: 40,
+      size: 32,
+      rotate: "-8deg",
+      color: theme.colors.success,
+    },
+    {
+      name: "fire",
+      top: 320,
+      left: 12,
+      size: 28,
+      rotate: "12deg",
+      color: theme.colors.accent,
+    },
+    {
+      name: "leaf",
+      top: 390,
+      right: 10,
+      size: 30,
+      rotate: "-20deg",
+      color: theme.colors.success,
+    },
+    {
+      name: "pizza",
+      top: 455,
+      left: 50,
+      size: 32,
+      rotate: "8deg",
+      color: theme.colors.primary,
+    },
+    {
+      name: "food-drumstick-outline",
+      top: 520,
+      right: 30,
+      size: 28,
+      rotate: "-12deg",
+      color: theme.colors.secondary,
+    },
+    {
+      name: "cup-outline",
+      top: 590,
+      left: 18,
+      size: 26,
+      rotate: "18deg",
+      color: theme.colors.primary,
+    },
+    {
+      name: "carrot",
+      top: 660,
+      right: 15,
+      size: 30,
+      rotate: "-10deg",
+      color: theme.colors.success,
+    },
+    {
+      name: "egg-outline",
+      top: 730,
+      left: 40,
+      size: 28,
+      rotate: "15deg",
+      color: theme.colors.accent,
+    },
+    {
+      name: "noodles",
+      top: 800,
+      right: 25,
+      size: 30,
+      rotate: "-18deg",
+      color: theme.colors.secondary,
+    },
+    {
+      name: "fish",
+      top: 870,
+      left: 8,
+      size: 32,
+      rotate: "6deg",
+      color: theme.colors.primary,
+    },
+    {
+      name: "bread-slice-outline",
+      top: 940,
+      right: 35,
+      size: 28,
+      rotate: "-22deg",
+      color: theme.colors.accent,
+    },
+    {
+      name: "cookie-outline",
+      top: 1010,
+      left: 48,
+      size: 28,
+      rotate: "14deg",
+      color: theme.colors.secondary,
+    },
+    {
+      name: "blender-outline",
+      top: 1080,
+      right: 18,
+      size: 30,
+      rotate: "-5deg",
+      color: theme.colors.success,
+    },
+    {
+      name: "silverware-variant",
+      top: 1150,
+      left: 15,
+      size: 30,
+      rotate: "10deg",
+      color: theme.colors.primary,
+    },
+    {
+      name: "food-steak",
+      top: 1220,
+      right: 22,
+      size: 28,
+      rotate: "-14deg",
+      color: theme.colors.accent,
+    },
+    {
+      name: "kettle-outline",
+      top: 1290,
+      left: 42,
+      size: 28,
+      rotate: "8deg",
+      color: theme.colors.secondary,
+    },
+    {
+      name: "fruit-cherries",
+      top: 1360,
+      right: 12,
+      size: 30,
+      rotate: "-10deg",
+      color: theme.colors.success,
+    },
+    {
+      name: "food-croissant",
+      top: 1430,
+      left: 10,
+      size: 32,
+      rotate: "16deg",
+      color: theme.colors.primary,
+    },
+    {
+      name: "mushroom-outline",
+      top: 1500,
+      right: 38,
+      size: 28,
+      rotate: "-18deg",
+      color: theme.colors.accent,
+    },
+    {
+      name: "ice-cream",
+      top: 1570,
+      left: 35,
+      size: 30,
+      rotate: "6deg",
+      color: theme.colors.secondary,
+    },
+    {
+      name: "corn",
+      top: 1640,
+      right: 15,
+      size: 28,
+      rotate: "-12deg",
+      color: theme.colors.success,
+    },
+    {
+      name: "chili-mild-outline",
+      top: 1710,
+      left: 20,
+      size: 30,
+      rotate: "20deg",
+      color: theme.colors.accent,
+    },
+    {
+      name: "pot-mix-outline",
+      top: 1780,
+      right: 28,
+      size: 32,
+      rotate: "-8deg",
+      color: theme.colors.primary,
+    },
+  ];
 
   return (
     <View style={styles.screenRoot}>
@@ -377,316 +520,343 @@ const DetailRecipe = ({ route }) => {
         collapsable={false}
         removeClippedSubviews={false}
       >
-        <StatusBar
-          barStyle="dark-content"
-          backgroundColor="transparent"
-          translucent
-        />
-        <CustomModal
-          visible={modalVisible}
-          onClose={() => setModalVisible(false)}
-          title="Eliminar receta"
-          message="¿Estás seguro de que quieres eliminar esta receta?"
-          icon="warning-outline"
-          iconColor={theme.colors.danger}
-          buttons={[
-            {
-              text: "Cancelar",
-              style: "cancel",
-              onPress: () => setModalVisible(false),
-            },
-            { text: "Eliminar", onPress: handleDelete },
-          ]}
-        />
+        <View style={styles.scrollContent}>
+          <View style={styles.bgIconsLayer} pointerEvents="none">
+            {BG_ICONS.map((ic, i) => (
+              <MaterialCommunityIcons
+                key={`bg-${i}`}
+                name={ic.name}
+                size={ic.size}
+                color={ic.color}
+                style={[
+                  styles.bgIcon,
+                  {
+                    top: ic.top,
+                    left: ic.left,
+                    right: ic.right,
+                    transform: [{ rotate: ic.rotate }],
+                  },
+                ]}
+              />
+            ))}
+          </View>
+          <StatusBar
+            barStyle="dark-content"
+            backgroundColor="transparent"
+            translucent
+          />
+          <CustomModal
+            visible={modalVisible}
+            onClose={() => setModalVisible(false)}
+            title="Eliminar receta"
+            message="¿Estás seguro de que quieres eliminar esta receta?"
+            icon="warning-outline"
+            iconColor={theme.colors.danger}
+            buttons={[
+              {
+                text: "Cancelar",
+                style: "cancel",
+                onPress: () => setModalVisible(false),
+              },
+              { text: "Eliminar", onPress: handleDelete },
+            ]}
+          />
 
-        <CustomModal
-          visible={successModalVisible}
-          onClose={handleSuccessConfirm}
-          title="Receta eliminada"
-          message="La receta se eliminó correctamente"
-          icon="checkmark-circle-outline"
-          iconColor={theme.colors.success}
-          buttons={[{ text: "Aceptar", onPress: handleSuccessConfirm }]}
-        />
+          <CustomModal
+            visible={successModalVisible}
+            onClose={handleSuccessConfirm}
+            title="Receta eliminada"
+            message="La receta se eliminó correctamente"
+            icon="checkmark-circle-outline"
+            iconColor={theme.colors.success}
+            buttons={[{ text: "Aceptar", onPress: handleSuccessConfirm }]}
+          />
 
-        <CustomModal
-          visible={updateModalVisible}
-          onClose={handleUpdateConfirm}
-          title="Receta actualizada"
-          message="La receta se actualizó correctamente"
-          icon="checkmark-circle-outline"
-          iconColor={theme.colors.success}
-          buttons={[{ text: "Aceptar", onPress: handleUpdateConfirm }]}
-        />
-        <View ref={contentRef} collapsable={false}>
-          {recipe && (
-            <View style={styles.imageContainer}>
-              <Image
-                source={{ uri: recipe.image }}
-                style={styles.image}
-                contentFit="cover"
-                transition={200}
-              />
-              <LinearGradient
-                colors={["transparent", "rgba(0,0,0,0.4)"]}
-                style={styles.imageOverlay}
-              />
-              <View style={styles.imageDivider} />
-              {!sharing && (
-                <Pressable style={styles.updateButton} onPress={handleUpdate}>
-                  <View style={styles.iconStack}>
-                    <MaterialCommunityIcons
-                      name="pencil"
-                      size={28}
-                      color={theme.colors.border}
-                      style={styles.iconShadow}
-                    />
-                    <MaterialCommunityIcons
-                      name="pencil"
-                      size={28}
-                      color="#FFFFFF"
-                    />
-                  </View>
-                </Pressable>
-              )}
-              {!sharing && (
-                <Pressable style={styles.button} onPress={showAlert}>
-                  <View style={styles.iconStack}>
-                    <MaterialCommunityIcons
-                      name="delete"
-                      size={28}
-                      color={theme.colors.border}
-                      style={styles.iconShadow}
-                    />
-                    <MaterialCommunityIcons
-                      name="delete"
-                      size={28}
-                      color="#FFFFFF"
-                    />
-                  </View>
-                </Pressable>
-              )}
-              {!isEditing && !sharing && (
-                <Pressable
-                  style={styles.shareButton}
-                  onPress={handleShare}
-                  disabled={sharing}
-                  activeOpacity={0.8}
-                >
-                  <View style={styles.iconStack}>
-                    <MaterialCommunityIcons
-                      name="share-variant"
-                      size={28}
-                      color={theme.colors.border}
-                      style={styles.iconShadow}
-                    />
-                    <MaterialCommunityIcons
-                      name="share-variant"
-                      size={28}
-                      color="#FFFFFF"
-                    />
-                  </View>
-                </Pressable>
-              )}
-            </View>
-          )}
-          {isEditing && updatedRecipe ? (
-            <>
-              <Text style={styles.label}>Nombre</Text>
-              <TextInput
-                style={styles.input}
-                value={updatedRecipe.name || ""}
-                onChangeText={(text) =>
-                  setUpdatedRecipe({ ...updatedRecipe, name: text })
-                }
-              />
-              <Text style={styles.label}>Categoría</Text>
-              {recipe && (
-                <Text style={styles.categoryText}>{recipe.category}</Text>
-              )}
-              <Text style={styles.label}>Tiempo (min)</Text>
-              <TextInput
-                style={styles.input}
-                value={updatedRecipe.time ? updatedRecipe.time.toString() : "0"}
-                onChangeText={(text) =>
-                  setUpdatedRecipe({
-                    ...updatedRecipe,
-                    time: Number.parseInt(text, 10) || 0,
-                  })
-                }
-                keyboardType="numeric"
-                autoCorrect={false}
-                autoCapitalize="none"
-              />
-              <Text style={styles.label}>Imagen (URL)</Text>
-              <TextInput
-                style={[styles.input, styles.imageUrlInput]}
-                value={updatedRecipe.image || ""}
-                onChangeText={(text) =>
-                  setUpdatedRecipe({ ...updatedRecipe, image: text.trim() })
-                }
-                autoCorrect={false}
-                autoCapitalize="none"
-                keyboardType="url"
-                textContentType="URL"
-                selectTextOnFocus
-                multiline
-                numberOfLines={3}
-                scrollEnabled={false}
-                placeholder="https://ejemplo.com/imagen.jpg"
-              />
-              <Text style={styles.label}>Personas</Text>
-              <TextInput
-                style={styles.input}
-                value={
-                  updatedRecipe.people ? updatedRecipe.people.toString() : "1"
-                }
-                onChangeText={(text) =>
-                  setUpdatedRecipe({
-                    ...updatedRecipe,
-                    people: Number.parseInt(text, 10) || 1,
-                  })
-                }
-                keyboardType="numeric"
-                autoCorrect={false}
-                autoCapitalize="none"
-              />
-              <Text style={styles.label}>Ingredientes</Text>
-              {updatedRecipe?.ingredients?.map((ingredient, idx) =>
-                renderEditableInputRow({
-                  item: ingredient,
-                  idx,
-                  isLast:
-                    ingredient.id ===
-                    updatedRecipe?.ingredients[
-                      updatedRecipe.ingredients.length - 1
-                    ]?.id,
-                  canRemove:
-                    (updatedRecipe?.ingredients?.length ?? 0) > 1 &&
-                    ingredient.id !==
+          <CustomModal
+            visible={updateModalVisible}
+            onClose={handleUpdateConfirm}
+            title="Receta actualizada"
+            message="La receta se actualizó correctamente"
+            icon="checkmark-circle-outline"
+            iconColor={theme.colors.success}
+            buttons={[{ text: "Aceptar", onPress: handleUpdateConfirm }]}
+          />
+          <View ref={contentRef} collapsable={false}>
+            {recipe && (
+              <View style={styles.imageContainer}>
+                <Image
+                  source={{ uri: recipe.image }}
+                  style={styles.image}
+                  contentFit="cover"
+                  transition={200}
+                />
+                <LinearGradient
+                  colors={["transparent", "rgba(0,0,0,0.4)"]}
+                  style={styles.imageOverlay}
+                />
+                <View style={styles.imageDivider} />
+                {!sharing && (
+                  <Pressable style={styles.updateButton} onPress={handleUpdate}>
+                    <View style={styles.iconStack}>
+                      <MaterialCommunityIcons
+                        name="pencil"
+                        size={28}
+                        color={theme.colors.border}
+                        style={styles.iconShadow}
+                      />
+                      <MaterialCommunityIcons
+                        name="pencil"
+                        size={28}
+                        color="#FFFFFF"
+                      />
+                    </View>
+                  </Pressable>
+                )}
+                {!sharing && (
+                  <Pressable style={styles.button} onPress={showAlert}>
+                    <View style={styles.iconStack}>
+                      <MaterialCommunityIcons
+                        name="delete"
+                        size={28}
+                        color={theme.colors.border}
+                        style={styles.iconShadow}
+                      />
+                      <MaterialCommunityIcons
+                        name="delete"
+                        size={28}
+                        color="#FFFFFF"
+                      />
+                    </View>
+                  </Pressable>
+                )}
+                {!isEditing && !sharing && (
+                  <Pressable
+                    style={styles.shareButton}
+                    onPress={handleShare}
+                    disabled={sharing}
+                    activeOpacity={0.8}
+                  >
+                    <View style={styles.iconStack}>
+                      <MaterialCommunityIcons
+                        name="share-variant"
+                        size={28}
+                        color={theme.colors.border}
+                        style={styles.iconShadow}
+                      />
+                      <MaterialCommunityIcons
+                        name="share-variant"
+                        size={28}
+                        color="#FFFFFF"
+                      />
+                    </View>
+                  </Pressable>
+                )}
+              </View>
+            )}
+            {isEditing && updatedRecipe ? (
+              <>
+                <Text style={styles.label}>Nombre</Text>
+                <TextInput
+                  style={styles.input}
+                  value={updatedRecipe.name || ""}
+                  onChangeText={(text) =>
+                    setUpdatedRecipe({ ...updatedRecipe, name: text })
+                  }
+                />
+                <Text style={styles.label}>Categoría</Text>
+                {recipe && (
+                  <Text style={styles.categoryText}>{recipe.category}</Text>
+                )}
+                <Text style={styles.label}>Tiempo (min)</Text>
+                <TextInput
+                  style={styles.input}
+                  value={
+                    updatedRecipe.time ? updatedRecipe.time.toString() : "0"
+                  }
+                  onChangeText={(text) =>
+                    setUpdatedRecipe({
+                      ...updatedRecipe,
+                      time: Number.parseInt(text, 10) || 0,
+                    })
+                  }
+                  keyboardType="numeric"
+                  autoCorrect={false}
+                  autoCapitalize="none"
+                />
+                <Text style={styles.label}>Imagen (URL)</Text>
+                <TextInput
+                  style={[styles.input, styles.imageUrlInput]}
+                  value={updatedRecipe.image || ""}
+                  onChangeText={(text) =>
+                    setUpdatedRecipe({ ...updatedRecipe, image: text.trim() })
+                  }
+                  autoCorrect={false}
+                  autoCapitalize="none"
+                  keyboardType="url"
+                  textContentType="URL"
+                  selectTextOnFocus
+                  multiline
+                  numberOfLines={3}
+                  scrollEnabled={false}
+                  placeholder="https://ejemplo.com/imagen.jpg"
+                />
+                <Text style={styles.label}>Personas</Text>
+                <TextInput
+                  style={styles.input}
+                  value={
+                    updatedRecipe.people ? updatedRecipe.people.toString() : "1"
+                  }
+                  onChangeText={(text) =>
+                    setUpdatedRecipe({
+                      ...updatedRecipe,
+                      people: Number.parseInt(text, 10) || 1,
+                    })
+                  }
+                  keyboardType="numeric"
+                  autoCorrect={false}
+                  autoCapitalize="none"
+                />
+                <Text style={styles.label}>Ingredientes</Text>
+                {updatedRecipe?.ingredients?.map((ingredient, idx) =>
+                  renderEditableInputRow({
+                    item: ingredient,
+                    idx,
+                    isLast:
+                      ingredient.id ===
                       updatedRecipe?.ingredients[
                         updatedRecipe.ingredients.length - 1
                       ]?.id,
-                  onAddPress: () => addInput("ingredients"),
-                  onRemovePress: () =>
-                    removeInput("ingredients", ingredient.id),
-                  inputProps: {
-                    value: ingredient.text,
-                    onChangeText: (text) =>
-                      handleIngredientChange(text, ingredient.id),
-                    multiline: true,
-                    textAlignVertical: "top",
-                    onContentSizeChange: (e) =>
-                      handleContentSizeChange(
-                        ingredient.id,
-                        e.nativeEvent.contentSize.height + 20,
-                      ),
-                  },
-                  inputStyle: {
-                    height: Math.max(50, inputHeights[ingredient.id] || 50),
-                  },
-                }),
-              )}
-              <Text style={styles.label}>Preparación</Text>
-              {updatedRecipe?.preparation?.map((step, idx) =>
-                renderEditableInputRow({
-                  item: step,
-                  idx,
-                  isLast:
-                    step.id ===
-                    updatedRecipe?.preparation[
-                      updatedRecipe.preparation.length - 1
-                    ]?.id,
-                  canRemove:
-                    (updatedRecipe?.preparation?.length ?? 0) > 1 &&
-                    step.id !==
+                    canRemove:
+                      (updatedRecipe?.ingredients?.length ?? 0) > 1 &&
+                      ingredient.id !==
+                        updatedRecipe?.ingredients[
+                          updatedRecipe.ingredients.length - 1
+                        ]?.id,
+                    onAddPress: () => addInput("ingredients"),
+                    onRemovePress: () =>
+                      removeInput("ingredients", ingredient.id),
+                    inputProps: {
+                      value: ingredient.text,
+                      onChangeText: (text) =>
+                        handleIngredientChange(text, ingredient.id),
+                      multiline: true,
+                      textAlignVertical: "top",
+                      onContentSizeChange: (e) =>
+                        handleContentSizeChange(
+                          ingredient.id,
+                          e.nativeEvent.contentSize.height + 20,
+                        ),
+                    },
+                    inputStyle: {
+                      height: Math.max(50, inputHeights[ingredient.id] || 50),
+                    },
+                  }),
+                )}
+                <Text style={styles.label}>Preparación</Text>
+                {updatedRecipe?.preparation?.map((step, idx) =>
+                  renderEditableInputRow({
+                    item: step,
+                    idx,
+                    isLast:
+                      step.id ===
                       updatedRecipe?.preparation[
                         updatedRecipe.preparation.length - 1
                       ]?.id,
-                  onAddPress: () => addInput("preparation"),
-                  onRemovePress: () => removeInput("preparation", step.id),
-                  inputProps: {
-                    value: step.text,
-                    onChangeText: (text) =>
-                      handlePreparationChange(text, step.id),
-                    multiline: true,
-                    textAlignVertical: "top",
-                    onContentSizeChange: (e) =>
-                      handleContentSizeChange(
-                        step.id,
-                        e.nativeEvent.contentSize.height + 20,
-                      ),
-                    blurOnSubmit: true,
-                    onSubmitEditing: () => {},
-                  },
-                  inputStyle: [
-                    styles.preparationInput,
-                    { height: Math.max(50, inputHeights[step.id] || 50) },
-                  ],
-                }),
-              )}
-              <Pressable style={styles.saveButton} onPress={handleSave}>
-                <Text style={styles.buttonText}>Guardar</Text>
-              </Pressable>
-            </>
-          ) : (
-            recipe && (
-              <>
-                <Text style={styles.title}>{recipe.name}</Text>
-                <View style={styles.metaRow}>
-                  <View style={[styles.metaCard, styles.metaPrimary]}>
-                    <Ionicons
-                      name="time-outline"
-                      size={20}
-                      color={theme.colors.ink}
-                    />
-                    <Text style={styles.metaText}>{recipe.time} min</Text>
-                  </View>
-                  <View style={[styles.metaCard, styles.metaSuccess]}>
-                    <MaterialCommunityIcons
-                      name="account-group-outline"
-                      size={20}
-                      color={theme.colors.ink}
-                    />
-                    <Text style={styles.metaText}>{recipe.people} pers.</Text>
-                  </View>
-                  {!!recipe.category && (
-                    <View style={[styles.metaCard, styles.metaAccent]}>
-                      <MaterialCommunityIcons
-                        name="tag-outline"
+                    canRemove:
+                      (updatedRecipe?.preparation?.length ?? 0) > 1 &&
+                      step.id !==
+                        updatedRecipe?.preparation[
+                          updatedRecipe.preparation.length - 1
+                        ]?.id,
+                    onAddPress: () => addInput("preparation"),
+                    onRemovePress: () => removeInput("preparation", step.id),
+                    inputProps: {
+                      value: step.text,
+                      onChangeText: (text) =>
+                        handlePreparationChange(text, step.id),
+                      multiline: true,
+                      textAlignVertical: "top",
+                      onContentSizeChange: (e) =>
+                        handleContentSizeChange(
+                          step.id,
+                          e.nativeEvent.contentSize.height + 20,
+                        ),
+                      blurOnSubmit: true,
+                      onSubmitEditing: () => {},
+                    },
+                    inputStyle: [
+                      styles.preparationInput,
+                      { height: Math.max(50, inputHeights[step.id] || 50) },
+                    ],
+                  }),
+                )}
+                <Pressable style={styles.saveButton} onPress={handleSave}>
+                  <Text style={styles.buttonText}>Guardar</Text>
+                </Pressable>
+              </>
+            ) : (
+              recipe && (
+                <>
+                  <Text style={styles.title}>{recipe.name}</Text>
+                  <View style={styles.metaRow}>
+                    <View style={[styles.metaCard, styles.metaPrimary]}>
+                      <Ionicons
+                        name="time-outline"
                         size={20}
                         color={theme.colors.ink}
                       />
-                      <Text style={styles.metaText} numberOfLines={1}>
-                        {recipe.category}
-                      </Text>
+                      <Text style={styles.metaText}>{recipe.time} min</Text>
                     </View>
+                    <View style={[styles.metaCard, styles.metaSuccess]}>
+                      <MaterialCommunityIcons
+                        name="account-group-outline"
+                        size={20}
+                        color={theme.colors.ink}
+                      />
+                      <Text style={styles.metaText}>{recipe.people} pers.</Text>
+                    </View>
+                    {!!recipe.category && (
+                      <View style={[styles.metaCard, styles.metaAccent]}>
+                        <MaterialCommunityIcons
+                          name="tag-outline"
+                          size={20}
+                          color={theme.colors.ink}
+                        />
+                        <Text style={styles.metaText} numberOfLines={1}>
+                          {recipe.category}
+                        </Text>
+                      </View>
+                    )}
+                  </View>
+                </>
+              )
+            )}
+            {recipe && (
+              <>
+                <Text style={styles.titleIngredientsInstructions}>
+                  Ingredientes:
+                </Text>
+                <View style={styles.containerIngredientsInstructions}>
+                  {recipe.ingredients?.map((ingredient, idx) =>
+                    renderDecoratedItem(
+                      ingredient,
+                      idx,
+                      `· ${ingredient.text}`,
+                    ),
+                  )}
+                </View>
+                <View style={styles.sectionDivider} />
+                <Text style={styles.titleIngredientsInstructions}>
+                  Preparación:
+                </Text>
+                <View style={styles.containerIngredientsInstructions}>
+                  {recipe.preparation?.map((step, idx) =>
+                    renderDecoratedItem(step, idx, `${idx + 1}. ${step.text}`),
                   )}
                 </View>
               </>
-            )
-          )}
-          {recipe && (
-            <>
-              <Text style={styles.titleIngredientsInstructions}>
-                Ingredientes:
-              </Text>
-              <View style={styles.containerIngredientsInstructions}>
-                {recipe.ingredients?.map((ingredient, idx) =>
-                  renderDecoratedItem(ingredient, idx, `· ${ingredient.text}`),
-                )}
-              </View>
-              <View style={styles.sectionDivider} />
-              <Text style={styles.titleIngredientsInstructions}>
-                Preparación:
-              </Text>
-              <View style={styles.containerIngredientsInstructions}>
-                {recipe.preparation?.map((step, idx) =>
-                  renderDecoratedItem(step, idx, `${idx + 1}. ${step.text}`),
-                )}
-              </View>
-            </>
-          )}
+            )}
+          </View>
         </View>
       </ScrollView>
     </View>
@@ -698,10 +868,28 @@ export default DetailRecipe;
 const styles = StyleSheet.create({
   screenRoot: {
     flex: 1,
+    backgroundColor: theme.colors.background,
+  },
+  scrollContent: {
+    position: "relative",
+    minHeight: 2000,
+  },
+  bgIconsLayer: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 2200,
+    zIndex: 0,
+    overflow: "hidden",
+  },
+  bgIcon: {
+    position: "absolute",
+    opacity: 0.15,
   },
   container: {
     flexGrow: 1,
-    backgroundColor: theme.colors.background,
+    backgroundColor: "transparent",
     paddingTop: 20,
     paddingHorizontal: 16,
   },
@@ -795,15 +983,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     backgroundColor: theme.colors.secondary,
     ...outline({ width: 3 }),
-    ...hardShadow({ x: 3, y: 3, elevation: 6 }),
+    ...hardShadow({ x: 3, y: 3, elevation: 12 }),
     textAlign: "left",
     letterSpacing: 0.8,
     textTransform: "uppercase",
+    position: "relative",
+    zIndex: 10,
   },
   containerIngredientsInstructions: {
     paddingHorizontal: 10,
     marginBottom: 25,
     width: "100%",
+    overflow: "hidden",
   },
   sectionDivider: {
     width: "100%",
@@ -884,114 +1075,23 @@ const styles = StyleSheet.create({
     position: "relative",
     zIndex: 1,
   },
-  readItemWrapper: {
-    position: "relative",
-    width: "100%",
-    paddingVertical: 6,
-    paddingHorizontal: 10,
-    marginBottom: 6,
-  },
-  readItemWrapperAlt: {
-    position: "relative",
-    width: "100%",
-    paddingVertical: 8,
-    paddingHorizontal: 8,
-    marginBottom: 6,
-  },
-  readItemBg: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    zIndex: 0,
-  },
-  readItemBackground: {
-    ...StyleSheet.absoluteFillObject,
-    zIndex: 0,
-  },
-  readItemContentWrapper: {
-    position: "relative",
-    zIndex: 1,
-  },
-  readBgWave: {
-    transform: [
-      { translateX: -20 },
-      { translateY: -35 },
-      { scale: 1.05 },
-      { rotate: "-12deg" },
-    ],
-  },
-  readBgTarget: {
-    transform: [{ translateX: 30 }, { translateY: -40 }, { scale: 0.85 }],
-  },
-  readBgDiamond: {
-    transform: [
-      { translateX: -25 },
-      { translateY: -30 },
-      { scale: 1.0 },
-      { rotate: "-15deg" },
-    ],
-  },
   readItemCard: {
     position: "relative",
-    paddingVertical: 10,
-    paddingHorizontal: 14,
+    overflow: "hidden",
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    paddingLeft: 20,
     borderRadius: 0,
-    borderLeftWidth: 12,
+    borderLeftWidth: 8,
     borderLeftColor: theme.colors.border,
     ...outline({ width: 3 }),
-    ...hardShadow({ x: 5, y: 5, elevation: 8 }),
-  },
-  readItemCardPrimary: {
-    backgroundColor: theme.colors.surface,
-  },
-  readItemCardAlt: {
-    backgroundColor: "#F8F8F8",
+    ...hardShadow({ x: 4, y: 4, elevation: 8 }),
+    marginBottom: 10,
   },
   editItemWrapper: {
-    position: "relative",
     width: "100%",
     marginBottom: 14,
-    paddingTop: 8,
-    paddingBottom: 8,
-    paddingLeft: 10,
-    paddingRight: 10,
-  },
-  editItemBg: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    zIndex: 0,
-  },
-  editItemBackground: {
-    ...StyleSheet.absoluteFillObject,
-    zIndex: 0,
-  },
-  editItemContentWrapper: {
-    position: "relative",
-    zIndex: 1,
-  },
-  editBgWave: {
-    transform: [
-      { translateX: -8 },
-      { translateY: -10 },
-      { scale: 1.05 },
-      { rotate: "-6deg" },
-    ],
-  },
-  editBgTarget: {
-    transform: [{ translateX: 24 }, { translateY: -18 }, { scale: 0.8 }],
-  },
-  editBgDiamond: {
-    transform: [
-      { translateX: -20 },
-      { translateY: -12 },
-      { scale: 0.95 },
-      { rotate: "-15deg" },
-    ],
+    paddingHorizontal: 10,
   },
   inputActions: {
     flexDirection: "row",
