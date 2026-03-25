@@ -1,12 +1,11 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useState } from "react";
-import { Dimensions, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, useWindowDimensions, View } from "react-native";
 import * as Animatable from "react-native-animatable";
 
 import splashImage from "../assets/splash_image.png";
 import { hardShadow, outline, theme } from "../utils/theme";
 
-const { width, height } = Dimensions.get("window");
 const LETTER_DELAY = 55;
 
 // Definimos animaciones personalizadas (neobrutalistas)
@@ -126,10 +125,17 @@ const SplashScreen = () => {
   const [letters, setLetters] = useState([]);
   const [containerW, setContainerW] = useState(0);
   const [contentW, setContentW] = useState(0);
+  const { width, height } = useWindowDimensions();
   const scale =
     containerW > 0 && contentW > 0
       ? Math.min(1, (containerW - 8) / contentW)
       : 1;
+  const topOffset = Math.max(height * 0.12, 56);
+  const imageWidth = Math.min(width * 0.88, 430);
+  const imageHeight = Math.min(height * 0.48, 430);
+  const textWidth = Math.min(width - 24, 520);
+  const badgeOffset = Math.max(height * 0.055, 28);
+  const titleOffsetX = width <= 390 ? 6 : 0;
 
   // Fuente Mario: usaremos "New Super Mario Font U".
   // Para que funcione, coloca `assets/fonts/NewSuperMarioFontU.ttf` y cárgala con Expo (expo-font).
@@ -164,30 +170,47 @@ const SplashScreen = () => {
   return (
     <LinearGradient
       colors={[theme.colors.background, theme.colors.surfaceAlt]}
-      style={styles.container}
+      style={[
+        styles.container,
+        { paddingTop: topOffset, paddingHorizontal: 12 },
+      ]}
     >
       <Animatable.Image
         source={splashImage}
-        style={styles.image}
+        style={[
+          styles.image,
+          {
+            width: imageWidth,
+            height: imageHeight,
+          },
+        ]}
         animation="brutalBounce"
         useNativeDriver
         duration={1800}
       />
       <Animatable.View
-        style={styles.textContainer}
+        style={[
+          styles.textContainer,
+          {
+            width: textWidth,
+          },
+        ]}
         animation="slideUpSnap"
         delay={200}
         duration={700}
         useNativeDriver
         onLayout={(e) => {
-          if (containerW === 0) setContainerW(e.nativeEvent.layout.width);
+          setContainerW(e.nativeEvent.layout.width);
         }}
       >
         <View
           onLayout={(e) => {
-            if (contentW === 0) setContentW(e.nativeEvent.layout.width);
+            setContentW(e.nativeEvent.layout.width);
           }}
-          style={[styles.contentRow, { transform: [{ scale }] }]}
+          style={[
+            styles.contentRow,
+            { transform: [{ scale }, { translateX: titleOffsetX }] },
+          ]}
         >
           {letters.map((letterObj, idx) => (
             <AnimatedLetter
@@ -206,7 +229,7 @@ const SplashScreen = () => {
           delay={letters.length * LETTER_DELAY + 200}
           duration={650}
           useNativeDriver
-          style={styles.versionBadge}
+          style={[styles.versionBadge, { marginTop: badgeOffset }]}
         >
           <View style={styles.textStack}>
             <Text
@@ -276,28 +299,27 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     alignItems: "center",
     backgroundColor: "transparent",
-    paddingTop: height * 0.15,
   },
   image: {
-    width: width * 0.9,
-    height: height * 0.55,
     resizeMode: "contain",
     marginBottom: -50,
+    alignSelf: "center",
   },
   textContainer: {
     flexDirection: "column",
     flexWrap: "nowrap",
     justifyContent: "center",
     alignItems: "center",
-    width: width * 0.95,
     paddingHorizontal: 5,
     overflow: "visible",
+    alignSelf: "center",
   },
   contentRow: {
     flexDirection: "row",
     flexWrap: "nowrap",
     alignItems: "center",
     justifyContent: "center",
+    alignSelf: "center",
   },
   textStack: {
     position: "relative",
@@ -336,7 +358,6 @@ const styles = StyleSheet.create({
     opacity: 0.8,
   },
   versionBadge: {
-    marginTop: height * 0.1,
     alignSelf: "center",
     paddingHorizontal: 12,
     paddingVertical: 4,

@@ -3,7 +3,7 @@ import { useNavigation } from "@react-navigation/native";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Sharing from "expo-sharing";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Alert,
   Pressable,
@@ -22,6 +22,10 @@ import CustomModal from "../components/CustomModal";
 import { deleteRecipe, getRecipe, updateRecipe } from "../data/api";
 import { hardShadow, outline, theme } from "../utils/theme";
 
+const SHARE_CARD_LAYOUT_WIDTH = 720;
+const SHARE_CARD_CAPTURE_WIDTH = 1080;
+const SHARE_INGREDIENTS_LIMIT = 8;
+
 const DetailRecipe = ({ route }) => {
   const { id } = route.params;
   const navigation = useNavigation();
@@ -34,7 +38,70 @@ const DetailRecipe = ({ route }) => {
   const [updateModalVisible, setUpdateModalVisible] = useState(false);
   const [sharing, setSharing] = useState(false);
   const scrollRef = useRef(null);
-  const contentRef = useRef(null);
+  const shareCardRef = useRef(null);
+
+  const shareIngredients = useMemo(
+    () =>
+      (recipe?.ingredients ?? [])
+        .map((item) => (typeof item === "string" ? item : item?.text))
+        .filter(Boolean),
+    [recipe],
+  );
+
+  const sharePreparation = useMemo(
+    () =>
+      (recipe?.preparation ?? [])
+        .map((item) => (typeof item === "string" ? item : item?.text))
+        .filter(Boolean),
+    [recipe],
+  );
+
+  const shareIngredientsPreview = useMemo(
+    () => shareIngredients.slice(0, SHARE_INGREDIENTS_LIMIT),
+    [shareIngredients],
+  );
+
+  const extraIngredientsCount = Math.max(
+    0,
+    shareIngredients.length - shareIngredientsPreview.length,
+  );
+
+  const shareMetaItems = useMemo(
+    () =>
+      [
+        recipe?.time
+          ? {
+              key: "time",
+              family: "ionicons",
+              icon: "time-outline",
+              value: `${recipe.time} min`,
+              backgroundColor: "#FFF9E6",
+              borderColor: theme.colors.primary,
+            }
+          : null,
+        recipe?.people
+          ? {
+              key: "people",
+              family: "material",
+              icon: "account-group-outline",
+              value: `${recipe.people} pers.`,
+              backgroundColor: "#EAFAF1",
+              borderColor: theme.colors.success,
+            }
+          : null,
+        recipe?.category
+          ? {
+              key: "category",
+              family: "material",
+              icon: "tag-outline",
+              value: recipe.category,
+              backgroundColor: "#FFF0F0",
+              borderColor: theme.colors.accent,
+            }
+          : null,
+      ].filter(Boolean),
+    [recipe],
+  );
 
   // Generador de ID único
   const generateUniqueId = useCallback(
@@ -172,11 +239,17 @@ const DetailRecipe = ({ route }) => {
       }
 
       setSharing(true);
-      const uri = await captureRef(contentRef.current, {
+
+      if (!shareCardRef.current) {
+        throw new Error("Share card not ready");
+      }
+
+      const uri = await captureRef(shareCardRef.current, {
         format: "png",
         quality: 1,
         result: "tmpfile",
         backgroundColor: "#FFFFFF",
+        width: SHARE_CARD_CAPTURE_WIDTH,
       });
 
       await Sharing.shareAsync(uri, {
@@ -581,7 +654,7 @@ const DetailRecipe = ({ route }) => {
             iconColor={theme.colors.success}
             buttons={[{ text: "Aceptar", onPress: handleUpdateConfirm }]}
           />
-          <View ref={contentRef} collapsable={false}>
+          <View collapsable={false}>
             {recipe && (
               <View style={styles.imageContainer}>
                 <Image
@@ -859,6 +932,128 @@ const DetailRecipe = ({ route }) => {
           </View>
         </View>
       </ScrollView>
+      {recipe ? (
+        <View style={styles.shareCaptureHost} pointerEvents="none">
+          <View ref={shareCardRef} collapsable={false} style={styles.shareCard}>
+            <View style={styles.shareHero}>
+              {recipe.image ? (
+                <Image
+                  source={{ uri: recipe.image }}
+                  style={styles.shareHeroImage}
+                  contentFit="cover"
+                  transition={0}
+                />
+              ) : (
+                <View style={styles.shareHeroPlaceholder} />
+              )}
+              <LinearGradient
+                colors={["transparent", "rgba(0,0,0,0.58)"]}
+                style={styles.shareHeroOverlay}
+              />
+              {recipe.category ? (
+                <View style={styles.shareCategoryBadge}>
+                  <Text style={styles.shareCategoryText} numberOfLines={1}>
+                    {recipe.category}
+                  </Text>
+                </View>
+              ) : null}
+              <View style={styles.shareTitleWrap}>
+                <Text style={styles.shareTitleText} numberOfLines={2}>
+                  {recipe.name}
+                </Text>
+              </View>
+            </View>
+
+            <View style={styles.shareContent}>
+              <View style={styles.shareMetaRow}>
+                {shareMetaItems.map((item) => (
+                  <View
+                    key={item.key}
+                    style={[
+                      styles.shareMetaCard,
+                      {
+                        backgroundColor: item.backgroundColor,
+                        borderLeftColor: item.borderColor,
+                      },
+                    ]}
+                  >
+                    {item.family === "ionicons" ? (
+                      <Ionicons
+                        name={item.icon}
+                        size={20}
+                        color={theme.colors.ink}
+                      />
+                    ) : (
+                      <MaterialCommunityIcons
+                        name={item.icon}
+                        size={20}
+                        color={theme.colors.ink}
+                      />
+                    )}
+                    <Text style={styles.shareMetaText} numberOfLines={1}>
+                      {item.value}
+                    </Text>
+                  </View>
+                ))}
+              </View>
+
+              <View style={styles.shareSectionsRow}>
+                <View style={styles.shareSectionColumn}>
+                  <View style={styles.shareSectionHeader}>
+                    <Text style={styles.shareSectionHeaderText}>
+                      Ingredientes
+                    </Text>
+                  </View>
+                  <View style={styles.shareSectionCard}>
+                    {shareIngredientsPreview.map((ingredient, idx) => (
+                      <Text
+                        key={`share-ingredient-${idx}`}
+                        style={styles.shareSectionItem}
+                      >
+                        {`· ${ingredient}`}
+                      </Text>
+                    ))}
+                    {extraIngredientsCount > 0 ? (
+                      <Text style={styles.shareOverflowText}>
+                        {`+ ${extraIngredientsCount} más`}
+                      </Text>
+                    ) : null}
+                  </View>
+                </View>
+
+                <View style={styles.shareSectionSpacer} />
+
+                <View style={styles.shareSectionColumn}>
+                  <View
+                    style={[
+                      styles.shareSectionHeader,
+                      styles.shareSectionHeaderAlt,
+                    ]}
+                  >
+                    <Text style={styles.shareSectionHeaderText}>
+                      Preparación
+                    </Text>
+                  </View>
+                  <View style={styles.shareSectionCard}>
+                    {sharePreparation.map((step, idx) => (
+                      <Text
+                        key={`share-step-${idx}`}
+                        style={styles.shareSectionItem}
+                      >
+                        {`${idx + 1}. ${step}`}
+                      </Text>
+                    ))}
+                  </View>
+                </View>
+              </View>
+
+              <View style={styles.shareFooter}>
+                <Text style={styles.shareFooterText}>Que comemos hoy</Text>
+              </View>
+            </View>
+          </View>
+        </View>
+      ) : null}
     </View>
   );
 };
@@ -872,14 +1067,13 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     position: "relative",
-    minHeight: 2000,
   },
   bgIconsLayer: {
     position: "absolute",
     top: 0,
     left: 0,
     right: 0,
-    height: 2200,
+    bottom: 0,
     zIndex: 0,
     overflow: "hidden",
   },
@@ -1337,5 +1531,164 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     ...outline({ width: 3 }),
     ...hardShadow({ x: 4, y: 4, elevation: 8 }),
+  },
+  shareCaptureHost: {
+    position: "absolute",
+    left: -10000,
+    top: 0,
+    width: SHARE_CARD_LAYOUT_WIDTH,
+  },
+  shareCard: {
+    width: SHARE_CARD_LAYOUT_WIDTH,
+    backgroundColor: theme.colors.surface,
+    overflow: "hidden",
+    ...outline({ width: 4 }),
+    ...hardShadow({ x: 6, y: 6, elevation: 12 }),
+  },
+  shareHero: {
+    width: "100%",
+    height: 300,
+    position: "relative",
+    backgroundColor: theme.colors.surfaceElevated,
+  },
+  shareHeroImage: {
+    width: "100%",
+    height: "100%",
+  },
+  shareHeroPlaceholder: {
+    width: "100%",
+    height: "100%",
+    backgroundColor: theme.colors.surfaceElevated,
+  },
+  shareHeroOverlay: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: "58%",
+  },
+  shareCategoryBadge: {
+    position: "absolute",
+    top: 22,
+    left: 22,
+    backgroundColor: theme.colors.secondary,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    maxWidth: "72%",
+    ...outline({ width: 3 }),
+    ...hardShadow({ x: 3, y: 3, elevation: 6 }),
+  },
+  shareCategoryText: {
+    color: "#FFFFFF",
+    fontFamily: theme.fonts.bold,
+    fontSize: 15,
+    textTransform: "uppercase",
+    letterSpacing: 0.8,
+  },
+  shareTitleWrap: {
+    position: "absolute",
+    left: 24,
+    right: 24,
+    bottom: 24,
+  },
+  shareTitleText: {
+    color: "#FFFFFF",
+    fontFamily: theme.fonts.extrabold,
+    fontSize: 36,
+    lineHeight: 42,
+    textShadowColor: "rgba(0,0,0,0.75)",
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 0,
+  },
+  shareContent: {
+    paddingHorizontal: 22,
+    paddingTop: 22,
+    paddingBottom: 26,
+    backgroundColor: theme.colors.background,
+  },
+  shareMetaRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    marginBottom: 18,
+  },
+  shareMetaCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    marginRight: 12,
+    marginBottom: 12,
+    borderLeftWidth: 8,
+    ...outline({ width: 3 }),
+  },
+  shareMetaText: {
+    marginLeft: 8,
+    color: theme.colors.ink,
+    fontFamily: theme.fonts.bold,
+    fontSize: 15,
+    maxWidth: 180,
+  },
+  shareSectionsRow: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+  },
+  shareSectionColumn: {
+    flex: 1,
+  },
+  shareSectionSpacer: {
+    width: 16,
+  },
+  shareSectionHeader: {
+    backgroundColor: theme.colors.secondary,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    ...outline({ width: 3 }),
+    ...hardShadow({ x: 3, y: 3, elevation: 6 }),
+    marginBottom: 12,
+  },
+  shareSectionHeaderAlt: {
+    backgroundColor: theme.colors.success,
+  },
+  shareSectionHeaderText: {
+    color: "#FFFFFF",
+    fontFamily: theme.fonts.bold,
+    fontSize: 18,
+    textTransform: "uppercase",
+    letterSpacing: 0.8,
+  },
+  shareSectionCard: {
+    minHeight: 220,
+    backgroundColor: theme.colors.surface,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    ...outline({ width: 3 }),
+    ...hardShadow({ x: 4, y: 4, elevation: 8 }),
+  },
+  shareSectionItem: {
+    color: theme.colors.ink,
+    fontFamily: theme.fonts.regular,
+    fontSize: 17,
+    lineHeight: 24,
+    marginBottom: 10,
+  },
+  shareOverflowText: {
+    marginTop: 4,
+    color: theme.colors.textMuted,
+    fontFamily: theme.fonts.bold,
+    fontSize: 15,
+  },
+  shareFooter: {
+    marginTop: 20,
+    alignItems: "center",
+    paddingTop: 18,
+    borderTopWidth: 3,
+    borderTopColor: theme.colors.border,
+  },
+  shareFooterText: {
+    color: theme.colors.ink,
+    fontFamily: theme.fonts.bold,
+    fontSize: 16,
+    textTransform: "uppercase",
+    letterSpacing: 1,
   },
 });

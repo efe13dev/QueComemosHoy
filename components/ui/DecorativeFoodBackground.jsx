@@ -25,7 +25,7 @@ const decorativeItems = [
     rotation: -15,
   },
   {
-    icon: "food-carrot",
+    icon: "carrot",
     size: 30,
     color: neoColors.orange,
     top: "12%",
@@ -57,7 +57,7 @@ const decorativeItems = [
     rotation: 15,
   },
   {
-    icon: "food-pizza",
+    icon: "pizza",
     size: 40,
     color: neoColors.blue,
     top: "45%",

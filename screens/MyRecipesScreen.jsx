@@ -9,15 +9,17 @@ import NeoIcon from "../components/ui/NeoIcon";
 import NeoTitle from "../components/ui/NeoTitle";
 import RetroInput from "../components/ui/RetroInput";
 import { getRecipes } from "../data/api";
+import { useResponsive } from "../hooks/useResponsive";
 import { hardShadow, outline, theme } from "../utils/theme";
 
 const MyRecipes = ({ navigation }) => {
+  const { isNarrow } = useResponsive();
   const [recipes, setRecipes] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [searchText, setSearchText] = useState("");
 
   const ICON_SIZE = 50;
-  const numColumns = 2;
+  const numColumns = isNarrow ? 1 : 2;
 
   const filteredRecipes = useMemo(
     () =>
@@ -50,9 +52,15 @@ const MyRecipes = ({ navigation }) => {
 
   const renderItem = useCallback(
     ({ item }) => (
-      <View style={styles.recipeCardContainer}>
+      <View
+        style={[
+          styles.recipeCardContainer,
+          isNarrow && styles.recipeCardContainerNarrow,
+        ]}
+      >
         <RecipeCard
           recipe={item}
+          isNarrow={isNarrow}
           buttonShadowOffset={{
             default: { x: 3, y: 3 },
             pressed: { x: 1, y: 1 },
@@ -62,7 +70,7 @@ const MyRecipes = ({ navigation }) => {
         />
       </View>
     ),
-    [],
+    [isNarrow],
   );
 
   const clearSearchText = () => {
@@ -113,13 +121,17 @@ const MyRecipes = ({ navigation }) => {
         ) : null}
       </View>
       <FlashList
+        key={`recipes-${numColumns}`}
         data={filteredRecipes}
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
         numColumns={numColumns}
-        contentContainerStyle={styles.listContent}
+        contentContainerStyle={{
+          paddingHorizontal: isNarrow ? 12 : 15,
+          paddingBottom: 15,
+        }}
         showsVerticalScrollIndicator={false}
-        estimatedItemSize={320}
+        estimatedItemSize={isNarrow ? 340 : 320}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -143,14 +155,15 @@ const styles = StyleSheet.create({
     paddingTop: Constants.statusBarHeight + 4,
     paddingBottom: theme.spacing.md,
   },
-  listContent: {
-    paddingHorizontal: 15,
-    paddingBottom: 15,
-  },
   recipeCardContainer: {
     flex: 1,
     margin: 5,
     width: "100%",
+  },
+  recipeCardContainerNarrow: {
+    flex: undefined,
+    marginHorizontal: 0,
+    marginVertical: 6,
   },
   searchContainer: {
     flexDirection: "row",

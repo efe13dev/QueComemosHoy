@@ -3,11 +3,14 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import {
   Animated,
   Dimensions,
-  FlatList,
+  InteractionManager,
+  Keyboard,
   Modal,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   View,
 } from "react-native";
 
@@ -68,6 +71,7 @@ export default function NeoDropdown({
   const backdropOpacity = useRef(new Animated.Value(0)).current;
   const panelTranslateY = useRef(new Animated.Value(28)).current;
   const panelScale = useRef(new Animated.Value(0.92)).current;
+  const blockOpenUntilRef = useRef(0);
 
   const selected = useMemo(
     () => items.find((i) => i.value === value),
@@ -79,7 +83,17 @@ export default function NeoDropdown({
   const panelBg = tintWithWhite(accent, 0.92);
   const selectedBg = hexToRgba(accent, 0.16);
 
+  const dismissNativeFocus = useCallback(() => {
+    TextInput.State.currentlyFocusedInput?.()?.blur?.();
+    Keyboard.dismiss();
+  }, []);
+
   const animateOpen = useCallback(() => {
+    if (Date.now() < blockOpenUntilRef.current) {
+      return;
+    }
+
+    dismissNativeFocus();
     setOpen(true);
     setIsVisible(true);
     backdropOpacity.setValue(0);
@@ -103,10 +117,17 @@ export default function NeoDropdown({
         duration: 220,
         useNativeDriver: true,
       }),
-    ]).start();
-  }, [backdropOpacity, panelScale, panelTranslateY]);
+    ]).start(() => {
+      InteractionManager.runAfterInteractions(() => {
+        dismissNativeFocus();
+      });
+    });
+  }, [backdropOpacity, dismissNativeFocus, panelScale, panelTranslateY]);
 
   const animateClose = useCallback(() => {
+    blockOpenUntilRef.current = Date.now() + 300;
+    dismissNativeFocus();
+
     Animated.parallel([
       Animated.timing(backdropOpacity, {
         toValue: 0,
@@ -127,9 +148,13 @@ export default function NeoDropdown({
       if (finished) {
         setOpen(false);
         setIsVisible(false);
+
+        InteractionManager.runAfterInteractions(() => {
+          dismissNativeFocus();
+        });
       }
     });
-  }, [backdropOpacity, panelScale, panelTranslateY]);
+  }, [backdropOpacity, dismissNativeFocus, panelScale, panelTranslateY]);
 
   return (
     <>
@@ -139,6 +164,7 @@ export default function NeoDropdown({
         onPressIn={onPressIn}
         onPressOut={onPressOut}
         android_ripple={{ color: theme.colors.textDark, borderless: false }}
+        focusable={false}
         accessibilityRole="button"
         accessibilityLabel="Abrir selector"
       >
@@ -157,6 +183,7 @@ export default function NeoDropdown({
         transparent
         visible={open}
         onRequestClose={animateClose}
+        onDismiss={dismissNativeFocus}
       >
         <Animated.View style={[styles.backdrop, { opacity: backdropOpacity }]}>
           <Animated.View
@@ -176,16 +203,17 @@ export default function NeoDropdown({
             <Text style={[styles.title, { textShadowColor: accent }]}>
               {modalTitle}
             </Text>
-            <FlatList
-              data={items}
-              keyExtractor={(item, idx) => `${item.value}-${idx}`}
+            <ScrollView
               contentContainerStyle={styles.listContent}
               keyboardShouldPersistTaps="handled"
-              renderItem={({ item }) => {
+              showsVerticalScrollIndicator={false}
+            >
+              {items.map((item, idx) => {
                 const isSelected = item.value === value;
 
                 return (
                   <Pressable
+                    key={`${item.value}-${idx}`}
                     style={[
                       styles.item,
                       isSelected && [
@@ -197,6 +225,7 @@ export default function NeoDropdown({
                       onValueChange?.(item.value);
                       animateClose();
                     }}
+                    focusable={false}
                   >
                     <Text
                       style={[
@@ -213,9 +242,13 @@ export default function NeoDropdown({
                     </Text>
                   </Pressable>
                 );
-              }}
-            />
-            <Pressable style={styles.closeBtn} onPress={animateClose}>
+              })}
+            </ScrollView>
+            <Pressable
+              style={styles.closeBtn}
+              onPress={animateClose}
+              focusable={false}
+            >
               <Text style={styles.closeBtnText}>Cancelar</Text>
             </Pressable>
           </Animated.View>
